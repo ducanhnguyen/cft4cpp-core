@@ -1,0 +1,23 @@
+
+Xây dựng cây cấu trúc vật lý xong
+
+Mở rộng đến method/attributes đã xong
+
+Xây dựng sự phụ thuộc cpp/.c -> .h, .hh xong
+
+Xây dựng sự phụ thuộc thừa kế class, struct xong
+
+Lấy xong thông tin biên dịch
+
+	Tệp make: C:/Program Files (x86)/Dev-Cpp/MinGW64/bin/mingw32-make.exe
+
+	gcc.exe: C:/Dev-Cpp/bin/gcc.exe
+
+	g++.exe: C:/Dev-Cpp/bin/g++.exe
+
+Phân tích tệp make của ứng dụng: 
+
+	Đường dẫn tệp make của ứng dụng: C:\Users\DucAnh\Google Drive\Workspace\Eclipse project\ava\Source code\CppProjectTesting\data-test\ducanh\DevCpp_BTL\Makefile.win
+
+	Đường dẫn tệp .exe của ứng dụng: C:\Users\DucAnh\Google Drive\Workspace\Eclipse project\ava\Source code\CppProjectTesting\data-test\ducanh\DevCpp_BTL\Project1.exe
+

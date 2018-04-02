@@ -1,0 +1,90 @@
+!SESSION 2017-06-13 22:01:51.310 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.cdt.core 1 0 2017-06-13 22:02:20.864
+!MESSAGE Indexed 'Sample_for_R1_4' (10 sources, 179 headers) in 3.63 sec: 12,417 declarations; 20,182 references; 0 unresolved inclusions; 7 syntax errors; 1,160 unresolved names (3.44%)
+!SESSION 2017-06-13 22:03:24.894 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/Link to Cpp -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:03:26.499
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2017-06-13 22:03:30.791 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/Link to Cpp -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:03:32.343
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2017-06-13 22:03:36.942 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/Link to Cpp -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:03:37.452
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2017-06-13 22:03:42.274 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/Link to Cpp -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:03:42.949
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2017-06-13 22:06:33.827 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/ava/data-test/ducanh/Eclipse -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:06:34.390
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2017-06-13 22:06:38.607 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/ava/data-test/ducanh/Eclipse -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:06:39.121
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2017-06-13 22:06:43.825 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/ava/data-test/ducanh/Eclipse -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:06:44.330
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2017-06-13 22:06:48.926 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.8.0_131
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -build Sample_for_R1_4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.cpp.product -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data /home/ducanhnguyen/Desktop/ava/data-test/ducanh/Eclipse -build Sample_for_R1_4
+
+!ENTRY org.eclipse.core.resources 2 10035 2017-06-13 22:06:49.430
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.

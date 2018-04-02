@@ -1,0 +1,58 @@
+# Project: Sample_for_R1_10file
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = main.o F4.o F5.o F6.o F7.o F8.o F1.o F3.o F2.o F10.o F9.o
+LINKOBJ  = main.o F4.o F5.o F6.o F7.o F8.o F1.o F3.o F2.o F10.o F9.o
+LIBS     = -L"D:/Dev-Cpp/MinGW64/lib" -L"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = Sample_for_R1_10file.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+F4.o: F4.cpp
+	$(CPP) -c F4.cpp -o F4.o $(CXXFLAGS)
+
+F5.o: F5.cpp
+	$(CPP) -c F5.cpp -o F5.o $(CXXFLAGS)
+
+F6.o: F6.cpp
+	$(CPP) -c F6.cpp -o F6.o $(CXXFLAGS)
+
+F7.o: F7.cpp
+	$(CPP) -c F7.cpp -o F7.o $(CXXFLAGS)
+
+F8.o: F8.cpp
+	$(CPP) -c F8.cpp -o F8.o $(CXXFLAGS)
+
+F1.o: F1.cpp
+	$(CPP) -c F1.cpp -o F1.o $(CXXFLAGS)
+
+F3.o: F3.cpp
+	$(CPP) -c F3.cpp -o F3.o $(CXXFLAGS)
+
+F2.o: F2.cpp
+	$(CPP) -c F2.cpp -o F2.o $(CXXFLAGS)
+
+F10.o: F10.cpp
+	$(CPP) -c F10.cpp -o F10.o $(CXXFLAGS)
+
+F9.o: F9.cpp
+	$(CPP) -c F9.cpp -o F9.o $(CXXFLAGS)

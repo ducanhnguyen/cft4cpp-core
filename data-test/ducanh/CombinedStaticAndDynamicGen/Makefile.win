@@ -1,0 +1,52 @@
+# Project: Project1
+# Makefile created by Dev-C++ 5.11
+
+CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
+WINDRES  = windres.exe
+OBJ      = class_test.o simple_test.o struct_test.o
+LINKOBJ  = class_test.o simple_test.o struct_test.o
+LIBS     = -L"E:/Dev-Cpp/MinGW64/lib" -L"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"E:/Dev-Cpp/MinGW64/include" -I"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"E:/Dev-Cpp/MinGW64/include" -I"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = Project1.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+class_test.o: class_test.cpp
+	$(CPP) -c class_test.cpp -o class_test.o $(CXXFLAGS)
+
+simple_test.o: simple_test.cpp
+	$(CPP) -c simple_test.cpp -o simple_test.o $(CXXFLAGS)
+
+struct_test.o: struct_test.cpp
+	$(CPP) -c struct_test.cpp -o struct_test.o $(CXXFLAGS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

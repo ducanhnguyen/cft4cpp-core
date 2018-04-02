@@ -1,0 +1,23 @@
+
+Xây dựng cây cấu trúc vật lý xong
+
+Mở rộng đến method/attributes đã xong
+
+Xây dựng sự phụ thuộc cpp/.c -> .h, .hh xong
+
+Xây dựng sự phụ thuộc thừa kế class, struct xong
+
+Lấy xong thông tin biên dịch
+
+	Tệp make: 
+
+	gcc.exe: 
+
+	g++.exe: 
+
+Phân tích tệp make của ứng dụng: 
+
+	Đường dẫn tệp make của ứng dụng: 
+
+	Đường dẫn tệp .exe của ứng dụng: 
+

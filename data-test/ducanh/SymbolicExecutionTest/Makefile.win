@@ -1,0 +1,91 @@
+# Project: Project1
+# Makefile created by Dev-C++ 5.11
+
+CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
+WINDRES  = windres.exe
+OBJ      = pointerTest.o switchCaseTest.o basicTest.o nsTest2.o nsTest3.o nsTest4.o nsTest0.o nsTest1.o tryCatchTest.o nsTest5.o praticalTest.o nsTest6.o nsTest7.o
+LINKOBJ  = pointerTest.o switchCaseTest.o basicTest.o nsTest2.o nsTest3.o nsTest4.o nsTest0.o nsTest1.o tryCatchTest.o nsTest5.o praticalTest.o nsTest6.o nsTest7.o
+LIBS     = -L"E:/Dev-Cpp/MinGW64/lib" -L"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"E:/Dev-Cpp/MinGW64/include" -I"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"E:/Dev-Cpp/MinGW64/include" -I"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = Project1.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+pointerTest.o: pointerTest.cpp
+	$(CPP) -c pointerTest.cpp -o pointerTest.o $(CXXFLAGS)
+
+switchCaseTest.o: switchCaseTest.cpp
+	$(CPP) -c switchCaseTest.cpp -o switchCaseTest.o $(CXXFLAGS)
+
+basicTest.o: basicTest.c
+	$(CPP) -c basicTest.c -o basicTest.o $(CXXFLAGS)
+
+nsTest2.o: nsTest2.cpp
+	$(CPP) -c nsTest2.cpp -o nsTest2.o $(CXXFLAGS)
+
+nsTest3.o: nsTest3.cpp
+	$(CPP) -c nsTest3.cpp -o nsTest3.o $(CXXFLAGS)
+
+nsTest4.o: nsTest4.cpp
+	$(CPP) -c nsTest4.cpp -o nsTest4.o $(CXXFLAGS)
+
+nsTest0.o: nsTest0.cpp
+	$(CPP) -c nsTest0.cpp -o nsTest0.o $(CXXFLAGS)
+
+nsTest1.o: nsTest1.cpp
+	$(CPP) -c nsTest1.cpp -o nsTest1.o $(CXXFLAGS)
+
+tryCatchTest.o: tryCatchTest.cpp
+	$(CPP) -c tryCatchTest.cpp -o tryCatchTest.o $(CXXFLAGS)
+
+nsTest5.o: nsTest5.cpp
+	$(CPP) -c nsTest5.cpp -o nsTest5.o $(CXXFLAGS)
+
+praticalTest.o: praticalTest.cpp
+	$(CPP) -c praticalTest.cpp -o praticalTest.o $(CXXFLAGS)
+
+nsTest6.o: nsTest6.cpp
+	$(CPP) -c nsTest6.cpp -o nsTest6.o $(CXXFLAGS)
+
+nsTest7.o: nsTest7.cpp
+	$(CPP) -c nsTest7.cpp -o nsTest7.o $(CXXFLAGS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

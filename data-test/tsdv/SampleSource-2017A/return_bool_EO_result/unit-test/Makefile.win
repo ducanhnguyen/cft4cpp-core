@@ -1,0 +1,37 @@
+#The make file is generated automatically to run the google test project
+#Project: RunGoogleTest 
+#Makefile created by CFT4Cpp
+CPP="C:/Program Files (x86)/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="C:/Program Files (x86)/Dev-Cpp/MinGW64/bin/gcc.exe"
+WINDRES  = windres.exe
+OBJ      = GoogleTest/src/gtest_main.o GoogleTest/src/gtest-all.o return_bool_test.o 
+LINKOBJ  = GoogleTest/src/gtest_main.o GoogleTest/src/gtest-all.o return_bool_test.o 
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib"  -static-libgcc
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Project/QC/trunk/other/fromTSDV/TestingForVNUProducts/Testing-R1/SampleSource-2017A/return_bool_result/unit-test/GoogleTest" -I"D:/Project/QC/trunk/other/fromTSDV/TestingForVNUProducts/Testing-R1/SampleSource-2017A/return_bool_result/unit-test/GoogleTest/include" 
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Project/QC/trunk/other/fromTSDV/TestingForVNUProducts/Testing-R1/SampleSource-2017A/return_bool_result/unit-test/GoogleTest" -I"D:/Project/QC/trunk/other/fromTSDV/TestingForVNUProducts/Testing-R1/SampleSource-2017A/return_bool_result/unit-test/GoogleTest/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++" 
+BIN      = RunGoogleTest.exe
+CXXFLAGS = $(CXXINCS) -std=gnu++11 
+CFLAGS   = $(INCS) -std=gnu++11
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+GoogleTest/src/gtest_main.o: GoogleTest/src/gtest_main.cc
+	$(CPP) -c GoogleTest/src/gtest_main.cc -o GoogleTest/src/gtest_main.o $(CXXFLAGS)
+
+GoogleTest/src/gtest-all.o: GoogleTest/src/gtest-all.cc
+	$(CPP) -c GoogleTest/src/gtest-all.cc -o GoogleTest/src/gtest-all.o $(CXXFLAGS)
+
+return_bool_test.o: return_bool_test.cpp
+	$(CPP) -c return_bool_test.cpp -o return_bool_test.o $(CXXFLAGS)
+
+
+

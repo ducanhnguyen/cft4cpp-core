@@ -1,0 +1,2 @@
+{
+trao_doi(a->id,b->id);
