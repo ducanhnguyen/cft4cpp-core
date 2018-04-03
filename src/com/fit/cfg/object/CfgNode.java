@@ -131,11 +131,6 @@ public class CfgNode implements ICfgNode, Cloneable {
 	}
 
 	@Override
-	public boolean isCondition() {
-		return !isMultipleTarget() && getTrueNode() != getFalseNode();
-	}
-
-	@Override
 	public boolean isMultipleTarget() {
 		return targetNodesList != null && targetNodesList.size() >= 1;
 	}
@@ -178,7 +173,7 @@ public class CfgNode implements ICfgNode, Cloneable {
 
 	@Override
 	public boolean shouldInBlock() {
-		return !isCondition();
+		return !(this instanceof ConditionCfgNode);
 	}
 
 	@Override

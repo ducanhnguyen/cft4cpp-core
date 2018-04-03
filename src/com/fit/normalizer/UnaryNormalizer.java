@@ -16,6 +16,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 
 import com.fit.cfg.CFGGenerationforBranchvsStatementCoverage;
 import com.fit.cfg.ICFGGeneration;
+import com.fit.cfg.object.ConditionCfgNode;
 import com.fit.cfg.object.ICfgNode;
 import com.fit.cfg.object.NormalCfgNode;
 import com.fit.cfg.object.SimpleCfgNode;
@@ -115,7 +116,7 @@ public class UnaryNormalizer extends AbstractNormalizer implements ITestpathNorm
 				 * Get the state of the next expression
 				 */
 				boolean nextIsTrue = false;
-				if (currentCfgNode.isCondition())
+				if (currentCfgNode instanceof ConditionCfgNode)
 					nextIsTrue = tp.nextIsTrueBranch(currentCfgNode, currentPosition);
 
 				parseNormalNode((NormalCfgNode) currentCfgNode, newTestpath, nextIsTrue);
@@ -132,7 +133,7 @@ public class UnaryNormalizer extends AbstractNormalizer implements ITestpathNorm
 			 */
 			boolean nextIsTrue = false;
 			if (tp instanceof IFullTestpath) {
-				if (lastCfgNode.isCondition())
+				if (lastCfgNode instanceof ConditionCfgNode)
 					nextIsTrue = tp.nextIsTrueBranch(lastCfgNode, last);
 
 			} else if (tp instanceof IPartialTestpath)
@@ -168,7 +169,7 @@ public class UnaryNormalizer extends AbstractNormalizer implements ITestpathNorm
 		try {
 			newNormalNode = (NormalCfgNode) currentCfgNode.clone();
 
-			if (currentCfgNode.isCondition()) {
+			if (currentCfgNode instanceof ConditionCfgNode) {
 				normalizeCondition(newNormalNode, nextIsTrue);
 			} else if (!(Utils.shortenAstNode(newNormalNode.getAst()) instanceof ICPPASTUnaryExpression))
 				// dont handle statement "p1[0][0]++"

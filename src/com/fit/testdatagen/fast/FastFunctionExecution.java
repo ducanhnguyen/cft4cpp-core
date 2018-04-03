@@ -79,7 +79,8 @@ public class FastFunctionExecution extends FunctionExecution {
 						// Improvement here: The test driver is created for all set of values. We only
 						// need to create it
 						// once!
-						logger.debug(Paths.CURRENT_PROJECT.EXE_PATH + " does not exist. Compile now!");
+						logger.debug(
+								Paths.CURRENT_PROJECT.EXE_PATH + " does not exist, so we have to compile project!");
 						if (!new File(Paths.CURRENT_PROJECT.EXE_PATH).exists()) {
 							ConsoleExecution.compileMakefile(new File(Paths.CURRENT_PROJECT.MAKEFILE_PATH));
 						} else
@@ -114,7 +115,7 @@ public class FastFunctionExecution extends FunctionExecution {
 	private ITestdriverGeneration generateTestdriver(IFunctionNode clone, String staticSolution, Backup backup)
 			throws Exception {
 		// Generate test driver
-		logger.debug("Generate test driver");
+		logger.info("Generate a test driver");
 		dataGen = clone.generateDataTree(FunctionExecution.staticSolutionsGen(staticSolution));
 		dataGen.setFunctionNode(clone);
 		dataGen.generateTree();
@@ -129,7 +130,7 @@ public class FastFunctionExecution extends FunctionExecution {
 		} else if (Utils.getSourcecodeFile(clone) instanceof CppFileNode) {
 			// Improvement here
 			initialization = dataGen.getInputformFile();
-			logger.info(new File(Paths.CURRENT_PROJECT.TESTDATA_INPUT_FILE_PATH).getName() + "="
+			logger.debug(new File(Paths.CURRENT_PROJECT.TESTDATA_INPUT_FILE_PATH).getName() + "="
 					+ dataGen.getInputSavedInFile().replace("\n", "; "));
 			Utils.writeContentToFile(dataGen.getInputSavedInFile(), Paths.CURRENT_PROJECT.TESTDATA_INPUT_FILE_PATH);
 			testdriverGen = new FastTestdriverGenerationforCpp();

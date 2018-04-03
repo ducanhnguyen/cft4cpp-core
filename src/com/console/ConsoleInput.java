@@ -54,7 +54,7 @@ public class ConsoleInput {
 
 		File cloneProject = Utils.copy(projectFile.getCanonicalPath());
 		Paths.CURRENT_PROJECT.CLONE_PROJECT_PATH = cloneProject.getAbsolutePath();
-		logger.info("Create a clone project done at " + projectFile.getCanonicalPath());
+		logger.info("Create a clone project done of project " + projectFile.getCanonicalPath());
 
 		IProjectNode root = new ProjectParser(cloneProject, null).getRootTree();
 
@@ -68,7 +68,7 @@ public class ConsoleInput {
 				logger.info("Founded only a function");
 				IFunctionNode functionNode = (IFunctionNode) functionNodes.get(0);
 				((FunctionNode) functionNode).setFunctionConfig(functionConfig);
-				logger.info("Function: " + functionNode.getAST().getRawSignature());
+				logger.info("Function: \n" + functionNode.getAST().getRawSignature());
 
 				ConsoleOutput consoleOutput = generateTestdata(functionNode);
 				consoleOutput.setFunctionNode(functionNode);
@@ -86,7 +86,8 @@ public class ConsoleInput {
 	}
 
 	private ConsoleOutput generateTestdata(IFunctionNode function) {
-		logger.debug("Start generating test data for the current function");
+		if (logger.isDebugEnabled())
+			logger.debug("Start generating test data for the current function");
 
 		ConsoleOutput consoleOutput = new ConsoleOutput();
 		ProjectReport.getInstance().addFunction(function);
@@ -127,6 +128,8 @@ public class ConsoleInput {
 				ConsoleOutput.setMacroNormalizationTime(AbstractTestdataGeneration.macroNormalizationTime);
 				consoleOutput.setCoverge(fnReport.computeCoverage());
 				ConsoleOutput.setBugs(AbstractTestdataGeneration.bugs);
+
+				ConsoleOutput.setLog(Utils.readFileContent("E:\\log4j-application.log"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

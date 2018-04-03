@@ -30,7 +30,7 @@ public class ConsoleExecution {
 	 * @throws Exception
 	 */
 	public static void compileMakefile(File makefilePath) throws Exception {
-		logger.debug("run make file");
+		logger.info("Compile " + makefilePath);
 		Date startTime = Calendar.getInstance().getTime();
 		try {
 			if (Utils.isWindows()) {
@@ -123,6 +123,7 @@ public class ConsoleExecution {
 	 * @param exePath
 	 */
 	public static boolean executeExe(File exePath) throws Exception {
+		boolean isTerminated = false;
 		String command = "";
 		if (Utils.isWindows())
 			command = "\"" + exePath.getCanonicalPath() + "\"";
@@ -131,22 +132,22 @@ public class ConsoleExecution {
 			command = exePath.getCanonicalPath();
 		}
 
-		logger.debug("Exe command: " + command);
+		logger.info("Executing " + command);
 
 		Date startTime = Calendar.getInstance().getTime();
 		Process p = Runtime.getRuntime().exec(command);
-		p.waitFor(15, TimeUnit.SECONDS);
+		p.waitFor(30, TimeUnit.SECONDS);
 
 		if (p.isAlive()) {
 			p.destroy(); // tell the process to stop
 			p.waitFor(10, TimeUnit.SECONDS); // give it a chance to stop
 			p.destroyForcibly(); // tell the OS to kill the process
 			p.waitFor();
-			return true;
+			isTerminated = true;
 		}
 		Date end = Calendar.getInstance().getTime();
 		AbstractTestdataGeneration.executionTime += end.getTime() - startTime.getTime();
-		return false;
+		return isTerminated;
 	}
 
 	/**

@@ -1,10 +1,11 @@
 package com.fit.cfg.testpath;
 
-import com.fit.cfg.ICFG;
-import com.fit.cfg.object.ICfgNode;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fit.cfg.ICFG;
+import com.fit.cfg.object.ConditionCfgNode;
+import com.fit.cfg.object.ICfgNode;
 
 /**
  * Represent full test path from the beginning node to the end node
@@ -13,70 +14,70 @@ import java.util.List;
  */
 public class FullTestpath extends AbstractTestpath implements IFullTestpath {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 3205932220413141035L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 3205932220413141035L;
 
-    @Override
-    public IPartialTestpath getPartialTestpathAt(int endConditionId, boolean finalConditionType) {
-        IPartialTestpath tp = new PartialTestpath();
-        tp.setFunctionNode(getFunctionNode());
+	@Override
+	public IPartialTestpath getPartialTestpathAt(int endConditionId, boolean finalConditionType) {
+		IPartialTestpath tp = new PartialTestpath();
+		tp.setFunctionNode(getFunctionNode());
 
-        if (endConditionId < getNumConditionsIncludingNegativeConditon()) {
-            int numVisitedCondition = 0;
+		if (endConditionId < getNumConditionsIncludingNegativeConditon()) {
+			int numVisitedCondition = 0;
 
-            for (ICfgNode node : this) {
-                tp.cast().add(node);
-                if (node.isCondition()) {
-                    numVisitedCondition++;
-                    if (numVisitedCondition >= endConditionId + 1)
-                        break;
-                }
-            }
-            tp.setFinalConditionType(finalConditionType);
-            return tp;
-        } else
-            return tp;
-    }
+			for (ICfgNode node : this) {
+				tp.cast().add(node);
+				if (node instanceof ConditionCfgNode) {
+					numVisitedCondition++;
+					if (numVisitedCondition >= endConditionId + 1)
+						break;
+				}
+			}
+			tp.setFinalConditionType(finalConditionType);
+			return tp;
+		} else
+			return tp;
+	}
 
-    @Override
-    public int getNumUnvisitedStatements(ICFG cfg) {
-        int numUnvisitedStatements = 0;
+	@Override
+	public int getNumUnvisitedStatements(ICFG cfg) {
+		int numUnvisitedStatements = 0;
 
-        List<ICfgNode> unvisitedNodes = cfg.getUnvisitedStatements();
+		List<ICfgNode> unvisitedNodes = cfg.getUnvisitedStatements();
 
-        List<Integer> unvisitedIds = new ArrayList<>();
-        for (ICfgNode unvisitedNode : unvisitedNodes)
-            unvisitedIds.add(unvisitedNode.getId());
+		List<Integer> unvisitedIds = new ArrayList<>();
+		for (ICfgNode unvisitedNode : unvisitedNodes)
+			unvisitedIds.add(unvisitedNode.getId());
 
-        for (ICfgNode cfgNode : getAllCfgNodes())
-            if (cfgNode.isNormalNode())
-                if (unvisitedIds.contains(cfgNode.getId()))
-                    numUnvisitedStatements++;
-        return numUnvisitedStatements;
-    }
+		for (ICfgNode cfgNode : getAllCfgNodes())
+			if (cfgNode.isNormalNode())
+				if (unvisitedIds.contains(cfgNode.getId()))
+					numUnvisitedStatements++;
+		return numUnvisitedStatements;
+	}
 
-    @Override
-    public String getFullPath() {
-        String output = "";
-        for (int i = 0; i < size() - 1; i++) {
-            ICfgNode n = get(i);
-            if (n.isCondition())
-                if (nextIsTrueBranch(n, i))
-                    output += "(" + n.getContent() + ") " + ITestpathInCFG.SEPARATE_BETWEEN_NODES + " ";
-                else
-                    output += "!(" + n.getContent() + ") " + ITestpathInCFG.SEPARATE_BETWEEN_NODES + " ";
-            else
-                output += n.getContent() + ITestpathInCFG.SEPARATE_BETWEEN_NODES + " ";
-        }
-        output += get(size() - 1);
-        return output;
-    }
+	@Override
+	public String getFullPath() {
+		String output = "";
+		for (int i = 0; i < size() - 1; i++) {
+			ICfgNode n = get(i);
+			if (n instanceof ConditionCfgNode)
+				if (nextIsTrueBranch(n, i))
+					output += "(" + n.getContent() + ") " + ITestpathInCFG.SEPARATE_BETWEEN_NODES + " ";
+				else
+					output += "!(" + n.getContent() + ") " + ITestpathInCFG.SEPARATE_BETWEEN_NODES + " ";
+			else
+				output += n.getContent() + ITestpathInCFG.SEPARATE_BETWEEN_NODES + " ";
+		}
+		output += get(size() - 1);
+		return output;
+	}
 
-    @Override
-    public FullTestpath cast() {
-        return this;
-    }
+	@Override
+	public FullTestpath cast() {
+		return this;
+	}
 
 }

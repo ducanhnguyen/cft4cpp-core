@@ -49,15 +49,17 @@ public class ConsoleOutput {
 	private long solverRunningTime = 0;
 
 	// The total time of normalizing function(ms)
-	private long normalizationTime;
+	private long normalizationTime = 0;
 
 	// The total time of symbolic execution (ms)
-	private long symbolicExecutionTime;
+	private long symbolicExecutionTime = 0;
 
 	// The total time of macro normalization (ms)
-	public static long macroNormalizationTime;
+	public static long macroNormalizationTime = 0;
 
 	public static Set<Bug> bugs = new HashSet<>();
+
+	public static String log = "";
 
 	public float getCoverge() {
 		return coverge;
@@ -201,5 +203,15 @@ public class ConsoleOutput {
 
 	public static void setBugs(Set<Bug> bugs) {
 		ConsoleOutput.bugs = bugs;
+	}
+
+	@Deprecated
+	public static String getLog() {
+		return log;
+	}
+
+	@Deprecated
+	public static void setLog(String log) {
+		ConsoleOutput.log = log;
 	}
 }

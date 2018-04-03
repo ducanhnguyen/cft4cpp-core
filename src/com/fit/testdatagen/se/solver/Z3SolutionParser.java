@@ -22,14 +22,16 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 	}
 
 	public static void main(String[] args) {
-		// String Z3Solution = "unknown\n(error \"line 27 column 10: model is
-		// not available\")";
-		String Z3Solution = "(error \"line 6 column 30: invalid function application, wrong number of arguments\")\nsat\n(model\n\n  (define-fun tvwp ((x!1 Int) (x!2 Int)) Int\n    (ite (and (= x!1 0) (= x!2 0)) 10\n      10))\n)";
-		// String Z3Solution = "(model\n(define-fun tvwx () Real\n(/ 1.0
-		// 10000.0))\n)";
+//		 String Z3Solution = "unknown\n(error \"line 27 column 10: model is not available\")";
 
-		// String Z3Solution = "(model\n(define-fun tvwhe ()
-		// Real\n1.0)\n(define-fun tvwb_w () Real\n(- (/ 9981.0 10000.0))))";
+//		 String Z3Solution = "(error \"line 6 column 30: invalid function application,		 wrong number of arguments\")\nsat\n(model\n\n (define-fun tvwp ((x!1 Int)		 (x!2 Int)) Int\n (ite (and (= x!1 0) (= x!2 0)) 10\n 10))\n)";
+
+		 String Z3Solution = "(model\n(define-fun tvwx () Real\n(/ 1.0 10000.0))\n)";
+
+//		 String Z3Solution = "(model\n(define-fun tvwhe ()		 Real\n1.0)\n(define-fun tvwb_w () Real\n(- (/ 9981.0 10000.0))))";
+
+//		String Z3Solution = "sat\r\n" + "(model \r\n" + "  (define-fun tvw_x () Int\r\n" + "    0)\r\n"
+//				+ "  (define-fun tvw_A ((x!1 Int)) Int\r\n" + "    0)\r\n" + ")";
 		System.out.println(new Z3SolutionParser().getSolution(Z3Solution));
 	}
 
@@ -88,12 +90,6 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 		return solution;
 	}
 
-	/**
-	 * Láº¥y cÃ¡c chá»‰ sá»‘ cá»§a hÃ m
-	 *
-	 * @param ifThenElse
-	 * @return
-	 */
 	private ArrayList<String> getIndex(String ifThenElse) {
 		ArrayList<String> indexList = new ArrayList<>();
 		Matcher m = Pattern.compile("=\\s(\\w+)!(\\d+)\\s([^\\)]+)").matcher(ifThenElse);
@@ -102,12 +98,6 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 		return indexList;
 	}
 
-	/**
-	 * Láº¥y tÃªn hÃ m
-	 *
-	 * @param defineFun
-	 * @return
-	 */
 	private String getName(String defineFun) {
 		String nameFunction = "";
 		Matcher m = Pattern.compile("\\(define-fun\\s(\\w+)").matcher(defineFun);
@@ -115,15 +105,23 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 			nameFunction = m.group(1);
 			break;
 		}
+
+		// case "define-fun tvw_A ((x!1 Int)) Int"
+		int chamThan = defineFun.indexOf("!");
+		if (chamThan != -1) {
+			String index = "";
+			for (int i = chamThan + 1; i < defineFun.length(); i++) {
+				Character c = defineFun.toCharArray()[i];
+				if (c >= '0' && c <= '9') {
+					index += c;
+				}
+			}
+			nameFunction += "[" + index + "]";
+		}
+
 		return nameFunction;
 	}
 
-	/**
-	 * XÃ¡c Ä‘á»‹nh loáº¡i dÃ²ng lá»‡nh
-	 *
-	 * @param line
-	 * @return
-	 */
 	private int getTypeOfLine(String line) {
 		if (line.contains(IZ3SolutionParser.KHAI_BAO))
 			return IZ3SolutionParser.KHAI_BAO_ID;
@@ -152,13 +150,6 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 		return IZ3SolutionParser.VALUE_ID;
 	}
 
-	/**
-	 * Láº¥y giÃ¡ trá»‹ cá»§a biáº¿n máº£ng, vá»›i giÃ¡ trá»‹ chá»‰ sá»‘ Ä‘Ã£ xÃ¡c
-	 * Ä‘á»‹nh á»Ÿ hÃ m khÃ¡c
-	 *
-	 * @param ifThenElse
-	 * @return
-	 */
 	private String getValueOfIte(String ifThenElse) {
 		String value = "";
 		Matcher m = Pattern.compile("(\\(=\\s\\w+!\\d+\\s\\d+\\)\\s*)+(.*)").matcher(ifThenElse);
@@ -169,12 +160,6 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 		return value;
 	}
 
-	/**
-	 * Láº¥y giÃ¡ trá»‹ biáº¿n sá»‘ nguyÃªn, sá»‘ thá»±c
-	 *
-	 * @param src
-	 * @return
-	 */
 	private String getValueOfVariable(String line) {
 		String value = "";
 		final String DEVIDE = "/";

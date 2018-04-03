@@ -1,7 +1,10 @@
 package com.fit.instrument;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
@@ -17,7 +20,10 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 
+import com.fit.config.Paths;
 import com.fit.parser.projectparser.ProjectParser;
 import com.fit.tree.object.IFunctionNode;
 import com.fit.utils.SpecialCharacter;
@@ -56,9 +62,9 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 	}
 
 	public static void main(String[] args) {
-		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		ProjectParser parser = new ProjectParser(new File(Paths.SYMBOLIC_EXECUTION_TEST));
 		IFunctionNode function = (IFunctionNode) Search
-				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_else_control_block_2(int)").get(0);
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
 		System.out.println(function.getAST().getRawSignature());
 		System.out.println(
 				new FunctionInstrumentationForStatementvsBranch_Marker(function, true).generateInstrumentedFunction());
@@ -79,11 +85,8 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 			StringBuilder b = new StringBuilder();
 			String inside = margin + SpecialCharacter.TAB;
 
-			b.append(SpecialCharacter.OPEN_BRACE)
-					// .append(putInMark(addBeginningScopeMarker(), true))
-					.append(SpecialCharacter.LINE_BREAK).append(inside).append(inside)
+			b.append(SpecialCharacter.OPEN_BRACE).append(SpecialCharacter.LINE_BREAK).append(inside).append(inside)
 					.append(parseStatement(stm, inside)).append(SpecialCharacter.LINE_BREAK).append(margin)
-					// .append(putInMark(addEndScopeMarker(), true))
 					.append(SpecialCharacter.CLOSE_BRACE);
 			return b.toString();
 		}
@@ -111,11 +114,20 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 	}
 
 	protected String parseBlock(IASTCompoundStatement block, String extra, String margin) {
-		StringBuilder b = new StringBuilder(
-				"{" + putInMark(
-						addMarkerByProperty(STATEMENT, "{") + DELIMITER_BETWEEN_PROPERTIES + addMarkerByProperty(
-								LINE_NUMBER_OF_BLOCK_IN_FUNCTION, block.getFileLocation().getStartingLineNumber() + ""),
-						true) + "\n");
+		StringBuilder b = new StringBuilder();
+
+		if (block.getParent() instanceof CPPASTFunctionDefinition) {
+			b = new StringBuilder("{" + putInMark(addMarkerByProperty(STATEMENT, "{") + DELIMITER_BETWEEN_PROPERTIES
+					+ addMarkerByProperty(LINE_NUMBER_OF_BLOCK_IN_FUNCTION,
+							block.getFileLocation().getStartingLineNumber() + "")
+					+ DELIMITER_BETWEEN_PROPERTIES + addMarkerByProperty(OPENNING_FUNCTION_SCOPE, "true"), true)
+					+ "\n");
+		} else
+			b = new StringBuilder("{" + putInMark(
+					addMarkerByProperty(STATEMENT, "{") + DELIMITER_BETWEEN_PROPERTIES + addMarkerByProperty(
+							LINE_NUMBER_OF_BLOCK_IN_FUNCTION, block.getFileLocation().getStartingLineNumber() + ""),
+					true) + "\n");
+
 		String inside = margin + SpecialCharacter.TAB;
 		if (extra != null)
 			b.append(inside);
@@ -188,6 +200,7 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 				b.append(addExtraCall(astFor.getBody(), "", margin));
 
 			b.append(putInMark(addEndScopeMarkerForForLoop(), true));
+
 		} else if (stm instanceof IASTWhileStatement) {
 			IASTWhileStatement astWhile = (IASTWhileStatement) stm;
 			String cond = getShortenContent(astWhile.getCondition());
@@ -227,17 +240,13 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 			b.append(SpecialCharacter.LINE_BREAK).append(margin).append("mark(\"end catch;\")");
 
 		} else if (stm instanceof IASTBreakStatement || stm instanceof IASTContinueStatement) {
-			/*
-			 * for break, continue statements
-			 */
 			b.append(putInMark(addDefaultMarkerContentforNormalStatement(stm), true));
 			b.append(getShortenContent(stm));
+
 		} else if (stm instanceof IASTReturnStatement) {
-			/*
-			 * for return statements
-			 */
 			b.append(putInMark(addDefaultMarkerContentforNormalStatement(stm), true));
 			b.append(getShortenContent(stm));
+
 		} else {
 			String raw = getShortenContent(stm);
 			b.append(putInMark(addDefaultMarkerContentforNormalStatement(stm), true));// add markers
@@ -321,8 +330,14 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 		String colProperty = OFFSET_IN_FUNCTION + DELIMITER_BETWEEN_PROPERTY_AND_VALUE
 				+ node.getFileLocation().getNodeOffset();
 		String statementProperty = STATEMENT + DELIMITER_BETWEEN_PROPERTY_AND_VALUE + esc(getShortenContent(node));
-		return lineProperty + DELIMITER_BETWEEN_PROPERTIES + colProperty + DELIMITER_BETWEEN_PROPERTIES
-				+ statementProperty;
+		String recursive = IS_RECURSIVE + DELIMITER_BETWEEN_PROPERTY_AND_VALUE + "true";
+
+		if (containRecursiveCall(node)) {
+			return lineProperty + DELIMITER_BETWEEN_PROPERTIES + colProperty + DELIMITER_BETWEEN_PROPERTIES
+					+ statementProperty + (DELIMITER_BETWEEN_PROPERTIES + recursive);
+		} else
+			return lineProperty + DELIMITER_BETWEEN_PROPERTIES + colProperty + DELIMITER_BETWEEN_PROPERTIES
+					+ statementProperty;
 	}
 
 	protected String addDefaultMarkerContentForIf(IASTNode node) {
@@ -366,6 +381,35 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 		return "mark(\"" + str + "\")" + (isAStatement ? ";" : "");
 	}
 
+	private boolean containRecursiveCall(IASTNode stm) {
+		// Get all function calls
+		List<CPPASTFunctionCallExpression> functionCalls = new ArrayList<>();
+		ASTVisitor visitor = new ASTVisitor() {
+			@Override
+			public int visit(IASTExpression statement) {
+				if (statement instanceof CPPASTFunctionCallExpression) {
+					functionCalls.add((CPPASTFunctionCallExpression) statement);
+					return ASTVisitor.PROCESS_SKIP;
+				} else
+					return ASTVisitor.PROCESS_CONTINUE;
+			}
+		};
+		visitor.shouldVisitExpressions = true;
+		stm.accept(visitor);
+
+		// Create link from statement to the called function
+		boolean foundRecursive = false;
+		for (CPPASTFunctionCallExpression functionCall : functionCalls) {
+			String name = functionCall.getChildren()[0].getRawSignature();
+			if (functionNode.getName().startsWith(name)) {
+
+				foundRecursive = true;
+				break;
+			}
+		}
+		return foundRecursive;
+	}
+
 	public static final String TYPE_STATEMENT = "type";
 
 	public static enum TYPE_STATEMENT_ENUM {
@@ -385,8 +429,6 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 
 	public static final String IN_CONTROL_BLOCK = "control-block";
 	public static final String IF_BLOCK = "if";
-	public static final String DO_BLOCK = "do-while";
-	public static final String WHILE_BLOCK = "while-do";
 	public static final String FOR_BLOCK = "for";
 
 	public static final String LINE_NUMBER_IN_FUNCTION = "line-in-function";
@@ -395,7 +437,8 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 	public static final String STATEMENT = "statement";
 	public static final String DELIMITER_BETWEEN_PROPERTIES = "###";
 	public static final String DELIMITER_BETWEEN_PROPERTY_AND_VALUE = "=";
-
+	public static final String OPENNING_FUNCTION_SCOPE = "openning-function"; // {true, false}
+	public static final String IS_RECURSIVE = "is-recursive"; // {true, false}
 	// Beside the executed statements, we also add several additional codes to print
 	// out further information
 	public static final String ADDITIONAL_BODY_CONTROL_MARKER = "additional-code";

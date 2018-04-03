@@ -170,7 +170,7 @@ public class CFGGenerationSubCondition implements ICFGGeneration {
 
 					} else if (node instanceof NormalCfgNode) {
 
-						if (((NormalCfgNode) node).isCondition()) {
+						if (node instanceof ConditionCfgNode) {
 							ConditionCfgNode castNode = (ConditionCfgNode) node;
 
 							if (castNode.getTrueNode().equals(complexConditionNode))

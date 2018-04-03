@@ -14,9 +14,9 @@ public class BasicTypeRandom {
 
 	public static int generateInt(int minBound, int maxBound) {
 		if (minBound <= 0 && maxBound >= 0) {
-			return new Random().nextInt(maxBound - minBound + 1) - minBound;
-		} else if (minBound >= 0) {
 			return new Random().nextInt(maxBound - minBound + 1) + minBound;
+		} else if (minBound >= 0) {
+			return new Random().nextInt(maxBound - minBound + 1) - minBound;
 		} else if (minBound <= 0 && maxBound <= 0) {
 			return new Random().nextInt(-1 * minBound - (-1) * maxBound + 1) + minBound;
 		} else

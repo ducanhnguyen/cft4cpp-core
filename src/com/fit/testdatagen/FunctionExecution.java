@@ -13,6 +13,7 @@ import com.fit.config.ISettingv2;
 import com.fit.config.Paths;
 import com.fit.config.Settingv2;
 import com.fit.exception.GUINotifyException;
+import com.fit.instrument.FunctionInstrumentationForStatementvsBranch_Marker;
 import com.fit.normalizer.PrivateToPublicNormalizer;
 import com.fit.parser.projectparser.ProjectLoader;
 import com.fit.parser.projectparser.ProjectParser;
@@ -281,34 +282,37 @@ public class FunctionExecution implements ITestdataExecution {
 			throw new Exception("Dont found exe");
 
 		} else {
-			logger.debug("Start executing function");
+			// logger.debug("Start executing function");
 			boolean isTerminated = ConsoleExecution.executeExe(new File(Paths.CURRENT_PROJECT.EXE_PATH));
-			logger.debug("Start executing function...done");
+			if (isTerminated)
+				logger.info("Terminate .exe due to too long!!!");
+
+			// logger.debug("Start executing function...done");
 			AbstractTestdataGeneration.numOfExecutions++;
 
-			if (isTerminated) {
-				initialization = "";
+			// Read hard disk until the test path is written into file completely
+			int MAX_READ_FILE_NUMBER = 10;
+			int countReadFile = 0;
+			do {
+				logger.info("Finish. We are getting a execution path from hard disk");
+				encodedTestpath.setEncodedTestpath(normalizeTestpathFromFile(Utils.readFileContent(executionFilePath)));
 
-			} else {
-				// Read hard disk until the test path is written into file completely
-				int MAX_READ_FILE_NUMBER = 10;
-				int countReadFile = 0;
-				do {
-					logger.debug("Reading execution path from hard disk");
-					encodedTestpath
-							.setEncodedTestpath(normalizeTestpathFromFile(Utils.readFileContent(executionFilePath)));
+				if (encodedTestpath.getEncodedTestpath().length() == 0) {
+					initialization = "";
+					Thread.sleep(10);
+				}
 
-					if (encodedTestpath.getEncodedTestpath().length() == 0) {
-						initialization = "";
-						Thread.sleep(10);
-					}
+				countReadFile++;
+			} while (encodedTestpath.getEncodedTestpath().length() == 0 && countReadFile <= MAX_READ_FILE_NUMBER);
 
-					countReadFile++;
-				} while (encodedTestpath.getEncodedTestpath().length() == 0 && countReadFile <= MAX_READ_FILE_NUMBER);
-
-				logger.debug("Done. Execution test path = " + encodedTestpath);
-				logger.debug("Done. Execution test path = " + encodedTestpath.getEncodedTestpath());
-			}
+			// Only for log
+			String tp = "";
+			List<String> stms = encodedTestpath
+					.getStandardTestpathByProperty(FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT);
+			for (String stm : stms)
+				tp += stm + "=>";
+			tp = tp.substring(0, tp.length() - 2);
+			logger.debug("Done. Execution test path = " + tp);
 		}
 	}
 

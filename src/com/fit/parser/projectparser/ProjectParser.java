@@ -40,13 +40,15 @@ public class ProjectParser extends AbstractProjectParser implements IProjectPars
 	}
 
 	public ProjectParser(File projectPath) {
-		logger.debug("Parse " + projectPath);
+		if (logger.isDebugEnabled())
+			logger.debug("Parse " + projectPath);
 		this.projectPath = projectPath;
 		notify = null;
 	}
 
 	public ProjectParser(File projectPath, IProcessNotify notify) {
-		logger.debug("Parse " + projectPath);
+		if (logger.isDebugEnabled())
+			logger.debug("Parse " + projectPath);
 		this.notify = notify;
 		this.projectPath = projectPath;
 	}

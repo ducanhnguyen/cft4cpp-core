@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -54,20 +55,26 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 	public static void main(String[] args) {
 		ProjectParser parser = new ProjectParser(new File(Paths.SYMBOLIC_EXECUTION_TEST));
 		IFunctionNode function = (IFunctionNode) Search
-				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "Merge1(int[3],int[3],int[6])").get(0);
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
 
 		ICFG cfg = function.generateCFGToFindStaticSolution();
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
-		String[] nodes = new String[] { "statement={###line-of-blockin-function=1",
-				"line-in-function=2###offset=49###statement=int i = 0, j = 0, k = 0 ;",
-				"line-in-function=3###offset=84###statement=i < 3 && j < 3", "statement={###line-of-blockin-function=3",
-				"line-in-function=4###offset=109###statement=t1[i] < t2[j]###control-block=if",
-				"statement={###line-of-blockin-function=4",
-				"line-in-function=5###offset=133###statement=t3[k] = t1[i];",
-
-		};
+		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"statement={###line-of-blockin-function=4", "line-in-function=5###offset=68###statement=return 0;",
+				"line-in-function=9###offset=120###statement=return sum;",
+				"line-in-function=9###offset=120###statement=return sum;" };
 		testpath.setEncodedTestpath(nodes);
 		logger.debug(testpath.getEncodedTestpath());
 
@@ -81,7 +88,7 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 		logger.debug("visited statements: " + cfg.getVisitedStatements());
 		logger.debug("Visited branches: " + cfg.getVisitedBranches());
 		logger.debug("Visited nodes: " + updater.getUpdatedCFGNodes());
-		logger.debug(updater.isUncompleteTestpath);
+		logger.debug("Complete test path: " + !updater.isUncompleteTestpath);
 	}
 
 	public CFGUpdater_Mark(TestpathString_Marker testpath, ICFG cfg) {
@@ -113,6 +120,7 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 		ArrayList<StatementInTestpath_Mark> detailTestpath = removeRedundantStatements();
 		logger.debug("Compared testpath:" + detailTestpath);
 
+		Stack<ICfgNode> recursivePoints = new Stack<>();
 		// Perform mapping
 		Set<ICfgNode> candidateCfgNodes = new HashSet<>();
 		candidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
@@ -124,13 +132,14 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 			StatementInTestpath_Mark testpathItem = detailTestpath.get(i);
 			StatementInTestpath_Mark nextTestpathItem = i == detailTestpath.size() - 1 ? null
 					: detailTestpath.get(i + 1);
+			logger.debug("current candidate CfgNodes: " + candidateCfgNodes);
 			logger.debug("testpathItem=" + testpathItem);
 
-			logger.debug("current candidate CfgNodes: " + candidateCfgNodes);
-
 			boolean mapOK = false;
+
 			for (ICfgNode candidateCfgNode : candidateCfgNodes) {
 				if (checkStrongConnectedMapping(testpathItem, candidateCfgNode, nextTestpathItem)) {
+					// A
 					candidateCfgNode.setVisit(true);
 					updatedCFGNodes.getAllCfgNodes().add(candidateCfgNode);
 
@@ -143,19 +152,65 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 					// Create new candidate set
 					candidateCfgNodes.removeAll(candidateCfgNodes);
 
-					candidateCfgNodes.add(candidateCfgNode.getTrueNode());
-					candidateCfgNodes.add(candidateCfgNode.getFalseNode());
-
-					// System.out.println("Mapping ok!" + testpathItem + ". Candidates: " +
-					// candidateCfgNodes);
-					logger.debug("new candidate CfgNodes: " + candidateCfgNodes);
-					mapOK = true;
-
+					Property_Marker isRecursive = testpathItem
+							.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.IS_RECURSIVE);
+					if (isRecursive != null) {
+						candidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
+						recursivePoints.add(candidateCfgNode);
+					} else {
+						candidateCfgNodes.add(candidateCfgNode.getTrueNode());
+						candidateCfgNodes.add(candidateCfgNode.getFalseNode());
+					}
 					previousNode = candidateCfgNode;
+
+					logger.debug("new candidate CfgNodes: " + candidateCfgNodes);
+					logger.debug("Recursive points in stack: " + recursivePoints);
+					mapOK = true;
 					break;
+					// END-A
 				}
 			}
 
+			// May be due to recursive
+			if (!mapOK && recursivePoints.size() > 0) {
+				ICfgNode latestRecursivePoint = recursivePoints.pop();
+				candidateCfgNodes.removeAll(candidateCfgNodes);
+				candidateCfgNodes.add(latestRecursivePoint.getFalseNode());
+				candidateCfgNodes.add(latestRecursivePoint.getTrueNode());
+
+				for (ICfgNode candidateCfgNode : candidateCfgNodes)
+					if (checkStrongConnectedMapping(testpathItem, candidateCfgNode, nextTestpathItem)) {
+						// CLONE A
+						candidateCfgNode.setVisit(true);
+						updatedCFGNodes.getAllCfgNodes().add(candidateCfgNode);
+
+						if (previousNode instanceof ConditionCfgNode) {
+							if (previousNode.getTrueNode().equals(candidateCfgNode))
+								((ConditionCfgNode) previousNode).setVisitedTrueBranch(true);
+							else if (previousNode.getFalseNode().equals(candidateCfgNode))
+								((ConditionCfgNode) previousNode).setVisitedFalseBranch(true);
+						}
+						// Create new candidate set
+						candidateCfgNodes.removeAll(candidateCfgNodes);
+
+						Property_Marker isRecursive = testpathItem
+								.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.IS_RECURSIVE);
+						if (isRecursive != null) {
+							candidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
+							recursivePoints.add(candidateCfgNode);
+						} else {
+							candidateCfgNodes.add(candidateCfgNode.getTrueNode());
+							candidateCfgNodes.add(candidateCfgNode.getFalseNode());
+						}
+						previousNode = candidateCfgNode;
+
+						logger.debug("new candidate CfgNodes: " + candidateCfgNodes);
+						logger.debug("Recursive points in stack: " + recursivePoints);
+						mapOK = true;
+						break;
+						// END CLONE A
+					}
+			}
 			if (!mapOK) {
 				System.out.println("Mapping fails!" + testpathItem);
 				break;
@@ -231,7 +286,6 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 								+ 1 == lineInFunction) {
 					mappingOK = true;
 				}
-
 			}
 			// CASE 3
 			else if (stm.getValue().equals(ScopeCfgNode.SCOPE_CLOSE)) {
@@ -247,16 +301,12 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 							.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT);
 					if (nextStm != null
 							&& (checkStrongConnectedMapping(nextTestpathItem, checkedNode.getTrueNode(), null)
-									|| checkStrongConnectedMapping(nextTestpathItem, checkedNode.getFalseNode(), null))
-					// (nextStm.getValue().equals(checkedNode.getTrueNode().getContent())
-					// || nextStm.getValue().equals(checkedNode.getFalseNode().getContent()))
-					)
+									|| checkStrongConnectedMapping(nextTestpathItem, checkedNode.getFalseNode(), null)))
 
 						mappingOK = true;
 				}
 			}
 		}
-
 		return mappingOK;
 	}
 
@@ -319,8 +369,6 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 							((ConditionCfgNode) node).setVisitedTrueBranch(true);
 					}
 			}
-		int a = 0;
-		a++;
 	}
 
 	public boolean isUncompleteTestpath() {

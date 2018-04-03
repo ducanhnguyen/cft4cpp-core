@@ -79,13 +79,6 @@ public interface ICfgNode {
 	ICfgNode getTrueNode();
 
 	/**
-	 * Check whether the statement stored in the current node is condition or not
-	 *
-	 * @return
-	 */
-	boolean isCondition();
-
-	/**
 	 * @return true if the current node has multiple targets
 	 */
 	boolean isMultipleTarget();

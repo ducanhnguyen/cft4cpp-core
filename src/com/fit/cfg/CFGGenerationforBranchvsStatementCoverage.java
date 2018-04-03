@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 
 import com.fit.cfg.object.AdditionalScopeCfgNode;
@@ -44,6 +46,7 @@ import com.fit.cfg.object.EndFlagCfgNode;
 import com.fit.cfg.object.ForwardCfgNode;
 import com.fit.cfg.object.ICfgNode;
 import com.fit.cfg.object.MarkFlagCfgNode;
+import com.fit.cfg.object.ReturnNode;
 import com.fit.cfg.object.ScopeCfgNode;
 import com.fit.cfg.object.SimpleCfgNode;
 import com.fit.cfg.object.ThrowCfgNode;
@@ -99,8 +102,8 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 	public static void main(String[] args) throws Exception {
 		ProjectParser parser = new ProjectParser(new File(Paths.SYMBOLIC_EXECUTION_TEST));
 
-		INode function = Search
-				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "Merge1(int[3],int[3],int[6])").get(0);
+		INode function = Search.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)")
+				.get(0);
 
 		System.out.println(((IFunctionNode) function).getAST().getRawSignature());
 		FunctionNormalizer fnNorm = ((IFunctionNode) function).normalizedAST();
@@ -130,11 +133,15 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 	 */
 	private ICFG setParentAgain(ICFG cfg) {
 		for (ICfgNode cfgNode : cfg.getAllNodes()) {
-			if (cfgNode.getTrueNode() != null)
-				cfgNode.getTrueNode().setParent(cfgNode);
+			if (cfgNode instanceof ReturnNode) {
+				// prevent
+			} else {
+				if (cfgNode.getTrueNode() != null)
+					cfgNode.getTrueNode().setParent(cfgNode);
 
-			if (cfgNode.getFalseNode() != null)
-				cfgNode.getFalseNode().setParent(cfgNode);
+				if (cfgNode.getFalseNode() != null)
+					cfgNode.getFalseNode().setParent(cfgNode);
+			}
 		}
 		return cfg;
 	}
@@ -213,6 +220,7 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 	private ICFG parse(IFunctionNode fn) throws Exception {
 		BEGIN = new BeginFlagCfgNode();
 		END = new EndFlagCfgNode();
+		((EndFlagCfgNode) END).setBeginNode((BeginFlagCfgNode) BEGIN);
 		labels = new HashMap<>();
 
 		visitBlock((IASTCompoundStatement) fn.getAST().getBody(), BEGIN, END, null, null, END, BEGIN);
@@ -281,23 +289,92 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 
 		ICfgNode normal = null;
 
-		// CÃ¢u lá»‡nh throw: chuyá»ƒn Ä‘áº¿n nhÃ£n _throw gáº§n nháº¥t
 		if (isThrowStatement(stm)) {
 			normal = new ThrowCfgNode(stm);
 			normal.setBranch(_throw);
-		} // CÃ¢u lá»‡nh return/exit/sbort: chuyá»ƒn Ä‘áº¿n cuá»‘i Ä‘á»“ thá»‹
-		else if (stm instanceof IASTReturnStatement || stm.getRawSignature().matches("exit\\s*\\(.*")
-				|| stm.getRawSignature().matches("abort\\s*\\(.*")) {
+
+		} else if (stm instanceof IASTReturnStatement) {
+			normal = new ReturnNode(stm);
+			parseReturnStatement(normal, stm, END, BEGIN);
+
+		} else if (stm.getRawSignature().matches("exit\\s*\\(.*") || stm.getRawSignature().matches("abort\\s*\\(.*")) {
 			normal = new SimpleCfgNode(stm);
 			normal.setBranch(END);
-		} // CÃ¢u lá»‡nh thÆ°á»�ng: chuyá»ƒn Ä‘áº¿n end
-		else {
+
+		} else {
 			normal = new SimpleCfgNode(stm);
-			normal.setBranch(end);
+			parseSimpleStatement(normal, stm, end, BEGIN);
+			// normal.setBranch(end);
 		}
 
 		begin.setBranch(normal);
 		normal.setParent(parent);
+	}
+
+	private void parseReturnStatement(ICfgNode returnNode, IASTStatement stm, ICfgNode endOfCFG,
+			ICfgNode beginningOfCfg) {
+		// Get all function calls
+		List<CPPASTFunctionCallExpression> functionCalls = new ArrayList<>();
+		ASTVisitor visitor = new ASTVisitor() {
+			@Override
+			public int visit(IASTExpression statement) {
+				if (statement instanceof CPPASTFunctionCallExpression) {
+					functionCalls.add((CPPASTFunctionCallExpression) statement);
+					return ASTVisitor.PROCESS_SKIP;
+				} else
+					return ASTVisitor.PROCESS_CONTINUE;
+			}
+		};
+		visitor.shouldVisitExpressions = true;
+		stm.accept(visitor);
+
+		// Create link from statement to the called function
+		boolean foundRecursive = false;
+		for (CPPASTFunctionCallExpression functionCall : functionCalls) {
+			String name = functionCall.getChildren()[0].getRawSignature();
+			if (functionNode.getName().startsWith(name)) {
+				returnNode.setBranch(beginningOfCfg.getTrueNode());
+				foundRecursive = true;
+				break;
+			}
+		}
+
+		if (!foundRecursive) {
+			returnNode.setBranch(endOfCFG);
+		}
+	}
+
+	private void parseSimpleStatement(ICfgNode simpleNode, IASTStatement stm, ICfgNode nextStatement,
+			ICfgNode beginningOfCfg) {
+		// Get all function calls
+		List<CPPASTFunctionCallExpression> functionCalls = new ArrayList<>();
+		ASTVisitor visitor = new ASTVisitor() {
+			@Override
+			public int visit(IASTExpression statement) {
+				if (statement instanceof CPPASTFunctionCallExpression) {
+					functionCalls.add((CPPASTFunctionCallExpression) statement);
+					return ASTVisitor.PROCESS_SKIP;
+				} else
+					return ASTVisitor.PROCESS_CONTINUE;
+			}
+		};
+		visitor.shouldVisitExpressions = true;
+		stm.accept(visitor);
+
+		// Create link from statement to the called function
+		boolean foundRecursive = false;
+		for (CPPASTFunctionCallExpression functionCall : functionCalls) {
+			String name = functionCall.getChildren()[0].getRawSignature();
+			if (functionNode.getName().startsWith(name)) {
+				simpleNode.setTrue(beginningOfCfg.getTrueNode());
+				simpleNode.setFalse(nextStatement);
+				foundRecursive = true;
+				break;
+			}
+		}
+		if (!foundRecursive) {
+			simpleNode.setBranch(nextStatement);
+		}
 	}
 
 	private void visitStatement(IASTStatement stm, ICfgNode begin, ICfgNode end, ICfgNode _break, ICfgNode _continue,
@@ -324,18 +401,14 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 
 			visitCondition(astCond, begin, afterTrue, afterFalse, parent, ICFGGeneration.IF_FLAG);
 
-			// Duyá»‡t nhÃ¡nh Ä‘Ãºng
-			// cÃ¡c cÃ¢u lá»‡nh bÃªn trong if sáº½ cÃ³ parent = Ä‘iá»�u kiá»‡n cá»§a if
 			visitStatement(astThen, afterTrue, end, _break, _continue, _throw, begin);
 
-			// Duyá»‡t nhÃ¡nh sai
 			visitStatement(astElse, afterFalse, end, _break, _continue, _throw, begin);
 		} else if (!notNull(stm))
 			begin.setBranch(end);
+
 		else if (stm instanceof IASTForStatement) {
-			/*
-			 * Hai cháº¿ Ä‘á»™ phÃ¢n tÃ­ch cÃ¢u lá»‡nh for
-			 */
+
 			if (forModel == ICFGGeneration.DONOT_SEPARATE_FOR) {
 				IASTForStatement stmFor = (IASTForStatement) stm;
 				IASTStatement astInit = stmFor.getInitializerStatement();
@@ -353,7 +426,6 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 				eFor.setTrue(bfBody);
 				eFor.setFalse(end);
 
-				// Body cá»§a for sáº½ cÃ³ parent lÃ  Ä‘iá»�u kiá»‡n eFor
 				visitStatement(astBody, bfBody, eFor, end, eFor, _throw, eFor);
 
 			} else if (forModel == ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES) {
@@ -487,9 +559,8 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 
 			begin.setBranch(ref);
 			visitStatement(stmLabel.getNestedStatement(), ref, end, _break, _continue, _throw, ref);
-		} // CÃ¢u lá»‡nh goto: chuyá»ƒn Ä‘áº¿n label tÆ°Æ¡ng á»©ng, hoáº·c táº¡o má»›i khi
-			// chÆ°a cÃ³
-		else if (stm instanceof IASTGotoStatement) {
+
+		} else if (stm instanceof IASTGotoStatement) {
 			String name = ((IASTGotoStatement) stm).getName().toString();
 			MarkFlagCfgNode ref = labels.get(name);
 
@@ -498,6 +569,7 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 				labels.put(name, ref);
 			}
 			begin.setBranch(ref);
+
 		} else
 			visitSimpleStatement(stm, begin, end, _throw, parent);
 	}

@@ -346,4 +346,150 @@ public class CFGUpdater_MarkTest {
 		// Some failures
 		Assert.assertEquals(true, false);
 	}
+
+	@Test
+	public void recursive_Fibonaxi_1() {
+		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		IFunctionNode function = (IFunctionNode) Search
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "Fibonacci(int)").get(0);
+
+		// Create a test path
+		TestpathString_Marker testpath = new TestpathString_Marker();
+		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=7###offset=95###statement=return ( Fibonacci(n-1) + Fibonacci(n-2) );###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=7###offset=95###statement=return ( Fibonacci(n-1) + Fibonacci(n-2) );###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=5###offset=75###statement=return 1;",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=3###offset=41###statement=return 0;",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=5###offset=75###statement=return 1;" };
+		testpath.setEncodedTestpath(nodes);
+
+		// Mapping
+		ICFG cfg = function.generateCFGToFindStaticSolution();
+		cfg.setFunctionNode(function);
+		cfg.setIdforAllNodes();
+		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
+		cfg.resetVisitedStateOfNodes();
+		updater.updateVisitedNodes();
+		Assert.assertEquals(4, cfg.getVisitedBranches().size());
+	}
+
+	@Test
+	public void recursive_Fibonaxi_2() {
+		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		IFunctionNode function = (IFunctionNode) Search
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "Fibonacci(int)").get(0);
+
+		// Create a test path
+		TestpathString_Marker testpath = new TestpathString_Marker();
+		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=7###offset=95###statement=return ( Fibonacci(n-1) + Fibonacci(n-2) );###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=7###offset=95###statement=return ( Fibonacci(n-1) + Fibonacci(n-2) );###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=5###offset=75###statement=return 1;",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=3###offset=41###statement=return 0;",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=29###statement=n == 0###control-block=if",
+				"line-in-function=4###offset=63###statement=n == 1###control-block=if",
+				"line-in-function=5###offset=75###statement=return 1;" };
+		testpath.setEncodedTestpath(nodes);
+
+		// Mapping
+		ICFG cfg = function.generateCFGToFindStaticSolution();
+		cfg.setFunctionNode(function);
+		cfg.setIdforAllNodes();
+		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
+		cfg.resetVisitedStateOfNodes();
+		updater.updateVisitedNodes();
+		Assert.assertEquals(5, cfg.getVisitedStatements().size());
+	}
+
+	@Test
+	public void recursive_add_digits_1() {
+		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		IFunctionNode function = (IFunctionNode) Search
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
+
+		// Create a test path
+		TestpathString_Marker testpath = new TestpathString_Marker();
+		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"statement={###line-of-blockin-function=4", "line-in-function=5###offset=68###statement=return 0;",
+				"line-in-function=9###offset=120###statement=return sum;",
+				"line-in-function=9###offset=120###statement=return sum;" };
+		testpath.setEncodedTestpath(nodes);
+
+		// Mapping
+		ICFG cfg = function.generateCFGToFindStaticSolution();
+		cfg.setFunctionNode(function);
+		cfg.setIdforAllNodes();
+		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
+		cfg.resetVisitedStateOfNodes();
+		updater.updateVisitedNodes();
+		Assert.assertEquals(5, cfg.getVisitedStatements().size());
+	}
+
+	@Test
+	public void recursive_add_digits_2() {
+		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		IFunctionNode function = (IFunctionNode) Search
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
+
+		// Create a test path
+		TestpathString_Marker testpath = new TestpathString_Marker();
+		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=26###statement=static int sum = 0;",
+				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
+				"statement={###line-of-blockin-function=4", "line-in-function=5###offset=68###statement=return 0;",
+				"line-in-function=9###offset=120###statement=return sum;",
+				"line-in-function=9###offset=120###statement=return sum;" };
+		testpath.setEncodedTestpath(nodes);
+
+		// Mapping
+		ICFG cfg = function.generateCFGToFindStaticSolution();
+		cfg.setFunctionNode(function);
+		cfg.setIdforAllNodes();
+		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
+		cfg.resetVisitedStateOfNodes();
+		updater.updateVisitedNodes();
+		Assert.assertEquals(2, cfg.getVisitedBranches().size());
+	}
 }

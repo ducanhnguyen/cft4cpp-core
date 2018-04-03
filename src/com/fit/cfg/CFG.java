@@ -21,7 +21,6 @@ import com.fit.cfg.testpath.PartialTestpaths;
 import com.fit.cfg.testpath.PossibleTestpathGeneration;
 import com.fit.testdata.object.TestpathString_Marker;
 import com.fit.testdatagen.coverage.CFGUpdater_Mark;
-import com.fit.testdatagen.htmlreport.Coverage;
 import com.fit.testdatagen.htmlreport.ICoverage;
 import com.fit.testdatagen.se.IPathConstraints;
 import com.fit.testdatagen.se.ISymbolicExecution;
@@ -81,7 +80,7 @@ public class CFG implements ICFG {
 	public int computeNumofVisitedBranches() {
 		int count = 0;
 		for (ICfgNode stm : getAllNodes())
-			if (stm.isCondition() && stm.isVisited()) {
+			if (stm instanceof ConditionCfgNode && stm.isVisited()) {
 
 				if (((ConditionCfgNode) stm).isVisitedFalseBranch())
 					count++;
@@ -95,7 +94,7 @@ public class CFG implements ICFG {
 	public int computeNumOfBranches() {
 		int count = 0;
 		for (ICfgNode stm : getAllNodes())
-			if (stm.isCondition())
+			if (stm instanceof ConditionCfgNode)
 				count += 2;
 		return count;
 
@@ -208,7 +207,7 @@ public class CFG implements ICFG {
 			else
 				output += "\n\tPArent: NULL";
 
-			if (stm.isCondition()) {
+			if (stm instanceof ConditionCfgNode) {
 				output += "\n\tTrue: [" + stm.getTrueNode().getId() + "]["
 						+ stm.getTrueNode().getClass().getSimpleName() + "] " + stm.getTrueNode().getContent() + "\t["
 						+ stm.getTrueNode().isVisited() + "]";

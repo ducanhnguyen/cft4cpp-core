@@ -9,6 +9,7 @@ import com.fit.cfg.CFGGenerationSubCondition;
 import com.fit.cfg.ICFG;
 import com.fit.cfg.ICFGGeneration;
 import com.fit.cfg.object.AbstractConditionLoopCfgNode;
+import com.fit.cfg.object.ConditionCfgNode;
 import com.fit.cfg.object.EndFlagCfgNode;
 import com.fit.cfg.object.ICfgNode;
 import com.fit.config.ISettingv2;
@@ -105,7 +106,7 @@ public class PossibleTestpathGeneration implements ITestpathGeneration {
 
 	@Override
 	public void generateTestpaths() {
-//		Date startTime = Calendar.getInstance().getTime();
+		// Date startTime = Calendar.getInstance().getTime();
 		FullTestpaths testpaths_ = new FullTestpaths();
 
 		ICfgNode beginNode = cfg.getBeginNode();
@@ -142,7 +143,7 @@ public class PossibleTestpathGeneration implements ITestpathGeneration {
 			ICfgNode trueNode = stm.getTrueNode();
 			ICfgNode falseNode = stm.getFalseNode();
 
-			if (stm.isCondition())
+			if (stm instanceof ConditionCfgNode)
 
 				if (stm instanceof AbstractConditionLoopCfgNode) {
 

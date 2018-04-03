@@ -6,14 +6,22 @@ package com.fit.cfg.object;
  * @author ducanh
  */
 public class EndFlagCfgNode extends FlagCfgNode {
-    /**
-     * Content of the ending node
-     */
-    public static final String END_FLAG = "End";
-    final static String END_NODE_CONTENT = "End";
+	BeginFlagCfgNode beginNode;
+	/**
+	 * Content of the ending node
+	 */
+	public static final String END_FLAG = "End";
+	final static String END_NODE_CONTENT = "End";
 
-    public EndFlagCfgNode() {
-        setContent(EndFlagCfgNode.END_FLAG);
-    }
+	public EndFlagCfgNode() {
+		setContent(EndFlagCfgNode.END_FLAG);
+	}
 
+	public BeginFlagCfgNode getBeginNode() {
+		return beginNode;
+	}
+
+	public void setBeginNode(BeginFlagCfgNode beginNode) {
+		this.beginNode = beginNode;
+	}
 }

@@ -68,6 +68,7 @@ public class StaticSolutionGeneration implements IStaticSolutionGeneration {
 
 				smtLibGeneration.generate();
 				String smtLibContent = smtLibGeneration.getSmtLibContent();
+//				logger.debug("SMT-Lib content:\n" + smtLibContent);
 
 				if (smtLibContent.equals(ISmtLibGeneration.EMPTY_SMT_LIB_FILE)) {
 					// In this case, the content of the SMT-Lib file is empty. We dont need to use
@@ -82,6 +83,7 @@ public class StaticSolutionGeneration implements IStaticSolutionGeneration {
 							constraintsFile);
 					z3Runner.execute();
 
+					logger.debug("Original solution:\n" + z3Runner.getSolution());
 					this.staticSolution = new Z3SolutionParser().getSolution(z3Runner.getSolution());
 				}
 			} else

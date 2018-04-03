@@ -7,18 +7,18 @@ package com.fit.cfg.object;
  */
 public class FlagCfgNode extends CfgNode {
 
-    @Override
-    public boolean isNormalNode() {
-        return false;
-    }
+	@Override
+	public boolean isNormalNode() {
+		return false;
+	}
 
-    @Override
-    public boolean shouldDisplayInCFG() {
-        return true;
-    }
+	@Override
+	public boolean shouldDisplayInCFG() {
+		return true;
+	}
 
-    @Override
-    public boolean shouldInBlock() {
-        return false;
-    }
+	@Override
+	public boolean shouldInBlock() {
+		return false;
+	}
 }

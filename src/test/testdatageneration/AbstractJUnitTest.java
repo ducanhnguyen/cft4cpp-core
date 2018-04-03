@@ -30,6 +30,11 @@ public abstract class AbstractJUnitTest {
 
 	public boolean generateTestdata(String originalProjectPath, String methodName, EO expectedOutput, int coverageType,
 			ITestReport testReport) throws LineUnavailableException {
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		// Create file for storing function
 		String folderTestPath = "";
 		try {
@@ -47,8 +52,8 @@ public abstract class AbstractJUnitTest {
 		Settingv2.create();
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_LOWER_BOUND, 32);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_UPPER_BOUND, 126);
-		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_LOWER_BOUND, -95);
-		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_UPPER_BOUND, 193);
+		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_LOWER_BOUND, -300);
+		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_UPPER_BOUND, 300);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_TEST_ARRAY_SIZE, 12);
 		AbstractSetting.setValue(ISettingv2.MAX_ITERATION_FOR_EACH_LOOP, 11);
 		AbstractSetting.setValue(ISettingv2.IN_TEST_MODE, "true");
@@ -65,11 +70,6 @@ public abstract class AbstractJUnitTest {
 
 		AbstractSetting.setValue(ISettingv2.SELECTED_SOLVING_STRATEGY, ISettingv2.SUPPORT_SOLVING_STRATEGIES[0]);
 
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		//
 		Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH = originalProjectPath;
 		AbstractSetting.setValue(ISettingv2.INPUT_PROJECT_PATH, Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH);
@@ -87,7 +87,7 @@ public abstract class AbstractJUnitTest {
 		boolean reachCoverageObjective = false;
 		for (int i = 0; i < MAX_GENERATION; i++) {
 			String[] args = new String[] { Console.LOAD_PROJECT, Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH,
-					Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "debug" };
+					Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "info" };
 			console[i] = new Console(args);
 			// Display output
 			List<ConsoleOutput> outputList = console[i].getOutput();
@@ -130,11 +130,12 @@ public abstract class AbstractJUnitTest {
 						+ " seconds");
 				logger.info("");
 				logger.info("");
+
 				// Compare the actual output and expected output
 				reachCoverageObjective = outputItem.getCoverge() >= expectedOutput.getExpectedCoverage() ? true : false;
+
 				console[i].exportToHtml(new File(JUNIT_REPORT), methodName);
 			}
-
 		}
 
 		// mergeAllReportIntoOneSummary(console, MAX_GENERATION, inputPath,
@@ -253,4 +254,5 @@ public abstract class AbstractJUnitTest {
 	public static boolean ENABLE_MACRO_NORMALIZATION = false; // default value
 
 	public static String JUNIT_REPORT = "C:\\Users\\Duc Anh Nguyen\\Desktop\\test.html";
+	public static String LOG_CONFIGURATION_FILE = "./bin/log4j.properties";
 }

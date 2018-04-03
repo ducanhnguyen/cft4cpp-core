@@ -73,7 +73,7 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 	public static long symbolicExecutionTime;
 	// The total time of macro normalization (ms)
 	public static long macroNormalizationTime;
-
+	// Bugs detected while executing the program
 	public static Set<Bug> bugs = new HashSet<>();
 
 	protected IFunctionNode fn = null;
@@ -96,6 +96,7 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 		normalizationTime = 0;
 		symbolicExecutionTime = 0;
 		macroNormalizationTime = 0;
+		bugs = new HashSet<>();
 
 		Date startTime = Calendar.getInstance().getTime();
 
