@@ -67,7 +67,7 @@ public class SmtLibGeneration2 implements ISmtLibGeneration {
 
 			smtLib += ISmtLibGeneration.SOLVE_COMMAND;
 		}
-//		logger.debug(smtLib);
+		logger.debug(smtLib);
 	}
 
 	/**

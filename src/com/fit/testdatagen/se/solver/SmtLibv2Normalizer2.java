@@ -31,8 +31,8 @@ public class SmtLibv2Normalizer2 extends SmtLibv2Normalizer {
 	}
 
 	public static void main(String[] args) {
-		String[] samples = new String[] { "((((-((-(tvw_a)+(-1)*1+0))+0))+1+0))>0", "!(!(d->ngay==1))", "a!=b", "a==b",
-				"(a)>b", "a>x[1][2]", "((tvwb_w)/((tvwhe)*(tvwhe)/10000))<19",
+		String[] samples = new String[] { "((x+1))!=1", "((((-((-(tvw_a)+(-1)*1+0))+0))+1+0))>0", "!(!(d->ngay==1))",
+				"a!=b", "a==b", "(a)>b", "a>x[1][2]", "((tvwb_w)/((tvwhe)*(tvwhe)/10000))<19",
 				"!((tvwkey)==tvwarray[(to_int*(((0)+(to_int*((tvwsize)+0)))/2+0))+0])",
 				"tvwp[0+0+0][0+0+0]>=(-10)&&tvwp[0+0+0][0+0+0]<=20",
 				"(to_int*(16807*((tvwseed)-(to_int*((tvwseed)/127773))*127773)-(to_int*((tvwseed)/127773))*2836))<0" };
@@ -49,13 +49,13 @@ public class SmtLibv2Normalizer2 extends SmtLibv2Normalizer {
 	@Override
 	public void normalize() {
 		IASTNode ast = ASTUtils.convertToIAST(originalSourcecode);
-		normalizeSourcecode = "(" + createSmtLib(ast, true) + ")";
+		normalizeSourcecode = createSmtLib(ast);
 
 		// Ex: "(1.2)" ----------->"1.2"
 		normalizeSourcecode = normalizeSourcecode.replaceAll("\\(([a-zA-Z0-9_\\.]+)\\)", "$1");
 	}
 
-	protected String createSmtLib(IASTNode ast, boolean isInBracket) {
+	protected String createSmtLib(IASTNode ast) {
 		String normalizeSc = "";
 		if (ast.getRawSignature().equals(NEGATIVE_ONE)) {
 			normalizeSc = "- 1";
@@ -63,7 +63,6 @@ public class SmtLibv2Normalizer2 extends SmtLibv2Normalizer {
 		} else if (ast instanceof ICPPASTName || ast instanceof IASTIdExpression
 				|| ast instanceof ICPPASTLiteralExpression || ast instanceof ICPPASTFieldReference) {
 			normalizeSc = ast.getRawSignature();
-			isInBracket = true;
 
 		} else {
 			// STEP 1. Shorten expression
@@ -100,9 +99,9 @@ public class SmtLibv2Normalizer2 extends SmtLibv2Normalizer {
 			if (isUnaryExpression) {
 				if (isNegate) {
 					operator = "not";
-					normalizeSc = String.format("%s (%s)", operator, createSmtLib(ast, true));
+					normalizeSc = String.format("%s %s", operator, createSmtLib(ast));
 				} else
-					normalizeSc = String.format("%s", createSmtLib(ast, isInBracket));
+					normalizeSc = String.format("%s", createSmtLib(ast));
 
 			} else if (ast instanceof ICPPASTBinaryExpression) {
 				ICPPASTBinaryExpression astBinary = (ICPPASTBinaryExpression) ast;
@@ -153,14 +152,14 @@ public class SmtLibv2Normalizer2 extends SmtLibv2Normalizer {
 				if (operator.length() > 0)
 					if (operator.equals("!="))
 						normalizeSc = String.format("or (> %s %s) (< %s %s)",
-								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand1(), false),
-								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand2(), false),
-								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand1(), false),
-								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand2(), false));
+								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand1()),
+								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand2()),
+								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand1()),
+								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand2()));
 					else
-						normalizeSc = String.format("%s (%s) (%s)", operator,
-								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand1(), true),
-								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand2(), true));
+						normalizeSc = String.format("%s %s %s", operator,
+								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand1()),
+								createSmtLib(((ICPPASTBinaryExpression) ast).getOperand2()));
 
 			} else if (ast instanceof ICPPASTArraySubscriptExpression) {
 				// Get all elements in array item
@@ -175,12 +174,30 @@ public class SmtLibv2Normalizer2 extends SmtLibv2Normalizer {
 				normalizeSc = astName.getRawSignature();
 
 				for (int i = elements.size() - 2; i >= 0; i--)
-					normalizeSc += " (" + createSmtLib(elements.get(i), true) + ")";
+					normalizeSc += createSmtLib(elements.get(i));
 			}
 		}
 
-		normalizeSc = isInBracket ? normalizeSc : "(" + normalizeSc + ")";
+		normalizeSc = checkInBracket(normalizeSc) ? normalizeSc : " (" + normalizeSc + ") ";
 		return normalizeSc;
+	}
+
+	private boolean checkInBracket(String stm) {
+		stm = stm.trim();
+		if (stm.startsWith("(")) {
+			int count = 0;
+			for (Character c : stm.toCharArray())
+				if (c == '(')
+					count++;
+				else if (c == ')')
+					count--;
+			if (count == 0)
+				return true;
+			else
+				return false;
+		} else
+			return false;
+
 	}
 
 	private final String NEGATIVE_ONE = "(-1)";

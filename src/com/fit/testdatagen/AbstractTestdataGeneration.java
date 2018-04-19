@@ -28,8 +28,6 @@ import com.fit.parser.projectparser.ProjectLoader;
 import com.fit.testdata.object.TestpathString_Marker;
 import com.fit.testdatagen.fast.FastFunctionExecution;
 import com.fit.testdatagen.htmlreport.BranchCoverage;
-import com.fit.testdatagen.htmlreport.StatementCoverage;
-import com.fit.testdatagen.htmlreport.SubConditionCoverage;
 import com.fit.testdatagen.structuregen.ChangedToken;
 import com.fit.testdatagen.structuregen.ChangedTokens;
 import com.fit.tree.object.IFunctionNode;
@@ -41,6 +39,7 @@ import com.fit.utils.search.Search;
 import com.ibm.icu.util.Calendar;
 
 import test.testdatageneration.Bug;
+import test.testdatageneration.TestdataInReport;
 
 public abstract class AbstractTestdataGeneration implements ITestdataGeneration {
 	final static Logger logger = Logger.getLogger(AbstractTestdataGeneration.class);
@@ -75,6 +74,8 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 	public static long macroNormalizationTime;
 	// Bugs detected while executing the program
 	public static Set<Bug> bugs = new HashSet<>();
+	// Testdata
+	public static List<TestdataInReport> testdata = new ArrayList<>();
 
 	protected IFunctionNode fn = null;
 	protected ITestedFunctionReport fnReport = null;
@@ -97,6 +98,7 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 		symbolicExecutionTime = 0;
 		macroNormalizationTime = 0;
 		bugs = new HashSet<>();
+		testdata = new ArrayList<>();
 
 		Date startTime = Calendar.getInstance().getTime();
 
@@ -117,10 +119,10 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 			fnReport.setCoverage(new BranchCoverage(this.fn));
 			break;
 		case IFunctionConfig.SUBCONDITION:
-			fnReport.setCoverage(new SubConditionCoverage(this.fn));
+
 			break;
 		case IFunctionConfig.STATEMENT_COVERAGE:
-			fnReport.setCoverage(new StatementCoverage(this.fn));
+
 			break;
 		}
 	}
@@ -184,11 +186,6 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 				FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT), changedTokens);
 		// logger.debug("Tp display in GUI = " + normalizedTestpath);
 
-		// Create an input for report storage
-		String exexutionTestpathInStr = "";
-		for (String item : executionTestpath
-				.getStandardTestpathByProperty(FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT))
-			exexutionTestpathInStr += item + ITestpathInCFG.SEPARATE_BETWEEN_NODES;
 		/*
 		 * Convert the test data generated from dynamic test data generation into it
 		 * original form

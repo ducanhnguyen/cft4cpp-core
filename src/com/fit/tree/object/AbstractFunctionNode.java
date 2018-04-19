@@ -29,19 +29,13 @@ import com.fit.externalvariable.ExternalVariableDetecter;
 import com.fit.externalvariable.ReducedExternalVariableDetecter;
 import com.fit.gui.testreport.object.INameRule;
 import com.fit.normalizer.ArgumentTypeNormalizer;
-import com.fit.normalizer.ClassvsStructNormalizer;
 import com.fit.normalizer.ConditionCovertNormalizer;
-import com.fit.normalizer.EndStringNormalizer;
-import com.fit.normalizer.EnumNormalizer;
-import com.fit.normalizer.ExternNormalizer;
 import com.fit.normalizer.FunctionNameNormalizer;
 import com.fit.normalizer.FunctionNormalizer;
 import com.fit.normalizer.MacroNormalizer2;
-import com.fit.normalizer.NullPtrNormalizer;
 import com.fit.normalizer.SetterandGetterFunctionNormalizer;
 import com.fit.normalizer.SwitchCaseNormalizer;
 import com.fit.normalizer.TernaryConvertNormalizer;
-import com.fit.normalizer.ThrowNormalizer;
 import com.fit.testdatagen.module.DataTreeGeneration;
 import com.fit.testdatagen.module.IDataTreeGeneration;
 import com.fit.testdatagen.testdatainit.VariableTypes;
@@ -60,13 +54,7 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 
 	private MacroNormalizer2 fnMacroNormalizer = null;
 
-	private FunctionNormalizer fnMoreSimpleAST = null;
-
-	private FunctionNormalizer fnNormalizeFunctionToFindStaticTestcase = null;
-
-	private FunctionNormalizer fnNormalizeFunctionToExecute = null;
-
-	private FunctionNormalizer fnNormalizeFunctionToDisplayCFG = null;
+	private FunctionNormalizer generalNormalizationFunction = null;
 
 	/**
 	 * Represent the real parent of function. Ex: if function in class is defined
@@ -309,7 +297,7 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 		 */
 		for (IVariableNode argument : getPassingVariables())
 			if (!expectedNodeTypes.contains(argument))
-			expectedNodeTypes.add(argument);
+				expectedNodeTypes.add(argument);
 
 		return expectedNodeTypes;
 	}
@@ -348,19 +336,6 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 		 */
 		returnType += isReturnReference == true ? "*" : "";
 		return returnType;
-	}
-
-	@Override
-	public IASTFunctionDefinition getNormalizedASTtoDisplayinCFG() throws Exception {
-		IASTFunctionDefinition normalizedAST = getAST();
-		SwitchCaseNormalizer switchCaseNormalizer = new SwitchCaseNormalizer(this);
-		switchCaseNormalizer.setFunctionNode(this);
-		switchCaseNormalizer.normalize();
-		String sc = switchCaseNormalizer.getNormalizedSourcecode();
-
-		normalizedAST = Utils.getFunctionsinAST(sc.toCharArray()).get(0);
-
-		return normalizedAST;
 	}
 
 	@Override
@@ -409,80 +384,8 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 	}
 
 	@Override
-	public FunctionNormalizer getNormalizeFunctionToExecute() throws Exception {
-		// logger.debug("Normalize function to execute");
-		if (fnNormalizeFunctionToExecute == null) {
-			FunctionNormalizer fnNormalizer = new FunctionNormalizer();
-			fnNormalizer.setFunctionNode(this);
-
-			if (AbstractSetting.getValue(ISettingv2.IN_TEST_MODE).equals("false")
-					|| (AbstractSetting.getValue(ISettingv2.IN_TEST_MODE).equals("true")
-							&& AbstractJUnitTest.ENABLE_MACRO_NORMALIZATION)) {
-				fnNormalizer.addNormalizer(new MacroNormalizer2());
-			}
-
-			fnNormalizer.addNormalizer(new FunctionNameNormalizer());
-			fnNormalizer.addNormalizer(new ArgumentTypeNormalizer());
-			fnNormalizer.addNormalizer(new TernaryConvertNormalizer());
-			fnNormalizer.addNormalizer(new ConditionCovertNormalizer());
-			fnNormalizer.addNormalizer(new ThrowNormalizer());
-			fnNormalizer.addNormalizer(new SwitchCaseNormalizer());
-			fnNormalizer.normalize();
-			fnNormalizeFunctionToExecute = fnNormalizer;
-		}
-		return fnNormalizeFunctionToExecute;
-	}
-
-	@Override
-	@Deprecated
-	public FunctionNormalizer normalizeFunctionToFindStaticTestcase() throws Exception {
-		logger.debug("Normalize function to find static test case");
-		if (fnNormalizeFunctionToFindStaticTestcase == null) {
-			FunctionNormalizer fnNormalizer = new FunctionNormalizer();
-			fnNormalizer.setFunctionNode(this);
-
-			if (AbstractSetting.getValue(ISettingv2.IN_TEST_MODE).equals("false")
-					|| (AbstractSetting.getValue(ISettingv2.IN_TEST_MODE).equals("true")
-							&& AbstractJUnitTest.ENABLE_MACRO_NORMALIZATION)) {
-				fnNormalizer.addNormalizer(new MacroNormalizer2());
-			}
-
-			fnNormalizer.addNormalizer(new ArgumentTypeNormalizer());
-			fnNormalizer.addNormalizer(new TernaryConvertNormalizer());
-			fnNormalizer.addNormalizer(new ConditionCovertNormalizer());
-			fnNormalizer.addNormalizer(new ClassvsStructNormalizer());
-			fnNormalizer.addNormalizer(new EnumNormalizer());
-			fnNormalizer.addNormalizer(new ExternNormalizer());
-			fnNormalizer.addNormalizer(new NullPtrNormalizer());
-			fnNormalizer.addNormalizer(new ThrowNormalizer());
-			fnNormalizer.addNormalizer(new SwitchCaseNormalizer());
-			fnNormalizer.addNormalizer(new EndStringNormalizer());
-			// fnNormalizer.addNormalizer(new ConstantNormalizer());
-
-			fnNormalizer.normalize();
-			fnNormalizeFunctionToFindStaticTestcase = fnNormalizer;
-		}
-		return fnNormalizeFunctionToFindStaticTestcase;
-	}
-
-	@Override
-	public FunctionNormalizer normalizeFunctionToDisplayCFG() throws Exception {
-		logger.debug("Normalization function to display in CFG");
-		if (fnNormalizeFunctionToDisplayCFG == null) {
-			FunctionNormalizer fnNormalizer = new FunctionNormalizer();
-			fnNormalizer.setFunctionNode(this);
-			fnNormalizer.addNormalizer(new TernaryConvertNormalizer());
-			fnNormalizer.addNormalizer(new ConditionCovertNormalizer());
-			fnNormalizer.addNormalizer(new SwitchCaseNormalizer());
-			fnNormalizer.normalize();
-			fnNormalizeFunctionToDisplayCFG = fnNormalizer;
-		}
-		return fnNormalizeFunctionToDisplayCFG;
-	}
-
-	@Override
 	public FunctionNormalizer normalizedAST() throws Exception {
-		if (fnMoreSimpleAST == null) {
+		if (generalNormalizationFunction == null) {
 			FunctionNormalizer fnNormalizer = new FunctionNormalizer();
 			fnNormalizer.setFunctionNode(this);
 
@@ -493,16 +396,18 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 				fnNormalizer.addNormalizer(new MacroNormalizer2());
 			}
 			// end test
+			fnNormalizer.addNormalizer(new FunctionNameNormalizer());
+			fnNormalizer.addNormalizer(new ArgumentTypeNormalizer());
 			fnNormalizer.addNormalizer(new TernaryConvertNormalizer());
 			fnNormalizer.addNormalizer(new ConditionCovertNormalizer());
 			fnNormalizer.addNormalizer(new SwitchCaseNormalizer());
-			
+
 			fnNormalizer.normalize();
-			fnMoreSimpleAST = fnNormalizer;
-			return fnMoreSimpleAST;
+			generalNormalizationFunction = fnNormalizer;
+			return generalNormalizationFunction;
 
 		} else
-			return fnMoreSimpleAST;
+			return generalNormalizationFunction;
 	}
 
 	@Override
@@ -522,7 +427,7 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 	}
 
 	@Override
-	public ICFG generateCFGToFindStaticSolution() {
+	public ICFG generateCFG() {
 		logger.debug("Generate CFG to find static solution");
 		ICFG cfg = null;
 		try {
@@ -550,12 +455,12 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 			if (getFunctionConfig().getTypeofCoverage() == IFunctionConfig.BRANCH_COVERAGE
 					|| getFunctionConfig().getTypeofCoverage() == IFunctionConfig.STATEMENT_COVERAGE) {
 				cfg = new CFGGenerationforBranchvsStatementCoverage(
-						this.getFnNormalizedASTtoInstrument().getFunctionNode(),
+						this.getGeneralNormalizationFunction().getFunctionNode(),
 						ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES).generateCFG();
 				cfg.setFunctionNode(this);
 
 			} else if (getFunctionConfig().getTypeofCoverage() == IFunctionConfig.SUBCONDITION) {
-				cfg = new CFGGenerationSubCondition(this.getFnNormalizedASTtoInstrument().getFunctionNode(),
+				cfg = new CFGGenerationSubCondition(this.getGeneralNormalizationFunction().getFunctionNode(),
 						ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES).generateCFG();
 				cfg.setFunctionNode(this);
 			}
@@ -612,51 +517,8 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 		clone.setAST(getAST());
 
 		clone.setFnMacroNormalizer(getFnMacroNormalizer());
-		clone.setFnNormalizedASTtoInstrument(getFnNormalizedASTtoInstrument());
-		clone.setFnNormalizeFunctionToDisplayCFG(getFnNormalizeFunctionToDisplayCFG());
-		clone.setFnNormalizeFunctionToExecute(getFnNormalizeFunctionToExecute());
-		clone.setFnNormalizeFunctionToFindStaticTestcase(getFnNormalizeFunctionToFindStaticTestcase());
+		clone.setGeneralNormalizationFunction(getGeneralNormalizationFunction());
 		return clone;
-	}
-
-	@Override
-	public FunctionNormalizer getFnNormalizedASTtoInstrument() {
-		return fnMoreSimpleAST;
-	}
-
-	@Override
-	public void setFnNormalizedASTtoInstrument(FunctionNormalizer fnNormalizedASTtoInstrument) {
-		this.fnMoreSimpleAST = fnNormalizedASTtoInstrument;
-	}
-
-	@Override
-	public FunctionNormalizer getFnNormalizeFunctionToFindStaticTestcase() {
-		return fnNormalizeFunctionToFindStaticTestcase;
-	}
-
-	@Override
-	public void setFnNormalizeFunctionToFindStaticTestcase(FunctionNormalizer fnNormalizeFunctionToFindStaticTestcase) {
-		this.fnNormalizeFunctionToFindStaticTestcase = fnNormalizeFunctionToFindStaticTestcase;
-	}
-
-	@Override
-	public FunctionNormalizer getFnNormalizeFunctionToExecute() {
-		return fnNormalizeFunctionToExecute;
-	}
-
-	@Override
-	public void setFnNormalizeFunctionToExecute(FunctionNormalizer fnNormalizeFunctionToExecute) {
-		this.fnNormalizeFunctionToExecute = fnNormalizeFunctionToExecute;
-	}
-
-	@Override
-	public FunctionNormalizer getFnNormalizeFunctionToDisplayCFG() {
-		return fnNormalizeFunctionToDisplayCFG;
-	}
-
-	@Override
-	public void setFnNormalizeFunctionToDisplayCFG(FunctionNormalizer fnNormalizeFunctionToDisplayCFG) {
-		this.fnNormalizeFunctionToDisplayCFG = fnNormalizeFunctionToDisplayCFG;
 	}
 
 	@Override
@@ -674,5 +536,15 @@ public abstract class AbstractFunctionNode extends CustomASTNode<IASTFunctionDef
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public FunctionNormalizer getGeneralNormalizationFunction() {
+		return generalNormalizationFunction;
+	}
+
+	@Override
+	public void setGeneralNormalizationFunction(FunctionNormalizer generalNormalizationFunction) {
+		this.generalNormalizationFunction = generalNormalizationFunction;
 	}
 }

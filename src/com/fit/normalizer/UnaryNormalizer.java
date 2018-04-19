@@ -64,7 +64,7 @@ public class UnaryNormalizer extends AbstractNormalizer implements ITestpathNorm
 		/*
 		 * Normalize function
 		 */
-		FunctionNormalizer fnNormalizer = function.normalizeFunctionToFindStaticTestcase();
+		FunctionNormalizer fnNormalizer = function.getGeneralNormalizationFunction();
 		String newFunctionInStr = fnNormalizer.getNormalizedSourcecode();
 		ICPPASTFunctionDefinition newAST = Utils.getFunctionsinAST(newFunctionInStr.toCharArray()).get(0);
 		((FunctionNode) function).setAST(newAST);
@@ -125,24 +125,25 @@ public class UnaryNormalizer extends AbstractNormalizer implements ITestpathNorm
 		}
 
 		// for the final node
-		ICfgNode lastCfgNode = tp.cast().get(last);
+		if (last >= 0) {
+			ICfgNode lastCfgNode = tp.cast().get(last);
 
-		if (lastCfgNode instanceof NormalCfgNode) {
-			/*
-			 * Get the state of the next expression
-			 */
-			boolean nextIsTrue = false;
-			if (tp instanceof IFullTestpath) {
-				if (lastCfgNode instanceof ConditionCfgNode)
-					nextIsTrue = tp.nextIsTrueBranch(lastCfgNode, last);
+			if (lastCfgNode instanceof NormalCfgNode) {
+				/*
+				 * Get the state of the next expression
+				 */
+				boolean nextIsTrue = false;
+				if (tp instanceof IFullTestpath) {
+					if (lastCfgNode instanceof ConditionCfgNode)
+						nextIsTrue = tp.nextIsTrueBranch(lastCfgNode, last);
 
-			} else if (tp instanceof IPartialTestpath)
-				nextIsTrue = ((IPartialTestpath) tp).getFinalConditionType();
+				} else if (tp instanceof IPartialTestpath)
+					nextIsTrue = ((IPartialTestpath) tp).getFinalConditionType();
 
-			parseNormalNode((NormalCfgNode) lastCfgNode, newTestpath, nextIsTrue);
-		} else
-			newTestpath.cast().add(lastCfgNode);
-
+				parseNormalNode((NormalCfgNode) lastCfgNode, newTestpath, nextIsTrue);
+			} else
+				newTestpath.cast().add(lastCfgNode);
+		}
 		return newTestpath;
 	}
 

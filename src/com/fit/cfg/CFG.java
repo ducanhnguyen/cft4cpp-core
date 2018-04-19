@@ -374,7 +374,7 @@ public class CFG implements ICFG {
 
 		// Step 1. Find all possible test paths
 		PossibleTestpathGeneration possibleTestpathGen = new PossibleTestpathGeneration(this);
-		possibleTestpathGen.setMaxIterationsforEachLoop(2);
+		possibleTestpathGen.setMaxIterationsforEachLoop(1);
 		possibleTestpathGen.generateTestpaths();
 		FullTestpaths possiblePaths = possibleTestpathGen.getPossibleTestpaths();
 
@@ -388,10 +388,10 @@ public class CFG implements ICFG {
 
 				if (node instanceof ConditionCfgNode) {
 					if (!((ConditionCfgNode) node).isVisitedFalseBranch()) {
-//						partialTestpath.cast().add(node.getFalseNode());
+						partialTestpath.cast().add(node.getFalseNode());
 						containUncoveredBranches = true;
 					} else if (!((ConditionCfgNode) node).isVisitedTrueBranch()) {
-//						partialTestpath.cast().add(node.getTrueNode());
+						partialTestpath.cast().add(node.getTrueNode());
 						containUncoveredBranches = true;
 					}
 					if (containUncoveredBranches && !uncoveredTestpaths.contains(partialTestpath)) {

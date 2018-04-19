@@ -53,7 +53,7 @@ public class Paths {
 	public static String CORE_UTILS = "..\\ava\\data-test\\ducanh\\coreutils-8.24";
 	public static String RETURN_ENUM = "..\\ava\\data-test\\tsdv\\SampleSource-2017A\\return_enum\\";
 	public static String GLOBAL_VARIABLE = "..\\ava\\data-test\\tsdv\\SampleSource-2017A\\global_variable\\";
-
+	public static String JOURNAL_TEST = "..\\ava\\data-test\\paper\\Algorithm\\";
 	public static class CURRENT_FUNCTION_CONFIGURATION {
 
 		public static int SIZE_OF_ARRAY = 10; // default

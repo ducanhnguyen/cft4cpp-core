@@ -99,8 +99,8 @@ public class FunctionExecution implements ITestdataExecution {
 				 */
 				logger.debug("Normalize function before executing it");
 				IFunctionNode clone = (IFunctionNode) fn.clone();
-				clone.setAST(clone.getNormalizeFunctionToExecute().getNormalizedAST());
-				changedTokens = clone.getNormalizeFunctionToExecute().getTokens();
+				clone.setAST(clone.getGeneralNormalizationFunction().getNormalizedAST());
+				changedTokens = clone.getGeneralNormalizationFunction().getTokens();
 				updateProject(backup, fn);
 
 				/*
@@ -306,13 +306,16 @@ public class FunctionExecution implements ITestdataExecution {
 			} while (encodedTestpath.getEncodedTestpath().length() == 0 && countReadFile <= MAX_READ_FILE_NUMBER);
 
 			// Only for log
-			String tp = "";
-			List<String> stms = encodedTestpath
-					.getStandardTestpathByProperty(FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT);
-			for (String stm : stms)
-				tp += stm + "=>";
-			tp = tp.substring(0, tp.length() - 2);
-			logger.debug("Done. Execution test path = " + tp);
+			if (encodedTestpath.getEncodedTestpath().length() > 0) {
+				String tp = "";
+				List<String> stms = encodedTestpath
+						.getStandardTestpathByProperty(FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT);
+				for (String stm : stms)
+					tp += stm + "=>";
+				tp = tp.substring(0, tp.length() - 2);
+				logger.debug("Done. Execution test path = " + tp);
+			} else
+				logger.debug("Done. Empty test path");
 		}
 	}
 

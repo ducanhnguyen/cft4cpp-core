@@ -23,100 +23,92 @@ import com.fit.utils.search.FunctionNodeCondition;
 import com.fit.utils.search.Search;
 
 public class CFGGenerationForDisplayingTest {
-    final static Logger logger = Logger
-            .getLogger(CFGGenerationForDisplayingTest.class);
+	final static Logger logger = Logger.getLogger(CFGGenerationForDisplayingTest.class);
 
-    @Test
-    public void test01() throws Exception {
-        Logger.getRootLogger().setLevel(Level.INFO);
+	@Test
+	public void test01() throws Exception {
+		Logger.getRootLogger().setLevel(Level.INFO);
 
-        ProjectParser parser = new ProjectParser(new File(Paths.CORE_UTILS));
+		ProjectParser parser = new ProjectParser(new File(Paths.CORE_UTILS));
 
-        List<INode> functions = Search.searchNodes(parser.getRootTree(),
-                new FunctionNodeCondition());
+		List<INode> functions = Search.searchNodes(parser.getRootTree(), new FunctionNodeCondition());
 
-        Paths.CURRENT_PROJECT.TYPE_OF_PROJECT = ISettingv2.PROJECT_ECLIPSE;
-        Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH = Paths.CORE_UTILS;
+		Paths.CURRENT_PROJECT.TYPE_OF_PROJECT = ISettingv2.PROJECT_ECLIPSE;
+		Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH = Paths.CORE_UTILS;
 
-        int error = 0;
-        List<String> errorList = new ArrayList<>();
-        int pass = 0;
-        for (INode fn : functions) {
-            try {
-                FunctionNormalizer fnNorm = ((IFunctionNode) fn)
-                        .normalizeFunctionToDisplayCFG();
+		int error = 0;
+		List<String> errorList = new ArrayList<>();
+		int pass = 0;
+		for (INode fn : functions) {
+			try {
+				FunctionNormalizer fnNorm = ((IFunctionNode) fn).getGeneralNormalizationFunction();
 
-                String normalizedSourcecode = fnNorm.getNormalizedSourcecode();
+				String normalizedSourcecode = fnNorm.getNormalizedSourcecode();
 
-                IFunctionNode clone = (IFunctionNode) fn.clone();
-                clone.setAST(Utils.getFunctionsinAST(
-                        normalizedSourcecode.toCharArray()).get(0));
+				IFunctionNode clone = (IFunctionNode) fn.clone();
+				clone.setAST(Utils.getFunctionsinAST(normalizedSourcecode.toCharArray()).get(0));
 
-                CFGGenerationforBranchvsStatementCoverage cfgGen = new CFGGenerationforBranchvsStatementCoverage(
-                        clone, ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES);
-                ICFG cfg = cfgGen.generateCFG();
-                pass++;
-            } catch (Exception e) {
-                error++;
-                errorList.add(fn.getAbsolutePath());
-                e.printStackTrace();
+				CFGGenerationforBranchvsStatementCoverage cfgGen = new CFGGenerationforBranchvsStatementCoverage(clone,
+						ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES);
+				ICFG cfg = cfgGen.generateCFG();
+				pass++;
+			} catch (Exception e) {
+				error++;
+				errorList.add(fn.getAbsolutePath());
+				e.printStackTrace();
 
-                logger.info("---------------------------------\nError Parse "
-                        + fn.getAbsolutePath());
-                logger.info(((IFunctionNode) fn).getAST().getRawSignature());
+				logger.info("---------------------------------\nError Parse " + fn.getAbsolutePath());
+				logger.info(((IFunctionNode) fn).getAST().getRawSignature());
 
-            } finally {
-                logger.info("Error : " + error + "| Pass : " + pass);
-            }
-        }
-        logger.info("-------------------------------------------------");
+			} finally {
+				logger.info("Error : " + error + "| Pass : " + pass);
+			}
+		}
+		logger.info("-------------------------------------------------");
 
-        logger.info(errorList.toString());
-        logger.info("Error : " + error + "| Pass : " + pass);
-        // Error = 11, pass = 1064
-        Assert.assertEquals(1064, pass);
-    }
+		logger.info(errorList.toString());
+		logger.info("Error : " + error + "| Pass : " + pass);
+		// Error = 11, pass = 1064
+		Assert.assertEquals(1064, pass);
+	}
 
-    @Test
-    public void test02() throws Exception {
-        Logger.getRootLogger().setLevel(Level.INFO);
+	@Test
+	public void test02() throws Exception {
+		Logger.getRootLogger().setLevel(Level.INFO);
 
-        ProjectParser parser = new ProjectParser(new File(Paths.TSDV_R1_4));
+		ProjectParser parser = new ProjectParser(new File(Paths.TSDV_R1_4));
 
-        List<INode> functions = Search.searchNodes(parser.getRootTree(),
-                new FunctionNodeCondition());
+		List<INode> functions = Search.searchNodes(parser.getRootTree(), new FunctionNodeCondition());
 
-        Paths.CURRENT_PROJECT.TYPE_OF_PROJECT = ISettingv2.PROJECT_DEV_CPP;
-        Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH = Paths.TSDV_R1_4;
+		Paths.CURRENT_PROJECT.TYPE_OF_PROJECT = ISettingv2.PROJECT_DEV_CPP;
+		Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH = Paths.TSDV_R1_4;
 
-        int error = 0;
-        List<String> errorList = new ArrayList<>();
-        int pass = 0;
-        for (INode fn : functions) {
-            try {
-                FunctionNormalizer fnNorm = ((IFunctionNode) fn)
-                        .normalizeFunctionToDisplayCFG();
+		int error = 0;
+		List<String> errorList = new ArrayList<>();
+		int pass = 0;
+		for (INode fn : functions) {
+			try {
+				FunctionNormalizer fnNorm = ((IFunctionNode) fn).getGeneralNormalizationFunction();
 
-                String normalizedSourcecode = fnNorm.getNormalizedSourcecode();
+				String normalizedSourcecode = fnNorm.getNormalizedSourcecode();
 
-                IFunctionNode clone = (IFunctionNode) fn.clone();
-                clone.setAST(Utils.getFunctionsinAST(
-                        normalizedSourcecode.toCharArray()).get(0));
+				IFunctionNode clone = (IFunctionNode) fn.clone();
+				clone.setAST(Utils.getFunctionsinAST(normalizedSourcecode.toCharArray()).get(0));
 
-                CFGGenerationforBranchvsStatementCoverage cfgGen = new CFGGenerationforBranchvsStatementCoverage(
-                        clone, ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES);
-                ICFG cfg = cfgGen.generateCFG();
-                pass++;
-            } catch (Exception e) {
-                error++;
-                errorList.add(fn.getAbsolutePath());
-                e.printStackTrace();
-            }
-        }
-        logger.info("-------------------------------------------------");
+				CFGGenerationforBranchvsStatementCoverage cfgGen = new CFGGenerationforBranchvsStatementCoverage(clone,
+						ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES);
+				ICFG cfg = cfgGen.generateCFG();
+				pass++;
+			} catch (Exception e) {
+				error++;
+				errorList.add(fn.getAbsolutePath());
+				e.printStackTrace();
+			}
+		}
+		logger.info("-------------------------------------------------");
 
-        logger.info(errorList.toString());
-        logger.info("Error : " + error + "| Pass : " + pass);
-        Assert.assertEquals(true, error == 0);
-    }
+		logger.info(errorList.toString());
+		logger.info("Error : " + error + "| Pass : " + pass);
+		Assert.assertEquals(true, error == 0);
+	}
 }

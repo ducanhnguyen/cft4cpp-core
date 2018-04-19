@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.fit.cfg.ICFG;
 import com.fit.gui.testreport.object.ITestpathReport;
+import com.fit.normalizer.FunctionNormalizer;
 import com.fit.testdata.object.TestpathString_Marker;
 import com.fit.tree.object.IFunctionNode;
 
@@ -39,10 +40,14 @@ public class BranchCoverage extends Coverage {
 		logger.debug("Computing branch coverage reaching by " + getTestpaths().size() + " test paths");
 
 		// Initialize CFG
-		ICFG cfg = functionNode.generateCFGToFindStaticSolution();
+		IFunctionNode clone = (IFunctionNode) functionNode.clone();
+		FunctionNormalizer fnNorm = clone.normalizedAST();
+		clone.setAST(fnNorm.getNormalizedAST());
+		ICFG cfg = clone.generateCFG();
+
 		cfg.setIdforAllNodes();
 		cfg.resetVisitedStateOfNodes();
-		cfg.setFunctionNode(functionNode);
+		cfg.setFunctionNode(clone);
 
 		// Compute coverage
 		List<ITestpathReport> tpReportClone = new ArrayList<>(getTestpaths());

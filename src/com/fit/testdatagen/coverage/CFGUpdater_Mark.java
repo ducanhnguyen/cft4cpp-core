@@ -21,6 +21,7 @@ import com.fit.cfg.testpath.FullTestpath;
 import com.fit.cfg.testpath.ITestpathInCFG;
 import com.fit.config.Paths;
 import com.fit.instrument.FunctionInstrumentationForStatementvsBranch_Marker;
+import com.fit.normalizer.FunctionNormalizer;
 import com.fit.parser.projectparser.ProjectParser;
 import com.fit.testdata.object.Property_Marker;
 import com.fit.testdata.object.StatementInTestpath_Mark;
@@ -44,6 +45,10 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 
 	private List<BranchInCFG> previousVisitedBranches = new ArrayList<>();
 
+	private List<ICfgNode> visitedStatements = new ArrayList<>();
+
+	private List<BranchInCFG> visitedBranches = new ArrayList<>();
+
 	// A list of visited cfg node by a given test path
 	private ITestpathInCFG updatedCFGNodes = new FullTestpath();
 
@@ -52,29 +57,40 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 	// Control flow graph
 	private ICFG cfg;
 
-	public static void main(String[] args) {
-		ProjectParser parser = new ProjectParser(new File(Paths.SYMBOLIC_EXECUTION_TEST));
+	public static void main(String[] args) throws Exception {
+		logger.setLevel(Level.DEBUG);
+		ProjectParser parser = new ProjectParser(new File(Paths.JOURNAL_TEST));
 		IFunctionNode function = (IFunctionNode) Search
-				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "quickSort(int[],int,int)").get(0);
 
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
+		ICFG cfg = function.generateCFG();
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
 		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
-				"line-in-function=2###offset=26###statement=static int sum = 0;",
-				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
-				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"line-in-function=2###offset=68###statement=low < high###control-block=if",
+				"statement={###line-of-blockin-function=2",
+				"line-in-function=5###offset=153###statement=int pi = partition(arr, low, high);",
+				"line-in-function=9###offset=268###statement=int x = pi - 1;",
+				"line-in-function=10###offset=287###statement=Algorithm::Sort::quickSort(arr, low, x);###is-recursive=true\"",
+
 				"statement={###line-of-blockin-function=1###openning-function=true",
-				"line-in-function=2###offset=26###statement=static int sum = 0;",
-				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
-				"line-in-function=7###offset=85###statement=sum = n%10 + add_digits(n/10);###is-recursive=true",
+				"line-in-function=2###offset=68###statement=low < high###control-block=if",
+
+				"statement=}###line-of-blockin-function=1",
+
+				"line-in-function=12###offset=335###statement=int y = pi + 1;",
+				"line-in-function=13###offset=354###statement=Algorithm::Sort::quickSort(arr, y, high);###is-recursive=true\"",
+
 				"statement={###line-of-blockin-function=1###openning-function=true",
-				"line-in-function=2###offset=26###statement=static int sum = 0;",
-				"line-in-function=4###offset=55###statement=n == 0###control-block=if",
-				"statement={###line-of-blockin-function=4", "line-in-function=5###offset=68###statement=return 0;",
-				"line-in-function=9###offset=120###statement=return sum;",
-				"line-in-function=9###offset=120###statement=return sum;" };
+				"line-in-function=2###offset=68###statement=low < high###control-block=if",
+
+				"statement=}###line-of-blockin-function=1", "statement=}###line-of-blockin-function=1",
+				"statement=}###line-of-blockin-function=1"
+
+		};
 		testpath.setEncodedTestpath(nodes);
 		logger.debug(testpath.getEncodedTestpath());
 
@@ -82,7 +98,7 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 		cfg.setFunctionNode(function);
 		cfg.resetVisitedStateOfNodes();
 		cfg.setIdforAllNodes();
-		logger.debug("\n" + cfg.toString());
+		// logger.debug("\n" + cfg.toString());
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
 		updater.updateVisitedNodes();
 		logger.debug("visited statements: " + cfg.getVisitedStatements());
@@ -95,7 +111,6 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 		logger.setLevel(Level.OFF);
 		this.testpath = testpath;
 		this.cfg = cfg;
-
 	}
 
 	public void storeTheCurrentVisitedStateOfCfg() {
@@ -120,109 +135,89 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 		ArrayList<StatementInTestpath_Mark> detailTestpath = removeRedundantStatements();
 		logger.debug("Compared testpath:" + detailTestpath);
 
-		Stack<ICfgNode> recursivePoints = new Stack<>();
-		// Perform mapping
 		Set<ICfgNode> candidateCfgNodes = new HashSet<>();
 		candidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
-		ICfgNode previousNode = cfg.getBeginNode().getTrueNode();
+		ICfgNode previousNode = cfg.getBeginNode();
 
-		for (int i = 0; i < detailTestpath.size(); i++) {
-			logger.debug("\n");
+		traverseGraph(0, detailTestpath, candidateCfgNodes, previousNode, new ArrayList<>(), new ArrayList<>(),
+				new Stack<>());
 
-			StatementInTestpath_Mark testpathItem = detailTestpath.get(i);
-			StatementInTestpath_Mark nextTestpathItem = i == detailTestpath.size() - 1 ? null
-					: detailTestpath.get(i + 1);
-			logger.debug("current candidate CfgNodes: " + candidateCfgNodes);
-			logger.debug("testpathItem=" + testpathItem);
+		logger.debug("Visited statements: " + visitedStatements.toString());
+		logger.debug("Visited branches: " + visitedBranches.toString());
+		for (ICfgNode node : visitedStatements) {
+			updatedCFGNodes.getAllCfgNodes().add(node);
+			node.setVisit(true);
+		}
+		for (BranchInCFG branch : visitedBranches) {
+			if (branch.getStart().getTrueNode().equals(branch.getEnd()))
+				((ConditionCfgNode) branch.getStart()).setVisitedTrueBranch(true);
+			else if (branch.getStart().getFalseNode().equals(branch.getEnd()))
+				((ConditionCfgNode) branch.getStart()).setVisitedFalseBranch(true);
+		}
+	}
 
-			boolean mapOK = false;
+	private void traverseGraph(int index, ArrayList<StatementInTestpath_Mark> detailTestpath,
+			Set<ICfgNode> candidateCfgNodes, ICfgNode previousNode, List<ICfgNode> visitedStatements,
+			List<BranchInCFG> visitedBranches, Stack<ICfgNode> recursivePoints) {
+		logger.debug("\n\ntraverseGraph");
+		logger.debug("Visited statements: " + visitedStatements);
+		logger.debug("Visited branches: " + visitedBranches);
+		logger.debug("Recursive points: " + recursivePoints);
+		logger.debug("index: " + index + " / " + detailTestpath.size());
 
-			for (ICfgNode candidateCfgNode : candidateCfgNodes) {
-				if (checkStrongConnectedMapping(testpathItem, candidateCfgNode, nextTestpathItem)) {
-					// A
-					candidateCfgNode.setVisit(true);
-					updatedCFGNodes.getAllCfgNodes().add(candidateCfgNode);
+		if (index == detailTestpath.size()) {
+			logger.debug("Reach the end");
+			this.visitedBranches = visitedBranches;
+			this.visitedStatements = visitedStatements;
+		} else {
+			StatementInTestpath_Mark testpathItem = detailTestpath.get(index);
+			logger.debug("Parse. " + testpathItem);
 
-					if (previousNode instanceof ConditionCfgNode) {
-						if (previousNode.getTrueNode().equals(candidateCfgNode))
-							((ConditionCfgNode) previousNode).setVisitedTrueBranch(true);
-						else if (previousNode.getFalseNode().equals(candidateCfgNode))
-							((ConditionCfgNode) previousNode).setVisitedFalseBranch(true);
-					}
-					// Create new candidate set
-					candidateCfgNodes.removeAll(candidateCfgNodes);
+			// Find candidate nodes
+			List<ICfgNode> matchCfgNodes = new ArrayList<>();
+			for (ICfgNode item : candidateCfgNodes)
+				if (isStronglyConnectedMapping(testpathItem, item))
+					matchCfgNodes.add(item);
+
+			if (matchCfgNodes.size() == 0 && recursivePoints.size() > 0) {
+				ICfgNode recursivePoint = recursivePoints.pop();
+				matchCfgNodes.add(recursivePoint.getFalseNode());
+				matchCfgNodes.add(recursivePoint.getTrueNode());
+			}
+			if (matchCfgNodes.size() == 0)
+				logger.debug("Mapping fails");
+			else
+				for (ICfgNode matchCfgNode : matchCfgNodes) {
+					Set<ICfgNode> newCandidateCfgNodes = new HashSet<>();
 
 					Property_Marker isRecursive = testpathItem
 							.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.IS_RECURSIVE);
 					if (isRecursive != null) {
-						candidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
-						recursivePoints.add(candidateCfgNode);
+						recursivePoints.add(matchCfgNode);
+						newCandidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
 					} else {
-						candidateCfgNodes.add(candidateCfgNode.getTrueNode());
-						candidateCfgNodes.add(candidateCfgNode.getFalseNode());
+						newCandidateCfgNodes.add(matchCfgNode.getTrueNode());
+						newCandidateCfgNodes.add(matchCfgNode.getFalseNode());
 					}
-					previousNode = candidateCfgNode;
 
-					logger.debug("new candidate CfgNodes: " + candidateCfgNodes);
-					logger.debug("Recursive points in stack: " + recursivePoints);
-					mapOK = true;
-					break;
-					// END-A
+					ICfgNode newPreviousNode = matchCfgNode;
+
+					List<ICfgNode> newVisitedStatements = new ArrayList<>();
+					newVisitedStatements.addAll(visitedStatements);
+					visitedStatements.add(matchCfgNode);
+
+					List<BranchInCFG> newVisitedBranches = new ArrayList<>();
+					newVisitedBranches.addAll(visitedBranches);
+					if (previousNode instanceof ConditionCfgNode)
+						newVisitedBranches.add(new BranchInCFG(previousNode, matchCfgNode));
+
+					Stack<ICfgNode> newRecursivePoints = (Stack<ICfgNode>) recursivePoints.clone();
+					index++;
+					traverseGraph(index, detailTestpath, newCandidateCfgNodes, newPreviousNode, visitedStatements,
+							newVisitedBranches, newRecursivePoints);
+					index--;
 				}
-			}
-
-			// May be due to recursive
-			if (!mapOK && recursivePoints.size() > 0) {
-				ICfgNode latestRecursivePoint = recursivePoints.pop();
-				candidateCfgNodes.removeAll(candidateCfgNodes);
-				candidateCfgNodes.add(latestRecursivePoint.getFalseNode());
-				candidateCfgNodes.add(latestRecursivePoint.getTrueNode());
-
-				for (ICfgNode candidateCfgNode : candidateCfgNodes)
-					if (checkStrongConnectedMapping(testpathItem, candidateCfgNode, nextTestpathItem)) {
-						// CLONE A
-						candidateCfgNode.setVisit(true);
-						updatedCFGNodes.getAllCfgNodes().add(candidateCfgNode);
-
-						if (previousNode instanceof ConditionCfgNode) {
-							if (previousNode.getTrueNode().equals(candidateCfgNode))
-								((ConditionCfgNode) previousNode).setVisitedTrueBranch(true);
-							else if (previousNode.getFalseNode().equals(candidateCfgNode))
-								((ConditionCfgNode) previousNode).setVisitedFalseBranch(true);
-						}
-						// Create new candidate set
-						candidateCfgNodes.removeAll(candidateCfgNodes);
-
-						Property_Marker isRecursive = testpathItem
-								.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.IS_RECURSIVE);
-						if (isRecursive != null) {
-							candidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
-							recursivePoints.add(candidateCfgNode);
-						} else {
-							candidateCfgNodes.add(candidateCfgNode.getTrueNode());
-							candidateCfgNodes.add(candidateCfgNode.getFalseNode());
-						}
-						previousNode = candidateCfgNode;
-
-						logger.debug("new candidate CfgNodes: " + candidateCfgNodes);
-						logger.debug("Recursive points in stack: " + recursivePoints);
-						mapOK = true;
-						break;
-						// END CLONE A
-					}
-			}
-			if (!mapOK) {
-				System.out.println("Mapping fails!" + testpathItem);
-				break;
-			}
 		}
-		// Detect the completetion of test path
-		ICfgNode theLastNode = updatedCFGNodes.getAllCfgNodes().get(updatedCFGNodes.getAllCfgNodes().size() - 1);
-		if (theLastNode instanceof EndFlagCfgNode || theLastNode.getTrueNode() instanceof EndFlagCfgNode
-				|| theLastNode.getFalseNode() instanceof EndFlagCfgNode)
-			isUncompleteTestpath = false;
-		else
-			isUncompleteTestpath = true;
 	}
 
 	private ArrayList<StatementInTestpath_Mark> removeRedundantStatements() {
@@ -259,8 +254,7 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 	 * @param checkedNode
 	 * @return
 	 */
-	protected boolean checkStrongConnectedMapping(StatementInTestpath_Mark propertiesInANode, ICfgNode checkedNode,
-			StatementInTestpath_Mark nextTestpathItem) {
+	protected boolean isStronglyConnectedMapping(StatementInTestpath_Mark propertiesInANode, ICfgNode checkedNode) {
 		boolean mappingOK = false;
 
 		Property_Marker stm = propertiesInANode
@@ -288,23 +282,9 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 				}
 			}
 			// CASE 3
-			else if (stm.getValue().equals(ScopeCfgNode.SCOPE_CLOSE)) {
+			else if (stm.getValue().equals(ScopeCfgNode.SCOPE_CLOSE)
+					|| stm.getValue().equals(ScopeCfgNode.SCOPE_OPEN)) {
 				mappingOK = true;
-			}
-			// CASE 4
-			else if (stm.getValue().equals(ScopeCfgNode.SCOPE_OPEN)) {
-				if (checkedNode.getParent() instanceof BeginFlagCfgNode) {
-					mappingOK = true;
-
-				} else if (nextTestpathItem != null) {
-					Property_Marker nextStm = nextTestpathItem
-							.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT);
-					if (nextStm != null
-							&& (checkStrongConnectedMapping(nextTestpathItem, checkedNode.getTrueNode(), null)
-									|| checkStrongConnectedMapping(nextTestpathItem, checkedNode.getFalseNode(), null)))
-
-						mappingOK = true;
-				}
 			}
 		}
 		return mappingOK;

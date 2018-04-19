@@ -10,7 +10,10 @@ import org.apache.log4j.Logger;
 import com.fit.config.AbstractSetting;
 import com.fit.config.Paths;
 import com.fit.config.Settingv2;
+import com.fit.instrument.FunctionInstrumentationForStatementvsBranch_Marker;
 import com.fit.utils.Utils;
+
+import test.testdatageneration.TestdataInReport;
 
 /**
  * Run cft4cpp on console
@@ -169,31 +172,12 @@ public class Console {
 		for (ConsoleOutput item : this.getOutput()) {
 			String row = "";
 
-			long totalTime = (item.getRunningTime() - ConsoleOutput.getMacroNormalizationTime());
-			// row += toCell(methodName)
-			// + toCell(item.getCoverge() == 100f ? "100%"
-			// : "<p style=\"color:red;\">" + item.getCoverge() + "</p>")
-			// + toCell(toUpperRound(1.0f * totalTime / 1000) + " s")
-			// + toCell(toUpperRound(100f * item.getExecutionTime() / totalTime) + "%")
-			// + toCell(toUpperRound(100f * item.getMakeCommandRunningTime() / totalTime) +
-			// "%")
-			// + toCell(toUpperRound(100f
-			// * (item.getNormalizationTime() - ConsoleOutput.getMacroNormalizationTime()) /
-			// totalTime)
-			// + "%")
-			// + toCell(toUpperRound(100f * item.getSolverRunningTime() / totalTime) + "%")
-			// + toCell(toUpperRound(100f * item.getSymbolicExecutionTime() / totalTime) +
-			// "%")
-			// + toCell(item.getNumOfSymbolicExecutions() + " times")
-			// + toCell(item.getNumOfSymbolicStatements() + " stms")
-			// + toCell(item.getMakeCommandRunningNumber() + " makes/ " +
-			// item.getNumOfExecutions() + " executions"
-			// + toCell(ConsoleOutput.getMacroNormalizationTime() / 1000 + " second"));
+			long totalTime = (item.getRunningTime() - item.getMacroNormalizationTime());
 
 			row += toCell(methodName)
 					+ toCell(item.getCoverge() == 100f ? "100%"
 							: "<p style=\"color:red;\">" + item.getCoverge() + "</p>")
-					+ toCell(ConsoleOutput.getBugs().size() + "")//
+					+ toCell(item.getBugs().size() + "")//
 					+ toCell(round(1.0f * totalTime / 1000) + " s")//
 					+ toCell(round(1.0f * item.getExecutionTime() / 1000) + " s" + " (" + item.getNumOfExecutions()
 							+ " executions)")
@@ -205,13 +189,46 @@ public class Console {
 					+ toCell(round(1.0f * item.getSymbolicExecutionTime() / 1000) + " s ("
 							+ item.getNumOfSymbolicExecutions() + " times, " + item.getNumOfSymbolicStatements()
 							+ " stms" + ")")
-					+ toCell(round(
-							1.0f * (item.getNormalizationTime() - ConsoleOutput.getMacroNormalizationTime()) / 1000)
+					+ toCell(round(1.0f * (item.getNormalizationTime() - item.getMacroNormalizationTime()) / 1000)
 							+ " s")
-					+ toCell(ConsoleOutput.getMacroNormalizationTime() / 1000 + " second");
+					+ toCell(item.getMacroNormalizationTime() / 1000 + " second");
 
 			allFunctionsTestReport += "<table>" + tableHeader + toRow(row) + "</table>" + "<pre>"
 					+ item.getFunctionNode().getAST().getRawSignature() + "</pre>";
+			allFunctionsTestReport += "</pre>";
+
+			// display test data
+			for (TestdataInReport testdata : item.getTestdata()) {
+				String testdataStatus = "["
+						+ (testdata.outputUncompleteTestpath() == true ? "<b><font color='red'> uncomplete </font></b>"
+								: "<b><font color='blue'> complete </font></b>")
+						+ "]&nbsp;";
+
+				String testdataStr = testdata.getValue();
+				if (testdata.isGenerateRandomly() && testdata.isImprovedTestdata())
+					testdataStr = "<span style='background-color: #CD5C5C'>" + testdataStr + "</span>";
+				else if (testdata.isGenerateRandomly())
+					testdataStr = "<span style='background-color: #FFFF00'>" + testdataStr + "</span>";
+				else if (testdata.isImprovedTestdata())
+					testdataStr = "<span style='background-color: green'>" + testdataStr + "</span>";
+
+				String statementCov = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Stm cov="
+						+ testdata.getCurrentStatementCodeCoverage();
+
+				String branchCov = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Branch cov="
+						+ testdata.getCurrentBranchCodeCoverage();
+
+				List<String> stms = testdata.getTestpath()
+						.getStandardTestpathByProperty(FunctionInstrumentationForStatementvsBranch_Marker.STATEMENT);
+				String testpath = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+						+ (stms.size() <= 50 ? stms : "Too long. size=" + stms.size()) + "<br/>";
+
+				if (testdata.isHighlight())
+					allFunctionsTestReport += testdataStatus + testdataStr + statementCov + branchCov + testpath;
+				else
+					allFunctionsTestReport += "<span style=\"opacity:0.5\">" + testdataStatus + testdataStr
+							+ statementCov + branchCov + testpath + "</span>";
+			}
 		}
 
 		fullHtml = "<!DOCTYPE html> <html> <head>" + style + "</head><body>" + allFunctionsTestReport

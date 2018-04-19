@@ -88,7 +88,7 @@ public class PossibleTestpathGeneration implements ITestpathGeneration {
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "calculateAge(Date,Date)").get(0);
 
-		FunctionNormalizer fnNormalizer = function.normalizeFunctionToFindStaticTestcase();
+		FunctionNormalizer fnNormalizer = function.getGeneralNormalizationFunction();
 		function.setAST(fnNormalizer.getNormalizedAST());
 		CFGGenerationSubCondition cfgGen = new CFGGenerationSubCondition(function,
 				ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES);

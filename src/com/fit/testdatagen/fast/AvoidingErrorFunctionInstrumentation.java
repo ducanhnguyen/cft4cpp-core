@@ -391,13 +391,4 @@ public class AvoidingErrorFunctionInstrumentation implements IFunctionInstrument
 
 	}
 
-	@Override
-	public boolean isNormalizedMode() {
-		return false;
-	}
-
-	@Override
-	public void setNormalizedMode(boolean normalizedMode) {
-		this.normalizedMode = normalizedMode;
-	}
 }

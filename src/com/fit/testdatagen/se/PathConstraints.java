@@ -42,6 +42,7 @@ public class PathConstraints extends ArrayList<PathConstraint> implements IPathC
 
 		} else if (new CustomJeval().evaluate(newConstraint.getConstraint()).equals(ALWAYS_TRUE_EXPRESSION_IN_JEVAL))
 			return true;
+
 		else {
 			newConstraint.setConstraint(normalizeConstraint(newConstraint.getConstraint()));
 
@@ -49,9 +50,9 @@ public class PathConstraints extends ArrayList<PathConstraint> implements IPathC
 			indexExpander.setInputConstraint(newConstraint.getConstraint());
 			indexExpander.generateNewConstraints();
 			for (String newConstraintItem : indexExpander.getNewConstraints()) {
-				// conditions.add(null);
 				super.add(new PathConstraint(newConstraintItem, null, PathConstraint.CREATE_FROM_STATEMENT));
 			}
+
 			//
 			// AbstractPathConstraintExpander denominatorExpander = new
 			// DenominatorExpander();
@@ -87,7 +88,8 @@ public class PathConstraints extends ArrayList<PathConstraint> implements IPathC
 		// Some small other normalizers here
 		// Character '\0' (end of char*) ==> ASCII = 0
 		normalizedSc = normalizedSc.replace("'\\0'", "0");
-
+		normalizedSc = normalizedSc.replace("\\s*true\\s*", "1");
+		normalizedSc = normalizedSc.replace("\\s*false\\s*", "0");
 		return normalizedSc;
 	}
 

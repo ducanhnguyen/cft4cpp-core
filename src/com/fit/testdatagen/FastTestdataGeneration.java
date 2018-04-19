@@ -30,6 +30,7 @@ import com.fit.gui.testreport.object.ITestedFunctionReport;
 import com.fit.gui.testreport.object.ProjectReport;
 import com.fit.gui.testreport.object.TestpathReport;
 import com.fit.parser.projectparser.ProjectParser;
+import com.fit.testdata.object.TestpathString_Marker;
 import com.fit.testdatagen.coverage.CFGUpdater_Mark;
 import com.fit.testdatagen.fast.random.BasicTypeRandom;
 import com.fit.testdatagen.se.IPathConstraints;
@@ -50,6 +51,7 @@ import com.fit.utils.search.Search;
 import com.ibm.icu.util.Calendar;
 
 import test.testdatageneration.Bug;
+import test.testdatageneration.TestdataInReport;
 
 /**
  * 
@@ -105,154 +107,7 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 		return testdata;
 	}
 
-	private void DART_negatedTheLastCondition2(IFunctionNode originalFunction) throws Exception {
-		getExePath(originalFunction);
-		ICFG normalizedCfg = generateNormalizedCFG(originalFunction);
-		if (normalizedCfg != null) {
-
-			// Initialize data at random
-			String testdata = initializeTestdataAtRandom();
-
-			// Generate test data
-			int iteration = 1;
-			float currentCoverage = 0.0f;
-
-			boolean hasNextTestdata = false;
-
-			PartialTestpaths solvedTestpaths = new PartialTestpaths();
-			do {
-				hasNextTestdata = false;
-				logger.debug("\n\n\n" + "---------------------ITERATION " + iteration + "-------------------------");
-
-				ITestdataExecution testdataExecution = executeTestdata(originalFunction, testdata);
-
-				if (testdataExecution != null) {
-					// Update CFG
-					CFGUpdater_Mark cfgUpdater = new CFGUpdater_Mark(testdataExecution.getEncodedTestpath(),
-							normalizedCfg);
-					cfgUpdater.storeTheCurrentVisitedStateOfCfg();
-					logger.debug("Previous Visited Nodes: " + cfgUpdater.getPreviousVisitedNodes());
-					logger.debug("Previous Visited Branches: " + cfgUpdater.getPreviousVisitedBranches());
-					cfgUpdater.updateVisitedNodes();
-
-					// CASE 1. The latest test path is uncomplete (there arises an error when the
-					// test data execute)
-					if (cfgUpdater.isUncompleteTestpath()) {
-						cfgUpdater.unrollChangesOfTheLatestPath();
-						logger.debug("The testpath is uncomplete! Unroll the state of CFG!");
-						logger.debug(
-								"Current statement coverage = " + cfgUpdater.getCfg().computeStatementCoverage() * 100);
-						logger.debug("Current branch coverage = " + cfgUpdater.getCfg().computeBranchCoverage() * 100);
-					}
-					// CASE 2. No errors during test data execution
-					else {
-						logger.debug("The testpath is complete!");
-						logger.debug(
-								"Current statement coverage = " + cfgUpdater.getCfg().computeStatementCoverage() * 100);
-						logger.debug("Current branch coverage = " + cfgUpdater.getCfg().computeBranchCoverage() * 100);
-
-						// Add to test report
-						fnReport.addTestpath(new TestpathReport(testdataExecution.getEncodedTestpath(),
-								testdataExecution.getEncodedTestpath().getEncodedTestpath(), null, null, null, "-",
-								originalFunction));
-
-						// Select the best uncovered partial test paths
-						PartialTestpaths uncoveredPartialTestpaths = null;
-						IPartialTestpath theBestPartialTestpath = null;
-
-						switch (originalFunction.getFunctionConfig().getTypeofCoverage()) {
-
-						case IFunctionConfig.BRANCH_COVERAGE:
-							uncoveredPartialTestpaths = normalizedCfg
-									.getPartialTestpathcontainingUnCoveredBranches_Strategy1();
-							// Remove test paths solved before
-							for (int i = uncoveredPartialTestpaths.size() - 1; i >= 0; i--)
-								if (solvedTestpaths.contains(uncoveredPartialTestpaths.get(i))) {
-									uncoveredPartialTestpaths.remove(i);
-								}
-
-							currentCoverage = normalizedCfg.computeBranchCoverage() * 100;
-							break;
-
-						case IFunctionConfig.STATEMENT_COVERAGE:
-							uncoveredPartialTestpaths = normalizedCfg.getPartialTestpathcontainingUnCoveredStatements(); // chua
-																															// code
-							currentCoverage = normalizedCfg.computeStatementCoverage() * 100;
-							break;
-
-						case IFunctionConfig.SUBCONDITION:
-							throw new Exception("Dont code sub-condition coverage");
-						}
-
-						if (uncoveredPartialTestpaths.size() >= 1)
-							do {
-								logger.debug(
-										"Num of potential uncovered test path = " + uncoveredPartialTestpaths.size());
-								// Choose a random test path in the candidate set
-								theBestPartialTestpath = uncoveredPartialTestpaths
-										.get(new Random().nextInt(uncoveredPartialTestpaths.size()));
-								uncoveredPartialTestpaths.remove(theBestPartialTestpath);
-								solvedTestpaths.add(theBestPartialTestpath);
-
-								logger.debug("Find the best potential partial test path: "
-										+ theBestPartialTestpath.getFullPath());
-
-								// Create constraints of the chosen test path
-								if (theBestPartialTestpath != null) {
-									Parameter paramaters = new Parameter();
-									for (INode n : ((FunctionNode) originalFunction).getArguments())
-										paramaters.add(n);
-									for (INode n : ((FunctionNode) originalFunction).getReducedExternalVariables())
-										paramaters.add(n);
-
-									logger.debug("Performing symbolic execution on this test path");
-									ISymbolicExecution se = new SymbolicExecution(theBestPartialTestpath, paramaters,
-											originalFunction);
-
-									logger.debug("Done. Constraints: \n" + se.getConstraints().toString()
-											.replace(ISymbolicVariable.PREFIX_SYMBOLIC_VALUE, "")
-											.replace(
-													ISymbolicVariable.SEPARATOR_BETWEEN_STRUCTURE_NAME_AND_ITS_ATTRIBUTES,
-													".")
-											.replace(ISymbolicVariable.ARRAY_CLOSING, "]")
-											.replace(ISymbolicVariable.ARRAY_OPENING, "["));
-
-									// Find test data
-									if (se.getConstraints().size() >= 1) {
-										testdata = new StaticSolutionGeneration().solve(se.getConstraints(),
-												originalFunction);
-
-										if (!testdata.equals(IStaticSolutionGeneration.NO_SOLUTION)) {
-											hasNextTestdata = true;
-											logger.debug("Done solving. Next test data = " + testdata);
-										}
-									}
-								}
-							} while (!hasNextTestdata && uncoveredPartialTestpaths.size() >= 1);
-					}
-				} else
-					logger.debug("Current test data causes errors.");
-
-				if (!hasNextTestdata && currentCoverage < 100f) {
-					testdata = initializeTestdataAtRandom();
-					logger.debug("Generate random test data= " + testdata);
-				}
-
-			} while (++iteration < MAX_ITERATIONS_IN_ONE_DEPTH && currentCoverage < 100f);
-		}
-	}
-
-	/**
-	 * Step 1. Generate test data at random <br/>
-	 * Step 2. Execute test data to get test path. If error occurs, back to Step 1,
-	 * else Step 2 <br/>
-	 * Step 3. Get constraints<br/>
-	 * Step 4. Negate constraints (from the last constraint)<br/>
-	 * 
-	 * @param originalFunction
-	 * @throws Exception
-	 */
-	private void DART_negatedTheLastCondition(IFunctionNode originalFunction) throws Exception {
+	private void DART_IMPROVEMENT(IFunctionNode originalFunction) throws Exception {
 		// Config: no limit loop, no limit recursive
 		getExePath(originalFunction);
 		ICFG normalizedCfg = generateNormalizedCFG(originalFunction);
@@ -265,6 +120,15 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 			float currentCoverage = 0.0f;
 
 			logger.info("STRATEGY: DART");
+
+			float tmp_currentStatementCoverage = 0.0f;
+			float tmp_currentBranchCoverage = 0.0f;
+
+			float tmp_previous_currentStatementCoverage = 0.0f;
+			float tmp_previous_currentBranchCoverage = 0.0f;
+
+			boolean improvedTestdata = false;
+
 			while (depth < DEPTH && currentCoverage < 100f) {
 				logger.info("\n\n\n" + "====================<b>DEPTH " + depth
 						+ "</b>==========================================================");
@@ -275,16 +139,24 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 					/**
 					 * STEP 1. INITIALIZE TEST DATA AT RANDOM
 					 */
+					boolean tmp_isGenerateRandomly = false;
 					if (testdata.length() == 0) {
 						testdata = initializeTestdataAtRandom();
 						logger.info("Generate a random test data: <b>" + testdata + "</b>");
-					}
+						tmp_isGenerateRandomly = true;
+					} else
+						tmp_isGenerateRandomly = false;
 
 					/**
 					 * STEP 2. EXECUTE TEST DATA TO GET TEST PATH
 					 */
 					ITestdataExecution testdataExecution = executeTestdata(originalFunction, testdata);
 
+					tmp_previous_currentBranchCoverage = tmp_currentBranchCoverage;
+					tmp_previous_currentStatementCoverage = tmp_currentStatementCoverage;
+
+					String fullTestdata = Utils.readFileContent(Paths.CURRENT_PROJECT.TESTDATA_INPUT_FILE_PATH)
+							.replace("\n", "; ");
 					if (testdataExecution != null) {
 						// Update CFG
 						CFGUpdater_Mark cfgUpdater = new CFGUpdater_Mark(testdataExecution.getEncodedTestpath(),
@@ -294,9 +166,12 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 						// logger.debug("Previous Visited Branches: " +
 						// cfgUpdater.getPreviousVisitedBranches());
 						cfgUpdater.updateVisitedNodes();
-						logger.info(
-								"Current statement coverage = " + cfgUpdater.getCfg().computeStatementCoverage() * 100);
-						logger.info("Current branch coverage = " + cfgUpdater.getCfg().computeBranchCoverage() * 100);
+
+						tmp_currentStatementCoverage = cfgUpdater.getCfg().computeStatementCoverage() * 100;
+						logger.info("Current statement coverage = " + tmp_currentStatementCoverage);
+
+						tmp_currentBranchCoverage = cfgUpdater.getCfg().computeBranchCoverage() * 100;
+						logger.info("Current branch coverage = " + tmp_currentBranchCoverage);
 
 						currentCoverage = normalizedCfg.computeBranchCoverage() * 100;
 						// Add to test report
@@ -309,13 +184,74 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 						if (cfgUpdater.isUncompleteTestpath()) {
 							logger.info("The testpath is uncomplete! We still update CFG");
 							logger.info("Found a bug. Uncomplete test path");
+
+							AbstractTestdataGeneration.bugs.add(
+									new Bug(fullTestdata, testdataExecution.getEncodedTestpath(), originalFunction));
+
+							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
+									testdataExecution.getEncodedTestpath(), true, tmp_currentStatementCoverage,
+									tmp_currentBranchCoverage,
+									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
+											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
+													? true
+													: false,
+									tmp_isGenerateRandomly, improvedTestdata));
+							improvedTestdata = false; // reset the state of test data
+
 							testdata = "";
 
-							Bug bug = new Bug(testdata, testdataExecution.getEncodedTestpath(), originalFunction);
-							AbstractTestdataGeneration.bugs.add(bug);
+							// IMPROVEMENT-BEGIN
+							logger.debug("Use static analysis to detect a directed test data");
+							PartialTestpaths uncoveredTestpaths = cfgUpdater.getCfg()
+									.getPartialTestpathcontainingUnCoveredBranches_Strategy1();
+
+							while (testdata.length() == 0 && uncoveredTestpaths.size() >= 1) {
+								IPartialTestpath uncoveredTestpath = uncoveredTestpaths.get(0);
+								uncoveredTestpaths.remove(0);
+
+								Parameter paramaters = new Parameter();
+								for (INode n : ((FunctionNode) originalFunction).getArguments())
+									paramaters.add(n);
+								for (INode n : ((FunctionNode) originalFunction).getReducedExternalVariables())
+									paramaters.add(n);
+
+								logger.info("Performing symbolic execution on this test path");
+								ISymbolicExecution se = new SymbolicExecution(uncoveredTestpath, paramaters,
+										originalFunction);
+
+								String currentTestdata = new StaticSolutionGeneration().solve(se.getConstraints(),
+										originalFunction);
+
+								if (currentTestdata.equals(IStaticSolutionGeneration.NO_SOLUTION)) {
+									logger.info("No solution. Seek another unvisited test path.");
+									testdata = "";
+								} else if (currentTestdata.equals(IStaticSolutionGeneration.EVERY_SOLUTION)) {
+									// Just pick a random test data
+									currentTestdata = initializeTestdataAtRandom();
+									logger.info("May solution. Choose a solution. Next test data = <b>"
+											+ currentTestdata + "</b>");
+									testdata = currentTestdata;
+									improvedTestdata = true;
+								} else {
+									logger.info("Found a solution. Next test data = <b>" + currentTestdata + "</b>");
+									testdata = currentTestdata;
+									improvedTestdata = true;
+								}
+							}
+							// IMPROVEMENT-END
 						}
 						// CASE 2. No errors during test data execution
 						else {
+							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
+									testdataExecution.getEncodedTestpath(), false, tmp_currentStatementCoverage,
+									tmp_currentBranchCoverage,
+									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
+											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
+													? true
+													: false,
+									tmp_isGenerateRandomly, improvedTestdata));
+							improvedTestdata = false; // reset the state of test data
+
 							switch (originalFunction.getFunctionConfig().getTypeofCoverage()) {
 
 							case IFunctionConfig.BRANCH_COVERAGE:
@@ -418,8 +354,239 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 								throw new Exception("Dont code this kind of code coverage");
 							}
 						}
-					} else
+					} else {
 						logger.debug("Current test data causes errors.");
+						AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
+								new TestpathString_Marker(), true, tmp_currentStatementCoverage,
+								tmp_currentBranchCoverage, false, tmp_isGenerateRandomly, improvedTestdata));
+						improvedTestdata = false; // reset the state of test data
+					}
+				}
+				depth++;
+			}
+		}
+	}
+
+	/**
+	 * Step 1. Generate test data at random <br/>
+	 * Step 2. Execute test data to get test path. If error occurs, back to Step 1,
+	 * else Step 2 <br/>
+	 * Step 3. Get constraints<br/>
+	 * Step 4. Negate constraints (from the last constraint). If exist, back to Step
+	 * 2, else back to step 1<br/>
+	 * 
+	 * @param originalFunction
+	 * @throws Exception
+	 */
+	private void DART(IFunctionNode originalFunction) throws Exception {
+		// Config: no limit loop, no limit recursive
+		getExePath(originalFunction);
+		ICFG normalizedCfg = generateNormalizedCFG(originalFunction);
+
+		if (normalizedCfg != null) {
+
+			String testdata = "";
+			int iteration_in_one_depth = 0;
+			int depth = 0;
+			float currentCoverage = 0.0f;
+
+			logger.info("STRATEGY: DART");
+
+			float tmp_currentStatementCoverage = 0.0f;
+			float tmp_currentBranchCoverage = 0.0f;
+
+			float tmp_previous_currentStatementCoverage = 0.0f;
+			float tmp_previous_currentBranchCoverage = 0.0f;
+
+			while (depth < DEPTH && currentCoverage < 100f) {
+				logger.info("\n\n\n" + "====================<b>DEPTH " + depth
+						+ "</b>==========================================================");
+				while (iteration_in_one_depth < MAX_ITERATIONS_IN_ONE_DEPTH && currentCoverage < 100f) {
+					logger.info("\n\n\n" + "---------------------ITERATION " + iteration_in_one_depth
+							+ "-------------------------");
+					iteration_in_one_depth++;
+					/**
+					 * STEP 1. INITIALIZE TEST DATA AT RANDOM
+					 */
+					boolean tmp_isGenerateRandomly = false;
+					if (testdata.length() == 0) {
+						testdata = initializeTestdataAtRandom();
+						logger.info("Generate a random test data: <b>" + testdata + "</b>");
+						tmp_isGenerateRandomly = true;
+					} else
+						tmp_isGenerateRandomly = false;
+
+					/**
+					 * STEP 2. EXECUTE TEST DATA TO GET TEST PATH
+					 */
+					ITestdataExecution testdataExecution = executeTestdata(originalFunction, testdata);
+
+					tmp_previous_currentBranchCoverage = tmp_currentBranchCoverage;
+					tmp_previous_currentStatementCoverage = tmp_currentStatementCoverage;
+
+					String fullTestdata = Utils.readFileContent(Paths.CURRENT_PROJECT.TESTDATA_INPUT_FILE_PATH)
+							.replace("\n", "; ");
+					if (testdataExecution != null) {
+						// Update CFG
+						CFGUpdater_Mark cfgUpdater = new CFGUpdater_Mark(testdataExecution.getEncodedTestpath(),
+								normalizedCfg);
+						// logger.debug("Previous Visited Nodes: " +
+						// cfgUpdater.getPreviousVisitedNodes());
+						// logger.debug("Previous Visited Branches: " +
+						// cfgUpdater.getPreviousVisitedBranches());
+						cfgUpdater.updateVisitedNodes();
+
+						tmp_currentStatementCoverage = cfgUpdater.getCfg().computeStatementCoverage() * 100;
+						logger.info("Current statement coverage = " + tmp_currentStatementCoverage);
+
+						tmp_currentBranchCoverage = cfgUpdater.getCfg().computeBranchCoverage() * 100;
+						logger.info("Current branch coverage = " + tmp_currentBranchCoverage);
+
+						currentCoverage = normalizedCfg.computeBranchCoverage() * 100;
+						// Add to test report
+						fnReport.addTestpath(new TestpathReport(testdataExecution.getEncodedTestpath(),
+								testdataExecution.getEncodedTestpath().getEncodedTestpath(), null, null, null, "-",
+								originalFunction));
+
+						// CASE 1. The latest test path is uncomplete (there arises an error when the
+						// test data execute)
+						if (cfgUpdater.isUncompleteTestpath()) {
+							logger.info("The testpath is uncomplete! We still update CFG");
+							logger.info("Found a bug. Uncomplete test path");
+
+							AbstractTestdataGeneration.bugs.add(
+									new Bug(fullTestdata, testdataExecution.getEncodedTestpath(), originalFunction));
+
+							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
+									testdataExecution.getEncodedTestpath(), true, tmp_currentStatementCoverage,
+									tmp_currentBranchCoverage,
+									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
+											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
+													? true
+													: false,
+									tmp_isGenerateRandomly, false));
+
+							testdata = "";
+						}
+						// CASE 2. No errors during test data execution
+						else {
+							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
+									testdataExecution.getEncodedTestpath(), false, tmp_currentStatementCoverage,
+									tmp_currentBranchCoverage,
+									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
+											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
+													? true
+													: false,
+									tmp_isGenerateRandomly, false));
+
+							switch (originalFunction.getFunctionConfig().getTypeofCoverage()) {
+
+							case IFunctionConfig.BRANCH_COVERAGE:
+
+								ITestpathInCFG executedTestpath = cfgUpdater.getUpdatedCFGNodes();
+
+								/**
+								 * STEP 3. GET PATH CONSTRAINTS
+								 */
+								if (currentCoverage < 100f && executedTestpath != null) {
+									Parameter paramaters = new Parameter();
+									for (INode n : ((FunctionNode) originalFunction).getArguments())
+										paramaters.add(n);
+									for (INode n : ((FunctionNode) originalFunction).getReducedExternalVariables())
+										paramaters.add(n);
+
+									logger.info("Performing symbolic execution on this test path");
+									ISymbolicExecution se = new SymbolicExecution(executedTestpath, paramaters,
+											originalFunction);
+
+									logger.debug("Done. Constraints: \n" + se.getConstraints().toString()
+											.replace(ISymbolicVariable.PREFIX_SYMBOLIC_VALUE, "")
+											.replace(
+													ISymbolicVariable.SEPARATOR_BETWEEN_STRUCTURE_NAME_AND_ITS_ATTRIBUTES,
+													".")
+											.replace(ISymbolicVariable.ARRAY_CLOSING, "]")
+											.replace(ISymbolicVariable.ARRAY_OPENING, "["));
+
+									/**
+									 * STEP 4. NEGATE PATH CONSTRAINTS
+									 */
+
+									logger.info("NEGATE PATH CONSTRAINTS");
+
+									boolean isFoundSolution = false;
+									boolean canNegateCondition = true;
+
+									Set<Integer> negatedIndexs = new HashSet<>();
+									while (!isFoundSolution && canNegateCondition && se.getConstraints().size() >= 1) {
+										// Choose a random constraint to negate
+										IPathConstraints negatedConstraints = null;
+										boolean foundNegatedCondition = false;
+										do {
+											int negatedConstraintsIndexCandidate = new Random()
+													.nextInt(se.getConstraints().size());
+											if (!negatedIndexs.contains(negatedConstraintsIndexCandidate)) {
+												negatedIndexs.add(new Integer(negatedConstraintsIndexCandidate));
+												// If the negated condition is not visited in all of two branches
+												negatedConstraints = se.getConstraints()
+														.negateConditionAt(negatedConstraintsIndexCandidate);
+												ConditionCfgNode negatedCfgNode = (ConditionCfgNode) ((PathConstraints) negatedConstraints)
+														.get(negatedConstraintsIndexCandidate).getCfgNode();
+												if (!negatedCfgNode.isVisitedFalseBranch()
+														|| !negatedCfgNode.isVisitedTrueBranch()) {
+													foundNegatedCondition = true;
+												}
+											}
+										} while (!foundNegatedCondition
+												&& negatedIndexs.size() < se.getConstraints().size());
+
+										if (foundNegatedCondition) {
+											// Solve path constraints
+											logger.debug("Negated Constraints: \n" + negatedConstraints.toString()
+													.replace(ISymbolicVariable.PREFIX_SYMBOLIC_VALUE, "")
+													.replace(
+															ISymbolicVariable.SEPARATOR_BETWEEN_STRUCTURE_NAME_AND_ITS_ATTRIBUTES,
+															".")
+													.replace(ISymbolicVariable.ARRAY_CLOSING, "]")
+													.replace(ISymbolicVariable.ARRAY_OPENING, "["));
+											testdata = new StaticSolutionGeneration().solve(negatedConstraints,
+													originalFunction);
+
+											if (testdata.equals(IStaticSolutionGeneration.NO_SOLUTION)) {
+												logger.info("No solution. Continue negating.");
+												isFoundSolution = false;
+											} else if (testdata.equals(IStaticSolutionGeneration.EVERY_SOLUTION)) {
+												isFoundSolution = true;
+												// Just pick a random test data
+												testdata = initializeTestdataAtRandom();
+												logger.info("May solution. Choose a solution. Next test data = <b>"
+														+ testdata + "</b>");
+											} else {
+												isFoundSolution = true;
+												logger.info(
+														"Found a solution. Next test data = <b>" + testdata + "</b>");
+											}
+										} else {
+											logger.info(
+													"Can not negate any condition. We start generating test data at random");
+											canNegateCondition = false;
+											testdata = "";
+											break;
+										}
+									}
+								}
+								break;
+
+							case IFunctionConfig.STATEMENT_COVERAGE:
+							case IFunctionConfig.SUBCONDITION:
+								throw new Exception("Dont code this kind of code coverage");
+							}
+						}
+					} else {
+						logger.debug("Current test data causes errors.");
+						AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
+								new TestpathString_Marker(), true, tmp_currentStatementCoverage,
+								tmp_currentBranchCoverage, false, tmp_isGenerateRandomly, false));
+					}
 				}
 				depth++;
 			}
@@ -431,7 +598,8 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 		logger.debug("Test data generation strategy: Fast Mars");
 		Date startTime = Calendar.getInstance().getTime();
 
-		DART_negatedTheLastCondition(originalFunction);
+		DART(originalFunction);
+		// DART_IMPROVEMENT(originalFunction);
 
 		// Calculate the running time
 		Date end = Calendar.getInstance().getTime();

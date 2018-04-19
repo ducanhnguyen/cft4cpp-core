@@ -1,11 +1,14 @@
 package com.console;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fit.tree.object.IFunctionNode;
 
 import test.testdatageneration.Bug;
+import test.testdatageneration.TestdataInReport;
 
 public class ConsoleOutput {
 	private IFunctionNode functionNode;
@@ -55,11 +58,13 @@ public class ConsoleOutput {
 	private long symbolicExecutionTime = 0;
 
 	// The total time of macro normalization (ms)
-	public static long macroNormalizationTime = 0;
+	public long macroNormalizationTime = 0;
 
-	public static Set<Bug> bugs = new HashSet<>();
+	public Set<Bug> bugs = new HashSet<>();
 
-	public static String log = "";
+	public List<TestdataInReport> testdata = new ArrayList<>();
+
+	public String log = "";
 
 	public float getCoverge() {
 		return coverge;
@@ -189,29 +194,37 @@ public class ConsoleOutput {
 		return makeCommandRunningNumber;
 	}
 
-	public static long getMacroNormalizationTime() {
+	public long getMacroNormalizationTime() {
 		return macroNormalizationTime;
 	}
 
-	public static void setMacroNormalizationTime(long macroNormalizationTime) {
-		ConsoleOutput.macroNormalizationTime = macroNormalizationTime;
+	public void setMacroNormalizationTime(long macroNormalizationTime) {
+		this.macroNormalizationTime = macroNormalizationTime;
 	}
 
-	public static Set<Bug> getBugs() {
+	public Set<Bug> getBugs() {
 		return bugs;
 	}
 
-	public static void setBugs(Set<Bug> bugs) {
-		ConsoleOutput.bugs = bugs;
+	public void setBugs(Set<Bug> bugs) {
+		this.bugs = bugs;
 	}
 
 	@Deprecated
-	public static String getLog() {
+	public String getLog() {
 		return log;
 	}
 
 	@Deprecated
-	public static void setLog(String log) {
-		ConsoleOutput.log = log;
+	public void setLog(String log) {
+		this.log = log;
+	}
+
+	public List<TestdataInReport> getTestdata() {
+		return testdata;
+	}
+
+	public void setTestdata(List<TestdataInReport> testdata) {
+		this.testdata = testdata;
 	}
 }

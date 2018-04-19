@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.fit.cfg.ICFG;
+import com.fit.normalizer.FunctionNormalizer;
 import com.fit.parser.projectparser.ProjectParser;
 import com.fit.testdata.object.TestpathString_Marker;
 import com.fit.tree.object.IFunctionNode;
@@ -14,10 +15,13 @@ import com.fit.utils.search.Search;
 
 public class CFGUpdater_MarkTest {
 	@Test
-	public void simple() {
+	public void simple() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "simple()").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -26,7 +30,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -36,10 +40,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void if_control_block_true_branch() {
+	public void if_control_block_true_branch() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_control_block(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -50,7 +57,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -61,10 +68,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void if_control_block_false_branch() {
+	public void if_control_block_false_branch() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_control_block(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -73,7 +83,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -84,10 +94,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void if_else_control_block() {
+	public void if_else_control_block() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_else_control_block(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -98,7 +111,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -109,10 +122,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void if_else_control_block_2() {
+	public void if_else_control_block_2() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_else_control_block_2(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -125,7 +141,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -136,10 +152,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void if_else_control_block_3() {
+	public void if_else_control_block_3() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_else_control_block_2(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -152,7 +171,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -163,10 +182,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void if_else_control_block_4() {
+	public void if_else_control_block_4() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_else_control_block_3(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -179,7 +201,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -190,10 +212,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void if_else_control_block_5() {
+	public void if_else_control_block_5() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "if_else_control_block_3(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -204,7 +229,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -215,10 +240,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void for_control_block() {
+	public void for_control_block() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "for_control_block(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -231,7 +259,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -245,10 +273,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void for_control_block_2() {
+	public void for_control_block_2() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "for_control_block_2(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -261,7 +292,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -271,10 +302,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void while_control_block() {
+	public void while_control_block() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "while_control_block(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -284,7 +318,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -294,10 +328,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void while_control_block_2() {
+	public void while_control_block_2() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "while_control_block(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -306,7 +343,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -316,10 +353,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void do_control_block() {
+	public void do_control_block() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "do_control_block(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -332,7 +372,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -342,16 +382,19 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void try_catch() {
+	public void try_catch() throws Exception {
 		// Some failures
 		Assert.assertEquals(true, false);
 	}
 
 	@Test
-	public void recursive_Fibonaxi_1() {
+	public void recursive_Fibonaxi_1() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "Fibonacci(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -377,7 +420,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -387,10 +430,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void recursive_Fibonaxi_2() {
+	public void recursive_Fibonaxi_2() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "Fibonacci(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -416,7 +462,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -426,10 +472,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void recursive_add_digits_1() {
+	public void recursive_add_digits_1() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -450,7 +499,7 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
@@ -460,10 +509,13 @@ public class CFGUpdater_MarkTest {
 	}
 
 	@Test
-	public void recursive_add_digits_2() {
+	public void recursive_add_digits_2() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
 
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
@@ -484,12 +536,79 @@ public class CFGUpdater_MarkTest {
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
-		ICFG cfg = function.generateCFGToFindStaticSolution();
+		ICFG cfg = function.generateCFG();
 		cfg.setFunctionNode(function);
 		cfg.setIdforAllNodes();
 		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedBranches().size());
+	}
+
+	@Test
+	public void break_Stm() throws Exception {
+		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		IFunctionNode function = (IFunctionNode) Search
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "compare_string(char*,char*)").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
+
+		// Create a test path
+		TestpathString_Marker testpath = new TestpathString_Marker();
+		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
+
+				"line-in-function=2###offset=55###statement=*first==*second",
+				"statement={###line-of-blockin-function=2",
+				"line-in-function=3###offset=81###statement=*first == '\\0' || *second == '\\0'###control-block=if",
+				"line-in-function=4###offset=121###statement=break;",
+				"line-in-function=9###offset=167###statement=*first == '\\0' && *second == '\\0'###control-block=if",
+				"line-in-function=10###offset=206###statement=return 0;" };
+		testpath.setEncodedTestpath(nodes);
+
+		// Mapping
+		ICFG cfg = function.generateCFG();
+		cfg.setFunctionNode(function);
+		cfg.setIdforAllNodes();
+		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
+		cfg.resetVisitedStateOfNodes();
+		updater.updateVisitedNodes();
+		Assert.assertEquals(3, cfg.getVisitedBranches().size());
+	}
+
+	@Test
+	public void multiple_brackets() throws Exception {
+		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		IFunctionNode function = (IFunctionNode) Search.searchNodes(parser.getRootTree(), new FunctionNodeCondition(),
+				"mergeTwoArray(int[],int,int[],int,int[])").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
+
+		// Create a test path
+		TestpathString_Marker testpath = new TestpathString_Marker();
+		String[] nodes = new String[] { "statement={###line-of-blockin-function=1###openning-function=true",
+				"line-in-function=2###offset=69###statement=int i, j, k, t;",
+				"line-in-function=4###offset=89###statement=t = j = k = 0;",
+				"statement={###additional-code=true###surrounding-control-block=for",
+				"line-in-function=6###offset=113###statement=i = 0;",
+				"line-in-function=6###offset=120###statement=i < m + n", "statement={###line-of-blockin-function=6",
+				"line-in-function=7###offset=145###statement=j < m && k < n###control-block=if",
+				"line-in-function=16###offset=294###statement=j == m###control-block=if",
+				"statement={###line-of-blockin-function=16",
+				"statement={###additional-code=true###surrounding-control-block=for",
+				"line-in-function=17###offset=313###statement=int t = 0;",
+				"line-in-function=17###offset=324###statement=i < m + n", "statement={###line-of-blockin-function=17",
+				"line-in-function=18###offset=346###statement=sorted[i] = b[k];" };
+		testpath.setEncodedTestpath(nodes);
+
+		// Mapping
+		ICFG cfg = function.generateCFG();
+		cfg.setFunctionNode(function);
+		cfg.setIdforAllNodes();
+		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
+		cfg.resetVisitedStateOfNodes();
+		updater.updateVisitedNodes();
+		Assert.assertEquals(4, cfg.getVisitedBranches().size());
 	}
 }

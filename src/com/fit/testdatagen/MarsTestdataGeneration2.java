@@ -81,7 +81,7 @@ public class MarsTestdataGeneration2 extends AbstractTestdataGeneration
 		logger.debug("Normalized function: \n" + normalizedFunction.getAST().getRawSignature());
 
 		// Generate CFG based on the normalized function
-		ICFG normalizedCfg = normalizedFunction.generateCFGToFindStaticSolution();
+		ICFG normalizedCfg = normalizedFunction.generateCFG();
 		if (normalizedCfg != null) {
 			normalizedCfg.resetVisitedStateOfNodes();
 			normalizedCfg.setIdforAllNodes();

@@ -52,8 +52,8 @@ public abstract class AbstractJUnitTest {
 		Settingv2.create();
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_LOWER_BOUND, 32);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_UPPER_BOUND, 126);
-		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_LOWER_BOUND, -300);
-		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_UPPER_BOUND, 300);
+		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_LOWER_BOUND, -200);
+		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_UPPER_BOUND, 200);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_TEST_ARRAY_SIZE, 12);
 		AbstractSetting.setValue(ISettingv2.MAX_ITERATION_FOR_EACH_LOOP, 11);
 		AbstractSetting.setValue(ISettingv2.IN_TEST_MODE, "true");
@@ -87,7 +87,7 @@ public abstract class AbstractJUnitTest {
 		boolean reachCoverageObjective = false;
 		for (int i = 0; i < MAX_GENERATION; i++) {
 			String[] args = new String[] { Console.LOAD_PROJECT, Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH,
-					Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "info" };
+					Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "debug" };
 			console[i] = new Console(args);
 			// Display output
 			List<ConsoleOutput> outputList = console[i].getOutput();
@@ -95,7 +95,7 @@ public abstract class AbstractJUnitTest {
 			for (ConsoleOutput outputItem : outputList) {
 				// logger.info("Original function: " +
 				// outputItem.getFunctionNode().getAST().getRawSignature());
-				long totalRunningTime = outputItem.getRunningTime() - ConsoleOutput.getMacroNormalizationTime();
+				long totalRunningTime = outputItem.getRunningTime() - outputItem.getMacroNormalizationTime();
 				logger.info("");
 				logger.info("|--SUMMARY - not include macro normalization-----|");
 				logger.info("| Total time = " + totalRunningTime + "ms (~" + totalRunningTime / 1000 + "s)");
@@ -107,8 +107,8 @@ public abstract class AbstractJUnitTest {
 						+ outputItem.getMakeCommandRunningTime() * 1.0 / totalRunningTime * 100 + "%) ("
 						+ outputItem.getMakeCommandRunningNumber() + "/" + outputItem.getNumOfExecutions() + " makes)");
 				logger.info("| Normalization time = "
-						+ (outputItem.getNormalizationTime() - ConsoleOutput.getMacroNormalizationTime()) + "ms ("
-						+ (outputItem.getNormalizationTime() - ConsoleOutput.getMacroNormalizationTime()) * 1.0
+						+ (outputItem.getNormalizationTime() - outputItem.getMacroNormalizationTime()) + "ms ("
+						+ (outputItem.getNormalizationTime() - outputItem.getMacroNormalizationTime()) * 1.0
 								/ totalRunningTime * 100
 						+ "%)");
 				logger.info("| Symbolic execution time = " + outputItem.getSymbolicExecutionTime() + "ms ("
@@ -124,9 +124,9 @@ public abstract class AbstractJUnitTest {
 				logger.info("| Num of executions = " + outputItem.getNumOfExecutions() + " times");
 				logger.info("| Reached coverage = " + outputItem.getCoverge() + "% (Expected coverage = "
 						+ expectedOutput.getExpectedCoverage() + "%)");
-				logger.info("| Bug = " + ConsoleOutput.getBugs());
+				logger.info("| Bug = " + outputItem.getBugs());
 				logger.info("|--END SUMMARY - not include macro normalization-----|");
-				logger.info("| Macro normalization time = " + ConsoleOutput.getMacroNormalizationTime() / 1000
+				logger.info("| Macro normalization time = " + outputItem.getMacroNormalizationTime() / 1000
 						+ " seconds");
 				logger.info("");
 				logger.info("");
@@ -183,7 +183,7 @@ public abstract class AbstractJUnitTest {
 				solverRunningTime += outputItem.getSolverRunningTime();
 				symbolicExecutionTime += outputItem.getSymbolicExecutionTime();
 				runningTime += outputItem.getRunningTime();
-				bugs.addAll(ConsoleOutput.getBugs());
+				bugs.addAll(outputItem.getBugs());
 			}
 		}
 

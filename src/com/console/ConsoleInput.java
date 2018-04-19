@@ -125,11 +125,13 @@ public class ConsoleInput {
 				consoleOutput.setNumOfNoChangeToCoverage(AbstractTestdataGeneration.numOfNotChangeToCoverage);
 				consoleOutput
 						.setNumOfSolverCallsbutCannotSolve(AbstractTestdataGeneration.numOfSolverCallsbutCannotSolve);
-				ConsoleOutput.setMacroNormalizationTime(AbstractTestdataGeneration.macroNormalizationTime);
+				consoleOutput.setMacroNormalizationTime(AbstractTestdataGeneration.macroNormalizationTime);
 				consoleOutput.setCoverge(fnReport.computeCoverage());
-				ConsoleOutput.setBugs(AbstractTestdataGeneration.bugs);
+				consoleOutput.setBugs(AbstractTestdataGeneration.bugs);
 
-				ConsoleOutput.setLog(Utils.readFileContent("E:\\log4j-application.log"));
+				consoleOutput.setLog(Utils.readFileContent("E:\\log4j-application.log"));
+
+				consoleOutput.setTestdata(AbstractTestdataGeneration.testdata);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

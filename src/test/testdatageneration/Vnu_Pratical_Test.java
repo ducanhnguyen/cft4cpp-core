@@ -2,7 +2,9 @@ package test.testdatageneration;
 
 import javax.sound.sampled.LineUnavailableException;
 
+
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -10,6 +12,7 @@ import com.fit.config.IFunctionConfig;
 import com.fit.config.Paths;
 import com.fit.testdatagen.htmlreport.FuntionTestReportGUI;
 
+@FixMethodOrder
 public class Vnu_Pratical_Test extends AbstractJUnitTest {
 
 	@Test

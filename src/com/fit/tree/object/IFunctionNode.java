@@ -109,13 +109,6 @@ public interface IFunctionNode extends ISourceNavigable, INode {
 	boolean isNoType();
 
 	/**
-	 * Get the AST of the given normalized source code to display in CFG
-	 *
-	 * @return
-	 */
-	IASTFunctionDefinition getNormalizedASTtoDisplayinCFG() throws Exception;
-
-	/**
 	 * Get the corresponding variable node of the current function. <br/>
 	 * If the call of the function is corresponding to a variable, then return this
 	 * variable. <br/>
@@ -229,35 +222,6 @@ public interface IFunctionNode extends ISourceNavigable, INode {
 	boolean isTemplate();
 
 	/**
-	 * Normalize a function before executing it. Therefore, the process for
-	 * generating test driver is easier.
-	 *
-	 * @throws Exception
-	 */
-	FunctionNormalizer getNormalizeFunctionToExecute() throws Exception;
-
-	/**
-	 * Normalize a function before find static solution. Because the complexity of
-	 * the function, it is hard to parse the function without any modifications on
-	 * source code.
-	 * <p>
-	 * Our objective is to rewrite function so that the process for discovering
-	 * static solution effectively!
-	 *
-	 * @throws Exception
-	 */
-	@Deprecated
-	FunctionNormalizer normalizeFunctionToFindStaticTestcase() throws Exception;
-
-	/**
-	 * Normalize function to display control flow graph
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	FunctionNormalizer normalizeFunctionToDisplayCFG() throws Exception;
-
-	/**
 	 * Normalize function before instrumenting source code
 	 *
 	 * @return
@@ -288,7 +252,7 @@ public interface IFunctionNode extends ISourceNavigable, INode {
 	 *
 	 * @return
 	 */
-	ICFG generateCFGToFindStaticSolution();
+	ICFG generateCFG();
 
 	/**
 	 * Get macro normalizer
@@ -325,21 +289,9 @@ public interface IFunctionNode extends ISourceNavigable, INode {
 	@Override
 	INode clone();
 
-	FunctionNormalizer getFnNormalizedASTtoInstrument();
+	FunctionNormalizer getGeneralNormalizationFunction();
 
-	void setFnNormalizedASTtoInstrument(FunctionNormalizer fnNormalizedASTtoInstrument);
-
-	FunctionNormalizer getFnNormalizeFunctionToFindStaticTestcase();
-
-	void setFnNormalizeFunctionToFindStaticTestcase(FunctionNormalizer fnNormalizeFunctionToFindStaticTestcase);
-
-	FunctionNormalizer getFnNormalizeFunctionToExecute();
-
-	void setFnNormalizeFunctionToExecute(FunctionNormalizer fnNormalizeFunctionToExecute);
-
-	FunctionNormalizer getFnNormalizeFunctionToDisplayCFG();
-
-	void setFnNormalizeFunctionToDisplayCFG(FunctionNormalizer fnNormalizeFunctionToDisplayCFG);
+	void setGeneralNormalizationFunction(FunctionNormalizer fnNormalizedASTtoInstrument);
 
 	boolean isStaticFunction();
 

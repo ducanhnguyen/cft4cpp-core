@@ -11,6 +11,7 @@ import com.fit.config.Paths;
 import com.fit.config.Settingv2;
 import com.fit.exception.GUINotifyException;
 import com.fit.parser.projectparser.ProjectParser;
+import com.fit.testdatagen.AbstractTestdataGeneration;
 import com.fit.testdatagen.Backup;
 import com.fit.testdatagen.FunctionExecution;
 import com.fit.testdatagen.testdataexec.ConsoleExecution;
@@ -23,6 +24,8 @@ import com.fit.tree.object.IFunctionNode;
 import com.fit.utils.Utils;
 import com.fit.utils.search.FunctionNodeCondition;
 import com.fit.utils.search.Search;
+
+import test.testdatageneration.AbstractJUnitTest;
 
 /**
  * Enhance the old function execution by compiling the testing project once
@@ -60,8 +63,8 @@ public class FastFunctionExecution extends FunctionExecution {
 				// Normalize function before executing it
 				// logger.debug("Normalize function before executing it");
 				IFunctionNode clone = (IFunctionNode) fn.clone();
-				clone.setAST(clone.getNormalizeFunctionToExecute().getNormalizedAST());
-				changedTokens = clone.getNormalizeFunctionToExecute().getTokens();
+				clone.setAST(clone.getGeneralNormalizationFunction().getNormalizedAST());
+				changedTokens = clone.getGeneralNormalizationFunction().getTokens();
 				updateProject(backup, fn);
 
 				ITestdriverGeneration testdriverGen = generateTestdriver(clone, staticSolution, backup);

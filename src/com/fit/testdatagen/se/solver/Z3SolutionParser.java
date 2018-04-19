@@ -17,21 +17,14 @@ import com.fit.testdatagen.se.memory.ISymbolicVariable;
  * @author anhanh
  */
 public class Z3SolutionParser implements IZ3SolutionParser {
+	boolean beforeLineIsArray = false;
 
 	public Z3SolutionParser() {
 	}
 
 	public static void main(String[] args) {
-//		 String Z3Solution = "unknown\n(error \"line 27 column 10: model is not available\")";
+		String Z3Solution = "(error \"line 6 column 30: invalid function application, wrong number of arguments\")\nsat\n(model\n\n (define-fun tvwp ((x!1 Int) (x!2 Int)) Int\n (ite (and (= x!1 0) (= x!2 0)) 10\n 10))\n)";
 
-//		 String Z3Solution = "(error \"line 6 column 30: invalid function application,		 wrong number of arguments\")\nsat\n(model\n\n (define-fun tvwp ((x!1 Int)		 (x!2 Int)) Int\n (ite (and (= x!1 0) (= x!2 0)) 10\n 10))\n)";
-
-		 String Z3Solution = "(model\n(define-fun tvwx () Real\n(/ 1.0 10000.0))\n)";
-
-//		 String Z3Solution = "(model\n(define-fun tvwhe ()		 Real\n1.0)\n(define-fun tvwb_w () Real\n(- (/ 9981.0 10000.0))))";
-
-//		String Z3Solution = "sat\r\n" + "(model \r\n" + "  (define-fun tvw_x () Int\r\n" + "    0)\r\n"
-//				+ "  (define-fun tvw_A ((x!1 Int)) Int\r\n" + "    0)\r\n" + ")";
 		System.out.println(new Z3SolutionParser().getSolution(Z3Solution));
 	}
 
@@ -55,11 +48,14 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 
 				case IF_THEN_ELSE_ID:
 					ArrayList<String> indexList = getIndex(line);
+					ArrayList<String> indexVariableList = getIndexVariable(line);
 					value = getValueOfIte(line);
-					solution += name;
-					for (String i : indexList)
-						solution += "[" + i + "]";
-					solution += "=" + value + ",";
+
+					String tmp = name;
+					for (int i = 0; i < indexList.size(); i++)
+						tmp = tmp.replace("[" + indexVariableList.get(i) + "]", "[" + indexList.get(i) + "]");
+
+					solution += tmp + "=" + value + ",";
 					ignoreEndLine = true;
 					break;
 
@@ -67,7 +63,13 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 					if (!ignoreEndLine) {
 						value = getValueOfVariable(line);
 						value = new CustomJeval().evaluate(value);
-						solution += name + "=" + value + ",";
+
+						// ! is the signal of array
+						if (name.contains("!"))
+							solution += name.replace("x!", "") + "=" + value + ",";
+
+						else
+							solution += name + "=" + value + ",";
 					}
 					break;
 
@@ -90,6 +92,12 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 		return solution;
 	}
 
+	/**
+	 * " (ite (= x!1 0) 1\r" ---------> 0
+	 * 
+	 * @param ifThenElse
+	 * @return
+	 */
 	private ArrayList<String> getIndex(String ifThenElse) {
 		ArrayList<String> indexList = new ArrayList<>();
 		Matcher m = Pattern.compile("=\\s(\\w+)!(\\d+)\\s([^\\)]+)").matcher(ifThenElse);
@@ -98,25 +106,32 @@ public class Z3SolutionParser implements IZ3SolutionParser {
 		return indexList;
 	}
 
+	/**
+	 * " (ite (= x!1 0) 1\r" ----> "x!1"
+	 * 
+	 * @param ifThenElse
+	 * @return
+	 */
+	private ArrayList<String> getIndexVariable(String ifThenElse) {
+		ArrayList<String> indexList = new ArrayList<>();
+		Matcher m = Pattern.compile("=\\s(\\w+!\\d+)\\s([^\\)]+)").matcher(ifThenElse);
+		while (m.find())
+			indexList.add(m.group(1));
+		return indexList;
+	}
+
 	private String getName(String defineFun) {
 		String nameFunction = "";
-		Matcher m = Pattern.compile("\\(define-fun\\s(\\w+)").matcher(defineFun);
+		Matcher m = Pattern.compile("\\(define-fun\\s+(\\w+)").matcher(defineFun);
 		while (m.find()) {
 			nameFunction = m.group(1);
 			break;
 		}
 
 		// case "define-fun tvw_A ((x!1 Int)) Int"
-		int chamThan = defineFun.indexOf("!");
-		if (chamThan != -1) {
-			String index = "";
-			for (int i = chamThan + 1; i < defineFun.length(); i++) {
-				Character c = defineFun.toCharArray()[i];
-				if (c >= '0' && c <= '9') {
-					index += c;
-				}
-			}
-			nameFunction += "[" + index + "]";
+		m = Pattern.compile("(\\w+!\\d+)").matcher(defineFun);
+		while (m.find()) {
+			nameFunction += "[" + m.group(0) + "]";
 		}
 
 		return nameFunction;

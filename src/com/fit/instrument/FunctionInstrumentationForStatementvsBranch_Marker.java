@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 
 import com.fit.config.Paths;
+import com.fit.normalizer.FunctionNormalizer;
 import com.fit.parser.projectparser.ProjectParser;
 import com.fit.tree.object.IFunctionNode;
 import com.fit.utils.SpecialCharacter;
@@ -46,26 +47,27 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 
 	private IFunctionNode functionNode;
 
-	private boolean normalizedMode = false;
-
 	public FunctionInstrumentationForStatementvsBranch_Marker() {
 	}
 
 	public FunctionInstrumentationForStatementvsBranch_Marker(IFunctionNode fn) {
 		functionNode = fn;
-		normalizedMode = false;
 	}
 
 	public FunctionInstrumentationForStatementvsBranch_Marker(IFunctionNode fn, boolean normalizedMode) {
-		this.normalizedMode = normalizedMode;
 		functionNode = fn;
 	}
 
-	public static void main(String[] args) {
-		ProjectParser parser = new ProjectParser(new File(Paths.SYMBOLIC_EXECUTION_TEST));
+	public static void main(String[] args) throws Exception {
+		ProjectParser parser = new ProjectParser(new File(Paths.JOURNAL_TEST));
 		IFunctionNode function = (IFunctionNode) Search
-				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)").get(0);
-		System.out.println(function.getAST().getRawSignature());
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "quickSort(int[],int,int)").get(0);
+		System.out.println("Original function:\n" + function.getAST().getRawSignature());
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
+		System.out.println("Normalized function:\n" + function.getAST().getRawSignature());
+
 		System.out.println(
 				new FunctionInstrumentationForStatementvsBranch_Marker(function, true).generateInstrumentedFunction());
 	}
@@ -94,21 +96,10 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 
 	protected String instrument(IFunctionNode fn) {
 		StringBuilder b = new StringBuilder();
-		IASTFunctionDefinition fnDef = null;
 
-		if (!normalizedMode)
-			fnDef = fn.getAST();
-		else
-			try {
-				fnDef = fn.normalizedAST().getNormalizedAST();
-			} catch (Exception e) {
-				e.printStackTrace();
-				fnDef = fn.getAST();
-			}
-
-		b.append(getShortenContent(fnDef.getDeclSpecifier())).append(SpecialCharacter.SPACE)
-				.append(getShortenContent(fnDef.getDeclarator()))
-				.append(parseBlock((IASTCompoundStatement) fnDef.getBody(), null, ""));
+		b.append(getShortenContent(fn.getAST().getDeclSpecifier())).append(SpecialCharacter.SPACE)
+				.append(getShortenContent(fn.getAST().getDeclarator()))
+				.append(parseBlock((IASTCompoundStatement) fn.getAST().getBody(), null, ""));
 
 		return b.toString();
 	}
@@ -266,16 +257,6 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 		this.functionNode = functionNode;
 	}
 
-	@Override
-	public boolean isNormalizedMode() {
-		return normalizedMode;
-	}
-
-	@Override
-	public void setNormalizedMode(boolean normalizedMode) {
-		this.normalizedMode = normalizedMode;
-	}
-
 	protected String getShortenContent(IASTNode node) {
 		if (node != null) {
 			if (node.getRawSignature().endsWith(SpecialCharacter.END_OF_STATEMENT)) {
@@ -401,7 +382,7 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 		boolean foundRecursive = false;
 		for (CPPASTFunctionCallExpression functionCall : functionCalls) {
 			String name = functionCall.getChildren()[0].getRawSignature();
-			if (functionNode.getName().startsWith(name)) {
+			if (functionNode.getDeclaration().startsWith(name + "(")) {
 
 				foundRecursive = true;
 				break;

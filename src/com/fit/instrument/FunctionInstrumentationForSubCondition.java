@@ -311,14 +311,4 @@ public class FunctionInstrumentationForSubCondition implements IFunctionInstrume
 	public void setFunctionNode(IFunctionNode functionNode) {
 
 	}
-
-	@Override
-	public boolean isNormalizedMode() {
-		return false;
-	}
-
-	@Override
-	public void setNormalizedMode(boolean normalizedMode) {
-		this.normalizedMode = normalizedMode;
-	}
 }

@@ -37,11 +37,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 
 import com.fit.cfg.object.AdditionalScopeCfgNode;
 import com.fit.cfg.object.BeginFlagCfgNode;
+import com.fit.cfg.object.BreakCfgNode;
 import com.fit.cfg.object.CfgNode;
 import com.fit.cfg.object.ConditionDoCfgNode;
 import com.fit.cfg.object.ConditionForCfgNode;
 import com.fit.cfg.object.ConditionIfCfgNode;
 import com.fit.cfg.object.ConditionWhileCfgNode;
+import com.fit.cfg.object.ContinueCfgNode;
 import com.fit.cfg.object.EndFlagCfgNode;
 import com.fit.cfg.object.ForwardCfgNode;
 import com.fit.cfg.object.ICfgNode;
@@ -102,8 +104,8 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 	public static void main(String[] args) throws Exception {
 		ProjectParser parser = new ProjectParser(new File(Paths.SYMBOLIC_EXECUTION_TEST));
 
-		INode function = Search.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "add_digits(int)")
-				.get(0);
+		INode function = Search
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "compare_string(char*,char*)").get(0);
 
 		System.out.println(((IFunctionNode) function).getAST().getRawSignature());
 		FunctionNormalizer fnNorm = ((IFunctionNode) function).normalizedAST();
@@ -120,7 +122,10 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 
 	@Override
 	public ICFG generateCFG() throws Exception {
-		ICFG cfg = parse(functionNode);
+		IFunctionNode normalizedFunction = (IFunctionNode) functionNode.clone();
+		normalizedFunction.setAST(functionNode.normalizedAST().getNormalizedAST());
+		
+		ICFG cfg = parse(normalizedFunction);
 		cfg = setParentAgain(cfg);
 		return cfg;
 	}
@@ -536,11 +541,17 @@ public class CFGGenerationforBranchvsStatementCoverage implements ICFGGeneration
 		} else if (stm instanceof IASTCompoundStatement)
 			visitBlock((IASTCompoundStatement) stm, begin, end, _break, _continue, _throw, parent);
 
-		else if (stm instanceof IASTBreakStatement)
-			begin.setBranch(_break);
+		else if (stm instanceof IASTBreakStatement) {
+			ICfgNode breakNode = new BreakCfgNode(stm);
+			begin.setBranch(breakNode);
+			breakNode.setBranch(_break);
+		}
 
-		else if (stm instanceof IASTContinueStatement)
-			begin.setBranch(_continue);
+		else if (stm instanceof IASTContinueStatement) {
+			ICfgNode continueNode = new ContinueCfgNode(stm);
+			begin.setBranch(continueNode);
+			continueNode.setBranch(_continue);
+		}
 
 		else if (stm instanceof ICPPASTTryBlockStatement)
 			visitTryCatch((ICPPASTTryBlockStatement) stm, begin, end, _break, _continue, _throw, parent);
