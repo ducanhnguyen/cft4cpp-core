@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 
 import com.fit.cfg.BranchInCFG;
 import com.fit.cfg.ICFG;
-import com.fit.cfg.object.BeginFlagCfgNode;
 import com.fit.cfg.object.ConditionCfgNode;
 import com.fit.cfg.object.EndFlagCfgNode;
 import com.fit.cfg.object.ICfgNode;
@@ -52,7 +51,7 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 	// A list of visited cfg node by a given test path
 	private ITestpathInCFG updatedCFGNodes = new FullTestpath();
 
-	boolean isUncompleteTestpath = false;
+	boolean isCompleteTestpath = false;
 
 	// Control flow graph
 	private ICFG cfg;
@@ -104,7 +103,7 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 		logger.debug("visited statements: " + cfg.getVisitedStatements());
 		logger.debug("Visited branches: " + cfg.getVisitedBranches());
 		logger.debug("Visited nodes: " + updater.getUpdatedCFGNodes());
-		logger.debug("Complete test path: " + !updater.isUncompleteTestpath);
+		logger.debug("Complete test path: " + updater.isCompleteTestpath);
 	}
 
 	public CFGUpdater_Mark(TestpathString_Marker testpath, ICFG cfg) {
@@ -156,67 +155,143 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 		}
 	}
 
-	private void traverseGraph(int index, ArrayList<StatementInTestpath_Mark> detailTestpath,
-			Set<ICfgNode> candidateCfgNodes, ICfgNode previousNode, List<ICfgNode> visitedStatements,
-			List<BranchInCFG> visitedBranches, Stack<ICfgNode> recursivePoints) {
-		logger.debug("\n\ntraverseGraph");
-		logger.debug("Visited statements: " + visitedStatements);
-		logger.debug("Visited branches: " + visitedBranches);
-		logger.debug("Recursive points: " + recursivePoints);
-		logger.debug("index: " + index + " / " + detailTestpath.size());
-
+	private boolean reachEndNodeInTestpath(int index, ArrayList<StatementInTestpath_Mark> detailTestpath,
+			List<ICfgNode> visitedStatements, List<BranchInCFG> visitedBranches, ICfgNode previousNode) {
 		if (index == detailTestpath.size()) {
 			logger.debug("Reach the end");
 			this.visitedBranches = visitedBranches;
 			this.visitedStatements = visitedStatements;
-		} else {
-			StatementInTestpath_Mark testpathItem = detailTestpath.get(index);
-			logger.debug("Parse. " + testpathItem);
 
-			// Find candidate nodes
-			List<ICfgNode> matchCfgNodes = new ArrayList<>();
-			for (ICfgNode item : candidateCfgNodes)
-				if (isStronglyConnectedMapping(testpathItem, item))
-					matchCfgNodes.add(item);
+			if (previousNode instanceof EndFlagCfgNode || previousNode.getTrueNode() instanceof EndFlagCfgNode
+					|| previousNode.getFalseNode() instanceof EndFlagCfgNode)
+				isCompleteTestpath = true;
+			return true;
+		} else
+			return false;
+	}
 
-			if (matchCfgNodes.size() == 0 && recursivePoints.size() > 0) {
-				ICfgNode recursivePoint = recursivePoints.pop();
-				matchCfgNodes.add(recursivePoint.getFalseNode());
-				matchCfgNodes.add(recursivePoint.getTrueNode());
-			}
-			if (matchCfgNodes.size() == 0)
-				logger.debug("Mapping fails");
-			else
-				for (ICfgNode matchCfgNode : matchCfgNodes) {
-					Set<ICfgNode> newCandidateCfgNodes = new HashSet<>();
+	private boolean findAPath() {
+		return this.visitedBranches.size() > 0 || this.visitedStatements.size() > 0;
+	}
+
+	private void traverseGraph(int index, ArrayList<StatementInTestpath_Mark> detailTestpath,
+			Set<ICfgNode> candidateCfgNodes, ICfgNode previousNode, List<ICfgNode> visitedStatements,
+			List<BranchInCFG> visitedBranches, Stack<ICfgNode> recursivePoints) {
+
+		if (findAPath())
+			return;
+		if (!reachEndNodeInTestpath(index, detailTestpath, visitedStatements, visitedBranches, previousNode)) {
+			boolean hasSingleChoice = false;
+
+			do {
+				if (findAPath())
+					return;
+				logger.debug("\n\ntraverseGraph");
+				logger.debug("index: " + index + " / " + detailTestpath.size());
+				logger.debug("Visited statements: " + visitedStatements);
+				logger.debug("Visited branches: " + visitedBranches);
+				logger.debug("Recursive points: " + recursivePoints);
+
+				StatementInTestpath_Mark testpathItem = detailTestpath.get(index);
+				logger.debug("Parse. " + testpathItem);
+
+				/**
+				 * Find candidate nodes
+				 */
+				List<ICfgNode> matchCfgNodes = new ArrayList<>();
+				for (ICfgNode item : candidateCfgNodes)
+					if (isStronglyConnectedMapping(testpathItem, item))
+						matchCfgNodes.add(item);
+
+				/**
+				 * No matching node is found
+				 */
+				if (matchCfgNodes.size() == 0 && recursivePoints.size() > 0) {
+					ICfgNode recursivePoint = recursivePoints.pop();
+
+					if (isStronglyConnectedMapping(testpathItem, recursivePoint.getFalseNode()))
+						matchCfgNodes.add(recursivePoint.getFalseNode());
+
+					if (isStronglyConnectedMapping(testpathItem, recursivePoint.getTrueNode()))
+						matchCfgNodes.add(recursivePoint.getTrueNode());
+				}
+				/**
+				 * If there exists only one candidate, we do not need any recursive call (to
+				 * avoid StackoverFlow)
+				 */
+				if (matchCfgNodes.size() == 0) {
+					logger.debug("Mapping fails");
+					hasSingleChoice = false;
+
+				} else if (matchCfgNodes.size() == 1) {
+					// Not need to create copy
+					logger.debug("Dont create stack");
+					ICfgNode matchCfgNode = matchCfgNodes.get(0);
+					candidateCfgNodes = new HashSet<>();
 
 					Property_Marker isRecursive = testpathItem
 							.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.IS_RECURSIVE);
 					if (isRecursive != null) {
 						recursivePoints.add(matchCfgNode);
-						newCandidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
+						candidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
 					} else {
-						newCandidateCfgNodes.add(matchCfgNode.getTrueNode());
-						newCandidateCfgNodes.add(matchCfgNode.getFalseNode());
+						candidateCfgNodes.add(matchCfgNode.getTrueNode());
+						candidateCfgNodes.add(matchCfgNode.getFalseNode());
 					}
+
+					visitedStatements.add(matchCfgNode);
+					if (previousNode instanceof ConditionCfgNode)
+						visitedBranches.add(new BranchInCFG(previousNode, matchCfgNode));
 
 					ICfgNode newPreviousNode = matchCfgNode;
 
-					List<ICfgNode> newVisitedStatements = new ArrayList<>();
-					newVisitedStatements.addAll(visitedStatements);
-					visitedStatements.add(matchCfgNode);
+					if (candidateCfgNodes.size() == 1) {
+						hasSingleChoice = true;
+						index++;
+						previousNode = newPreviousNode;
+					} else {
+						hasSingleChoice = false;
+						index++;
+						traverseGraph(index, detailTestpath, candidateCfgNodes, newPreviousNode, visitedStatements,
+								visitedBranches, recursivePoints);
+						index--;
+					}
+				} else {
+					hasSingleChoice = false;
+					logger.debug("Create new stack");
+					for (ICfgNode matchCfgNode : matchCfgNodes) {
+						Set<ICfgNode> newCandidateCfgNodes = new HashSet<>();
 
-					List<BranchInCFG> newVisitedBranches = new ArrayList<>();
-					newVisitedBranches.addAll(visitedBranches);
-					if (previousNode instanceof ConditionCfgNode)
-						newVisitedBranches.add(new BranchInCFG(previousNode, matchCfgNode));
+						Property_Marker isRecursive = testpathItem
+								.getPropertyByName(FunctionInstrumentationForStatementvsBranch_Marker.IS_RECURSIVE);
+						if (isRecursive != null) {
+							recursivePoints.add(matchCfgNode);
+							newCandidateCfgNodes.add(cfg.getBeginNode().getTrueNode());
+						} else {
+							newCandidateCfgNodes.add(matchCfgNode.getTrueNode());
+							newCandidateCfgNodes.add(matchCfgNode.getFalseNode());
+						}
 
-					Stack<ICfgNode> newRecursivePoints = (Stack<ICfgNode>) recursivePoints.clone();
-					index++;
-					traverseGraph(index, detailTestpath, newCandidateCfgNodes, newPreviousNode, visitedStatements,
-							newVisitedBranches, newRecursivePoints);
-					index--;
+						ICfgNode newPreviousNode = matchCfgNode;
+
+						List<ICfgNode> newVisitedStatements = new ArrayList<>();
+						newVisitedStatements.addAll(visitedStatements);
+						visitedStatements.add(matchCfgNode);
+
+						List<BranchInCFG> newVisitedBranches = new ArrayList<>();
+						newVisitedBranches.addAll(visitedBranches);
+						if (previousNode instanceof ConditionCfgNode)
+							newVisitedBranches.add(new BranchInCFG(previousNode, matchCfgNode));
+
+						Stack<ICfgNode> newRecursivePoints = (Stack<ICfgNode>) recursivePoints.clone();
+						index++;
+						traverseGraph(index, detailTestpath, newCandidateCfgNodes, newPreviousNode, visitedStatements,
+								newVisitedBranches, newRecursivePoints);
+						index--;
+					}
 				}
+			} while (hasSingleChoice && !reachEndNodeInTestpath(index, detailTestpath, visitedStatements,
+					visitedBranches, previousNode));
 		}
 	}
 
@@ -351,8 +426,8 @@ public class CFGUpdater_Mark implements ICFGUpdater {
 			}
 	}
 
-	public boolean isUncompleteTestpath() {
-		return isUncompleteTestpath;
+	public boolean isCompleteTestpath() {
+		return isCompleteTestpath;
 	}
 
 	public List<BranchInCFG> getPreviousVisitedBranches() {

@@ -151,7 +151,8 @@ public class SymbolicExecution implements ISymbolicExecution {
 	 */
 	private Set<String> usedVariables = new HashSet<>();
 
-	public SymbolicExecution(ITestpathInCFG testpath, Parameter paramaters, IFunctionNode functionNode) throws Exception {
+	public SymbolicExecution(ITestpathInCFG testpath, Parameter paramaters, IFunctionNode functionNode)
+			throws Exception {
 		if (functionNode != null && paramaters != null && paramaters.size() > 0 && testpath != null) {
 			Date startTime = Calendar.getInstance().getTime();
 
@@ -241,13 +242,16 @@ public class SymbolicExecution implements ISymbolicExecution {
 		// STEP 2.
 		// We perform the symbolic execution on all of the statements in the normalized
 		// test path until catch an supported statement.
+		int i = 0;
 		for (ICfgNode cfgNode : normalizedTestpath.getAllCfgNodes())
 			// If the test path is always false, we stop the symbolic execution.
 			if (!this.constraints.isAlwaysFalse())
 				if (cfgNode instanceof BeginFlagCfgNode || cfgNode instanceof EndFlagCfgNode) {
 					// nothing to do
-				} else 
+				} else
 					try {
+						i++;
+						System.out.println("["+i+"/"+normalizedTestpath.getAllCfgNodes().size()+"] Parse " + cfgNode.getContent());
 						AbstractTestdataGeneration.numOfSymbolicStatements++;
 						boolean isContinue = true;
 
@@ -382,8 +386,8 @@ public class SymbolicExecution implements ISymbolicExecution {
 					logicCells = ((PointerSymbolicVariable) var).getAllLogicCells();
 
 				for (LogicCell logicCell : logicCells) {
-					List<ICPPASTArraySubscriptExpression> arrayItems = Utils
-							.getArraySubscriptExpression(ASTUtils.convertToIAST(logicCell.getPhysicalCell().getValue()));
+					List<ICPPASTArraySubscriptExpression> arrayItems = Utils.getArraySubscriptExpression(
+							ASTUtils.convertToIAST(logicCell.getPhysicalCell().getValue()));
 
 					String fullNameVar = var.getName() + logicCell.getFullIndex();
 					arrayItems.addAll(Utils.getArraySubscriptExpression(ASTUtils.convertToIAST(fullNameVar)));

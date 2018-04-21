@@ -52,8 +52,8 @@ public abstract class AbstractJUnitTest {
 		Settingv2.create();
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_LOWER_BOUND, 32);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_UPPER_BOUND, 126);
-		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_LOWER_BOUND, -200);
-		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_UPPER_BOUND, 200);
+		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_LOWER_BOUND, 0);
+		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_UPPER_BOUND, 30);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_TEST_ARRAY_SIZE, 12);
 		AbstractSetting.setValue(ISettingv2.MAX_ITERATION_FOR_EACH_LOOP, 11);
 		AbstractSetting.setValue(ISettingv2.IN_TEST_MODE, "true");

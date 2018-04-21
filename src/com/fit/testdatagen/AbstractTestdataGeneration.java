@@ -77,6 +77,17 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 	// Testdata
 	public static List<TestdataInReport> testdata = new ArrayList<>();
 
+	// DOES NOT RESET THESE FOLLOWING FIELDS
+	public static int numOfBranches = 0;
+	public static int numOfVisitedBranches = 0;
+	public static int totalSolverCalls = 0;
+	public static int totalNumOfExecution = 0;
+	public static int totalSymbolicStatements = 0;
+	// item = {iteration, visited branches}
+	public static List<Integer[]> visitedBranchesInfor = new ArrayList<>();
+	public static int tmp_iterations = 0;
+	public static int currentNumOfVisitedBranches = 0;
+
 	protected IFunctionNode fn = null;
 	protected ITestedFunctionReport fnReport = null;
 	protected int numPossibleTestpath = -1;

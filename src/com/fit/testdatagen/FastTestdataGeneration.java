@@ -1,6 +1,7 @@
 package com.fit.testdatagen;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -113,13 +114,17 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 		ICFG normalizedCfg = generateNormalizedCFG(originalFunction);
 
 		if (normalizedCfg != null) {
+			// IMPROVEMENT HERE
+			boolean improvedTestdata = false;
+			List<IPartialTestpath> analyzedTestpaths = new ArrayList<>();
+			// IMPROVEMENT HERE
 
 			String testdata = "";
 			int iteration_in_one_depth = 0;
 			int depth = 0;
 			float currentCoverage = 0.0f;
 
-			logger.info("STRATEGY: DART");
+			logger.info("STRATEGY: DART_IMPROVEMENT");
 
 			float tmp_currentStatementCoverage = 0.0f;
 			float tmp_currentBranchCoverage = 0.0f;
@@ -127,12 +132,11 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 			float tmp_previous_currentStatementCoverage = 0.0f;
 			float tmp_previous_currentBranchCoverage = 0.0f;
 
-			boolean improvedTestdata = false;
-
 			while (depth < DEPTH && currentCoverage < 100f) {
 				logger.info("\n\n\n" + "====================<b>DEPTH " + depth
 						+ "</b>==========================================================");
 				while (iteration_in_one_depth < MAX_ITERATIONS_IN_ONE_DEPTH && currentCoverage < 100f) {
+
 					logger.info("\n\n\n" + "---------------------ITERATION " + iteration_in_one_depth
 							+ "-------------------------");
 					iteration_in_one_depth++;
@@ -181,7 +185,7 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 
 						// CASE 1. The latest test path is uncomplete (there arises an error when the
 						// test data execute)
-						if (cfgUpdater.isUncompleteTestpath()) {
+						if (!cfgUpdater.isCompleteTestpath()) {
 							logger.info("The testpath is uncomplete! We still update CFG");
 							logger.info("Found a bug. Uncomplete test path");
 
@@ -189,68 +193,28 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 									new Bug(fullTestdata, testdataExecution.getEncodedTestpath(), originalFunction));
 
 							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
-									testdataExecution.getEncodedTestpath(), true, tmp_currentStatementCoverage,
-									tmp_currentBranchCoverage,
-									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
-											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
-													? true
-													: false,
-									tmp_isGenerateRandomly, improvedTestdata));
-							improvedTestdata = false; // reset the state of test data
-
-							testdata = "";
-
-							// IMPROVEMENT-BEGIN
-							logger.debug("Use static analysis to detect a directed test data");
-							PartialTestpaths uncoveredTestpaths = cfgUpdater.getCfg()
-									.getPartialTestpathcontainingUnCoveredBranches_Strategy1();
-
-							while (testdata.length() == 0 && uncoveredTestpaths.size() >= 1) {
-								IPartialTestpath uncoveredTestpath = uncoveredTestpaths.get(0);
-								uncoveredTestpaths.remove(0);
-
-								Parameter paramaters = new Parameter();
-								for (INode n : ((FunctionNode) originalFunction).getArguments())
-									paramaters.add(n);
-								for (INode n : ((FunctionNode) originalFunction).getReducedExternalVariables())
-									paramaters.add(n);
-
-								logger.info("Performing symbolic execution on this test path");
-								ISymbolicExecution se = new SymbolicExecution(uncoveredTestpath, paramaters,
-										originalFunction);
-
-								String currentTestdata = new StaticSolutionGeneration().solve(se.getConstraints(),
-										originalFunction);
-
-								if (currentTestdata.equals(IStaticSolutionGeneration.NO_SOLUTION)) {
-									logger.info("No solution. Seek another unvisited test path.");
-									testdata = "";
-								} else if (currentTestdata.equals(IStaticSolutionGeneration.EVERY_SOLUTION)) {
-									// Just pick a random test data
-									currentTestdata = initializeTestdataAtRandom();
-									logger.info("May solution. Choose a solution. Next test data = <b>"
-											+ currentTestdata + "</b>");
-									testdata = currentTestdata;
-									improvedTestdata = true;
-								} else {
-									logger.info("Found a solution. Next test data = <b>" + currentTestdata + "</b>");
-									testdata = currentTestdata;
-									improvedTestdata = true;
-								}
-							}
-							// IMPROVEMENT-END
-						}
-						// CASE 2. No errors during test data execution
-						else {
-							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
 									testdataExecution.getEncodedTestpath(), false, tmp_currentStatementCoverage,
 									tmp_currentBranchCoverage,
 									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
 											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
 													? true
 													: false,
-									tmp_isGenerateRandomly, improvedTestdata));
-							improvedTestdata = false; // reset the state of test data
+									tmp_isGenerateRandomly, improvedTestdata)); // MODIFIED
+							improvedTestdata = false; // ADDED
+
+							testdata = "";
+						}
+						// CASE 2. No errors during test data execution
+						else {
+							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
+									testdataExecution.getEncodedTestpath(), true, tmp_currentStatementCoverage,
+									tmp_currentBranchCoverage,
+									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
+											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
+													? true
+													: false,
+									tmp_isGenerateRandomly, improvedTestdata));// MODIFIED
+							improvedTestdata = false; // ADDED
 
 							switch (originalFunction.getFunctionConfig().getTypeofCoverage()) {
 
@@ -290,15 +254,21 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 									boolean canNegateCondition = true;
 
 									Set<Integer> negatedIndexs = new HashSet<>();
-									while (!isFoundSolution && canNegateCondition) {
+									while (!isFoundSolution && canNegateCondition && se.getConstraints().size() >= 1) {
 										// Choose a random constraint to negate
 										IPathConstraints negatedConstraints = null;
 										boolean foundNegatedCondition = false;
 										do {
 											int negatedConstraintsIndexCandidate = new Random()
 													.nextInt(se.getConstraints().size());
-											if (!negatedIndexs.contains(negatedConstraintsIndexCandidate)) {
+
+											if (((PathConstraints) se.getConstraints())
+													.get(negatedConstraintsIndexCandidate).getCfgNode() == null) {
 												negatedIndexs.add(new Integer(negatedConstraintsIndexCandidate));
+
+											} else if (!negatedIndexs.contains(negatedConstraintsIndexCandidate)) {
+												negatedIndexs.add(new Integer(negatedConstraintsIndexCandidate));
+
 												// If the negated condition is not visited in all of two branches
 												negatedConstraints = se.getConstraints()
 														.negateConditionAt(negatedConstraintsIndexCandidate);
@@ -354,16 +324,70 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 								throw new Exception("Dont code this kind of code coverage");
 							}
 						}
+						// IMPROVEMENT HERE
+						if (testdata.length() == 0) {
+							logger.debug("Use static analysis to detect a directed test data");
+							PartialTestpaths uncoveredTestpaths = normalizedCfg
+									.getPartialTestpathcontainingUnCoveredBranches_Strategy1();
+
+							while (testdata.length() == 0 && uncoveredTestpaths.size() >= 1) {
+								IPartialTestpath uncoveredTestpath = uncoveredTestpaths.get(0);
+
+								if (analyzedTestpaths.contains(uncoveredTestpath)) {
+									uncoveredTestpaths.remove(0);
+									continue;
+								} else {
+									analyzedTestpaths.add(uncoveredTestpath);
+									uncoveredTestpaths.remove(0);
+
+									Parameter paramaters = new Parameter();
+									for (INode n : ((FunctionNode) originalFunction).getArguments())
+										paramaters.add(n);
+									for (INode n : ((FunctionNode) originalFunction).getReducedExternalVariables())
+										paramaters.add(n);
+
+									logger.info("Performing symbolic execution on this test path");
+									ISymbolicExecution se = new SymbolicExecution(uncoveredTestpath, paramaters,
+											originalFunction);
+
+									String currentTestdata = new StaticSolutionGeneration().solve(se.getConstraints(),
+											originalFunction);
+
+									if (currentTestdata.equals(IStaticSolutionGeneration.NO_SOLUTION)) {
+										logger.info("No solution. Seek another unvisited test path.");
+										testdata = "";
+										improvedTestdata = false;
+									} else if (currentTestdata.equals(IStaticSolutionGeneration.EVERY_SOLUTION)) {
+										// Just pick a random test data
+										currentTestdata = initializeTestdataAtRandom();
+										logger.info("May solution. Choose a solution. Next test data = <b>"
+												+ currentTestdata + "</b>");
+										testdata = currentTestdata;
+										improvedTestdata = true;
+									} else {
+										logger.info(
+												"Found a solution. Next test data = <b>" + currentTestdata + "</b>");
+										testdata = currentTestdata;
+										improvedTestdata = true;
+									}
+								}
+							}
+						}
+						// IMPROVEMENT HERE
 					} else {
 						logger.debug("Current test data causes errors.");
 						AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
-								new TestpathString_Marker(), true, tmp_currentStatementCoverage,
-								tmp_currentBranchCoverage, false, tmp_isGenerateRandomly, improvedTestdata));
-						improvedTestdata = false; // reset the state of test data
+								new TestpathString_Marker(), false, tmp_currentStatementCoverage,
+								tmp_currentBranchCoverage, false, tmp_isGenerateRandomly, improvedTestdata));// MODIFIED
+						improvedTestdata = false; // ADDED
 					}
 				}
 				depth++;
 			}
+
+			AbstractTestdataGeneration.numOfBranches += normalizedCfg.getUnvisitedBranches().size()
+					+ normalizedCfg.getVisitedBranches().size();
+			AbstractTestdataGeneration.numOfVisitedBranches += normalizedCfg.getVisitedBranches().size();
 		}
 	}
 
@@ -430,6 +454,9 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 						// Update CFG
 						CFGUpdater_Mark cfgUpdater = new CFGUpdater_Mark(testdataExecution.getEncodedTestpath(),
 								normalizedCfg);
+						
+						currentNumOfVisitedBranches-= normalizedCfg.getVisitedBranches().size();
+						
 						// logger.debug("Previous Visited Nodes: " +
 						// cfgUpdater.getPreviousVisitedNodes());
 						// logger.debug("Previous Visited Branches: " +
@@ -448,9 +475,13 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 								testdataExecution.getEncodedTestpath().getEncodedTestpath(), null, null, null, "-",
 								originalFunction));
 
+						currentNumOfVisitedBranches+= normalizedCfg.getVisitedBranches().size();
+						AbstractTestdataGeneration.visitedBranchesInfor
+								.add(new Integer[] { ++tmp_iterations, currentNumOfVisitedBranches });
+
 						// CASE 1. The latest test path is uncomplete (there arises an error when the
 						// test data execute)
-						if (cfgUpdater.isUncompleteTestpath()) {
+						if (!cfgUpdater.isCompleteTestpath()) {
 							logger.info("The testpath is uncomplete! We still update CFG");
 							logger.info("Found a bug. Uncomplete test path");
 
@@ -458,7 +489,7 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 									new Bug(fullTestdata, testdataExecution.getEncodedTestpath(), originalFunction));
 
 							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
-									testdataExecution.getEncodedTestpath(), true, tmp_currentStatementCoverage,
+									testdataExecution.getEncodedTestpath(), false, tmp_currentStatementCoverage,
 									tmp_currentBranchCoverage,
 									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
 											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
@@ -471,7 +502,7 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 						// CASE 2. No errors during test data execution
 						else {
 							AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
-									testdataExecution.getEncodedTestpath(), false, tmp_currentStatementCoverage,
+									testdataExecution.getEncodedTestpath(), true, tmp_currentStatementCoverage,
 									tmp_currentBranchCoverage,
 									tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? true
 											: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
@@ -524,8 +555,14 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 										do {
 											int negatedConstraintsIndexCandidate = new Random()
 													.nextInt(se.getConstraints().size());
-											if (!negatedIndexs.contains(negatedConstraintsIndexCandidate)) {
+
+											if (((PathConstraints) se.getConstraints())
+													.get(negatedConstraintsIndexCandidate).getCfgNode() == null) {
 												negatedIndexs.add(new Integer(negatedConstraintsIndexCandidate));
+
+											} else if (!negatedIndexs.contains(negatedConstraintsIndexCandidate)) {
+												negatedIndexs.add(new Integer(negatedConstraintsIndexCandidate));
+
 												// If the negated condition is not visited in all of two branches
 												negatedConstraints = se.getConstraints()
 														.negateConditionAt(negatedConstraintsIndexCandidate);
@@ -584,12 +621,16 @@ public class FastTestdataGeneration extends MarsTestdataGeneration2 {
 					} else {
 						logger.debug("Current test data causes errors.");
 						AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
-								new TestpathString_Marker(), true, tmp_currentStatementCoverage,
+								new TestpathString_Marker(), false, tmp_currentStatementCoverage,
 								tmp_currentBranchCoverage, false, tmp_isGenerateRandomly, false));
 					}
 				}
 				depth++;
 			}
+
+			AbstractTestdataGeneration.numOfBranches += normalizedCfg.getUnvisitedBranches().size()
+					+ normalizedCfg.getVisitedBranches().size();
+			AbstractTestdataGeneration.numOfVisitedBranches += normalizedCfg.getVisitedBranches().size();
 		}
 	}
 

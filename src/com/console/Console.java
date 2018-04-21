@@ -8,9 +8,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.fit.config.AbstractSetting;
+import com.fit.config.IFunctionConfig;
 import com.fit.config.Paths;
 import com.fit.config.Settingv2;
 import com.fit.instrument.FunctionInstrumentationForStatementvsBranch_Marker;
+import com.fit.testdatagen.AbstractTestdataGeneration;
 import com.fit.utils.Utils;
 
 import test.testdatageneration.TestdataInReport;
@@ -200,7 +202,7 @@ public class Console {
 			// display test data
 			for (TestdataInReport testdata : item.getTestdata()) {
 				String testdataStatus = "["
-						+ (testdata.outputUncompleteTestpath() == true ? "<b><font color='red'> uncomplete </font></b>"
+						+ (testdata.outputCompleteTestpath() == false ? "<b><font color='red'> uncomplete </font></b>"
 								: "<b><font color='blue'> complete </font></b>")
 						+ "]&nbsp;";
 
@@ -210,7 +212,7 @@ public class Console {
 				else if (testdata.isGenerateRandomly())
 					testdataStr = "<span style='background-color: #FFFF00'>" + testdataStr + "</span>";
 				else if (testdata.isImprovedTestdata())
-					testdataStr = "<span style='background-color: green'>" + testdataStr + "</span>";
+					testdataStr = "<span style='background-color: green'> [improved]" + testdataStr + "</span>";
 
 				String statementCov = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Stm cov="
 						+ testdata.getCurrentStatementCodeCoverage();
@@ -230,10 +232,48 @@ public class Console {
 							+ statementCov + branchCov + testpath + "</span>";
 			}
 		}
+		// Summary of result
+		for (ConsoleOutput item : this.getOutput()) {
+			AbstractTestdataGeneration.totalNumOfExecution += item.getNumOfExecutions();
+			AbstractTestdataGeneration.totalSolverCalls += item.getNumOfSolverCalls();
+			AbstractTestdataGeneration.totalSymbolicStatements += item.getNumOfSymbolicStatements();
+		}
+		String summary = ("Total solver calls = " + AbstractTestdataGeneration.totalSolverCalls + "<br/>")
+				+ ("Total num of execution: " + AbstractTestdataGeneration.totalNumOfExecution + "<br/>")
+				+ ("Total symbolic statements: " + AbstractTestdataGeneration.totalSymbolicStatements + "<br/>")
+				+ (AbstractTestdataGeneration.numOfVisitedBranches + " / " + AbstractTestdataGeneration.numOfBranches
+						+ " visited branches");
+		allFunctionsTestReport += "<br/>" + summary;
 
+		// Add configuration
+		IFunctionConfig conf = this.getOutput().get(0).getFunctionNode().getFunctionConfig();
+		String config1 = "Character bound: [" + conf.getCharacterBound().getLower() + ".."
+				+ conf.getCharacterBound().getUpper() + "]";
+		String config2 = "Integer bound: [" + conf.getIntegerBound().getLower() + ".."
+				+ conf.getIntegerBound().getUpper() + "]";
+		String solver = "Solver: " + conf.getSolvingStrategy();
+		String iterations = "Max iteration for each loop: " + conf.getMaximumInterationsForEachLoop();
+		String sizeofArray = "Max size of array: " + conf.getSizeOfArray();
+		allFunctionsTestReport += "<br/>" + config1 + "<br/>" + config2 + "<br/>" + solver + "<br/>" + iterations
+				+ "<br/>" + sizeofArray + "<br/>";
+
+		//
 		fullHtml = "<!DOCTYPE html> <html> <head>" + style + "</head><body>" + allFunctionsTestReport
 				+ "</body></html>";
 		Utils.writeContentToFile(fullHtml, htmlFile.getAbsolutePath());
+
+		// OTHER FILES
+		// Present changes in visited branches over iterations
+		String visitedBranchesChangesOverIterations = "";
+		for (Integer[] iterationInfor : AbstractTestdataGeneration.visitedBranchesInfor) {
+			Integer iteration = iterationInfor[0];
+			Integer numVisitedBranches = iterationInfor[1];
+			visitedBranchesChangesOverIterations += toRow(toCell(iteration + "") + toCell(numVisitedBranches + ""));
+		}
+		visitedBranchesChangesOverIterations = "<table>" + visitedBranchesChangesOverIterations + "</table>";
+		String iterationInforHtml = "<!DOCTYPE html> <html> <head>" + style + "</head><body>"
+				+ visitedBranchesChangesOverIterations + "</body></html>";
+		Utils.writeContentToFile(iterationInforHtml, htmlFile.getParent() + File.separator + "infor.html");
 	}
 
 	static String toCell(String content) {

@@ -15,7 +15,7 @@ import com.fit.utils.search.Search;
 
 public class CFGUpdater_MarkTest {
 	@Test
-	public void simple() throws Exception {
+	public void noBranchTestpath() throws Exception {
 		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
 		IFunctionNode function = (IFunctionNode) Search
 				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "simple()").get(0);
@@ -37,6 +37,34 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
+	}
+
+	@Test
+	public void completenessTestpath() throws Exception {
+		ProjectParser parser = new ProjectParser(new File("..\\ava\\data-test\\ducanh\\instrument"));
+		IFunctionNode function = (IFunctionNode) Search
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "simple()").get(0);
+
+		FunctionNormalizer fnNorm = function.normalizedAST();
+		function.setAST(fnNorm.getNormalizedAST());
+
+		// Create a test path
+		TestpathString_Marker testpath = new TestpathString_Marker();
+		String[] nodes = new String[] { "statement={", "line-in-function=2###offset=18###statement=int a = 0;",
+				"line-in-function=3###offset=31###statement=int b, c;" };
+		testpath.setEncodedTestpath(nodes);
+
+		// Mapping
+		ICFG cfg = function.generateCFG();
+		cfg.setFunctionNode(function);
+		cfg.setIdforAllNodes();
+		CFGUpdater_Mark updater = new CFGUpdater_Mark(testpath, cfg);
+		cfg.resetVisitedStateOfNodes();
+		updater.updateVisitedNodes();
+		Assert.assertEquals(2, cfg.getVisitedStatements().size());
+		Assert.assertEquals(0, cfg.getVisitedBranches().size());
+		Assert.assertEquals(false, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -65,6 +93,7 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
 		Assert.assertEquals(1, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -91,6 +120,7 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 		Assert.assertEquals(1, cfg.getVisitedStatements().size());
 		Assert.assertEquals(1, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -119,6 +149,7 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
 		Assert.assertEquals(1, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -135,9 +166,7 @@ public class CFGUpdater_MarkTest {
 		String[] nodes = new String[] { "statement={###line-of-blockin-function=1",
 				"line-in-function=2###offset=44###statement=a>0###control-block=if",
 				"statement={###line-of-blockin-function=2", "line-in-function=3###offset=53###statement=a++;",
-				"statement=}###line-of-blockin-function=2", "statement=}###line-of-blockin-function=1"
-
-		};
+				"statement=}###line-of-blockin-function=2", "statement=}###line-of-blockin-function=1" };
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
@@ -149,6 +178,7 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
 		Assert.assertEquals(1, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -179,6 +209,7 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
 		Assert.assertEquals(1, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -209,6 +240,7 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
 		Assert.assertEquals(1, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -237,6 +269,7 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
 		Assert.assertEquals(1, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -267,9 +300,8 @@ public class CFGUpdater_MarkTest {
 		updater.updateVisitedNodes();
 
 		Assert.assertEquals(4, cfg.getVisitedStatements().size());
-
-		System.out.println(cfg.getVisitedBranches());
 		Assert.assertEquals(2, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -299,6 +331,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(4, cfg.getVisitedStatements().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -325,6 +358,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -350,6 +384,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(1, cfg.getVisitedStatements().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -364,11 +399,7 @@ public class CFGUpdater_MarkTest {
 		// Create a test path
 		TestpathString_Marker testpath = new TestpathString_Marker();
 		String[] nodes = new String[] { "statement={", "statement={", "line-in-function=3###offset=41###statement=a--;",
-				"statement=}",
-
-				"line-in-function=4###offset=56###statement=a<1",
-
-				"statement=}" };
+				"statement=}", "line-in-function=4###offset=56###statement=a<1", "statement=}" };
 		testpath.setEncodedTestpath(nodes);
 
 		// Mapping
@@ -379,6 +410,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedStatements().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -427,6 +459,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(4, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -469,6 +502,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(5, cfg.getVisitedStatements().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -506,6 +540,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(5, cfg.getVisitedStatements().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -543,6 +578,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(2, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -574,6 +610,7 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(3, cfg.getVisitedBranches().size());
+		Assert.assertEquals(true, updater.isCompleteTestpath());
 	}
 
 	@Test
@@ -610,5 +647,6 @@ public class CFGUpdater_MarkTest {
 		cfg.resetVisitedStateOfNodes();
 		updater.updateVisitedNodes();
 		Assert.assertEquals(4, cfg.getVisitedBranches().size());
+		Assert.assertEquals(false, updater.isCompleteTestpath());
 	}
 }
