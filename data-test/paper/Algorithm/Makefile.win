@@ -1,14 +1,14 @@
 # Project: Project1
 # Makefile created by Dev-C++ 5.11
 
-CPP      = g++.exe
-CC       = gcc.exe
+CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
 WINDRES  = windres.exe
-OBJ      = Search.o main.o Merge.o Sort.o
-LINKOBJ  = Search.o main.o Merge.o Sort.o
-LIBS     = -L"G:/Tools/Dev-Cpp/MinGW64/lib" -L"G:/Tools/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
-INCS     = -I"G:/Tools/Dev-Cpp/MinGW64/include" -I"G:/Tools/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"G:/Tools/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
-CXXINCS  = -I"G:/Tools/Dev-Cpp/MinGW64/include" -I"G:/Tools/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"G:/Tools/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"G:/Tools/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+OBJ      = Search.o main.o Merge.o Sort.o Utils.o
+LINKOBJ  = Search.o main.o Merge.o Sort.o Utils.o
+LIBS     = -L"E:/Dev-Cpp/MinGW64/lib" -L"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"E:/Dev-Cpp/MinGW64/include" -I"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"E:/Dev-Cpp/MinGW64/include" -I"E:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"E:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = Algorithm.exe
 CXXFLAGS = $(CXXINCS) 
 CFLAGS   = $(INCS) 
@@ -35,3 +35,17 @@ Merge.o: Merge.cpp
 
 Sort.o: Sort.cpp
 	$(CPP) -c Sort.cpp -o Sort.o $(CXXFLAGS)
+
+Utils.o: Utils.cpp
+	$(CPP) -c Utils.cpp -o Utils.o $(CXXFLAGS)
+
+
+
+
+
+
+
+
+
+
+

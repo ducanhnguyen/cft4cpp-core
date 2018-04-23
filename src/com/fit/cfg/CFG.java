@@ -390,16 +390,18 @@ public class CFG implements ICFG {
 					if (!((ConditionCfgNode) node).isVisitedFalseBranch()) {
 						partialTestpath.cast().add(node.getFalseNode());
 						containUncoveredBranches = true;
+						break;
 					} else if (!((ConditionCfgNode) node).isVisitedTrueBranch()) {
 						partialTestpath.cast().add(node.getTrueNode());
 						containUncoveredBranches = true;
+						break;
 					}
-					if (containUncoveredBranches && !uncoveredTestpaths.contains(partialTestpath)) {
-						uncoveredTestpaths.add(partialTestpath);
-					}
+
 				}
 			}
-
+			if (containUncoveredBranches && !uncoveredTestpaths.contains(partialTestpath)) {
+				uncoveredTestpaths.add(partialTestpath);
+			}
 		}
 		return uncoveredTestpaths;
 	}

@@ -28,6 +28,7 @@ import com.fit.parser.projectparser.ProjectLoader;
 import com.fit.testdata.object.TestpathString_Marker;
 import com.fit.testdatagen.fast.FastFunctionExecution;
 import com.fit.testdatagen.htmlreport.BranchCoverage;
+import com.fit.testdatagen.se.IPathConstraints;
 import com.fit.testdatagen.structuregen.ChangedToken;
 import com.fit.testdatagen.structuregen.ChangedTokens;
 import com.fit.tree.object.IFunctionNode;
@@ -78,15 +79,18 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 	public static List<TestdataInReport> testdata = new ArrayList<>();
 
 	// DOES NOT RESET THESE FOLLOWING FIELDS
-	public static int numOfBranches = 0;
-	public static int numOfVisitedBranches = 0;
-	public static int totalSolverCalls = 0;
-	public static int totalNumOfExecution = 0;
-	public static int totalSymbolicStatements = 0;
+	public static int numOfBranches = 0;// OVERALL SCOPE
+	public static int numOfVisitedBranches = 0;// OVERALL SCOPE
+	public static int totalSolverCalls = 0;// OVERALL SCOPE
+	public static int totalNumOfExecution = 0;// OVERALL SCOPE
+	public static int totalSymbolicStatements = 0;// OVERALL SCOPE
 	// item = {iteration, visited branches}
-	public static List<Integer[]> visitedBranchesInfor = new ArrayList<>();
-	public static int tmp_iterations = 0;
-	public static int currentNumOfVisitedBranches = 0;
+	public static List<Integer[]> visitedBranchesInfor = new ArrayList<>();// OVERALL SCOPE
+	public static int tmp_iterations = 0;// OVERALL SCOPE
+	public static int currentNumOfVisitedBranches = 0;// OVERALL SCOPE
+
+	public static int removedConstraints = 0; // OVERALL SCOPE
+	public static int removedTestdata = 0;// OVERALL SCOPE
 
 	protected IFunctionNode fn = null;
 	protected ITestedFunctionReport fnReport = null;

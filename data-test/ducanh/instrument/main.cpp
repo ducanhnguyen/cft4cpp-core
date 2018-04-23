@@ -66,6 +66,69 @@ void try_catch() {
 	}
 }
 
+int Fibonacci(int n){
+	if ( n == 0 )
+		return 0;
+	else if ( n == 1 )
+		return 1;
+	else
+		return ( Fibonacci(n-1) + Fibonacci(n-2) );
+} 
+int add_digits(int n) {
+	static int sum = 0;
+	
+	if (n == 0) {
+		return 0;
+	}	
+	sum = n%10 + add_digits(n/10);
+
+	return sum;
+}
+
+int compare_string(char *first, char *second){
+	while(*first==*second){
+		if ( *first == '\0' || *second == '\0' )
+			break;
+		
+		first++;
+		second++;
+	}
+	if( *first == '\0' && *second == '\0' )
+		return 0;
+	else
+		return -1;
+}
+
+void mergeTwoArray(int a[], int m, int b[], int n, int sorted[]) {
+	int i, j, k, t;
+
+	t = j = k = 0;
+
+	for (i = 0; i < m + n; t++) {
+		if (j < m && k < n) {
+			if (a[j] < b[k]) {
+				sorted[i] = a[j];
+				j++;
+			} else {
+				sorted[i] = b[k];
+				k++;
+			}
+			i++;
+		} else if (j == m) {
+			for (int t = 0; i < m + n;t++) {
+				sorted[i] = b[k];
+				k++;
+				i++;
+			}
+		} else {
+			for (int t = 0; i < m + n;t++) {
+				sorted[i] = a[j];
+				j++;
+				i++;
+			}
+		}
+	}
+}
 int main(){
 	return 0;
 }

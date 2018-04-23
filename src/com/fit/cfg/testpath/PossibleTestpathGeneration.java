@@ -83,13 +83,12 @@ public class PossibleTestpathGeneration implements ITestpathGeneration {
 	}
 
 	public static void main(String[] args) throws Exception {
-		ProjectParser parser = new ProjectParser(new File(Paths.TSDV_R1_4));
+		ProjectParser parser = new ProjectParser(new File(Paths.JOURNAL_TEST));
 
 		IFunctionNode function = (IFunctionNode) Search
-				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "calculateAge(Date,Date)").get(0);
+				.searchNodes(parser.getRootTree(), new FunctionNodeCondition(), "mergeSort(int[],int,int)").get(0);
+		System.out.println(function.getAST().getRawSignature());
 
-		FunctionNormalizer fnNormalizer = function.getGeneralNormalizationFunction();
-		function.setAST(fnNormalizer.getNormalizedAST());
 		CFGGenerationSubCondition cfgGen = new CFGGenerationSubCondition(function,
 				ICFGGeneration.SEPARATE_FOR_INTO_SEVERAL_NODES);
 		ICFG cfg = cfgGen.generateCFG();
@@ -97,7 +96,7 @@ public class PossibleTestpathGeneration implements ITestpathGeneration {
 		cfg.setIdforAllNodes();
 		cfg.resetVisitedStateOfNodes();
 
-		int maxIterations = 4;
+		int maxIterations = 1;
 		PossibleTestpathGeneration tpGen = new PossibleTestpathGeneration(cfg, maxIterations);
 		tpGen.generateTestpaths();
 
@@ -149,28 +148,14 @@ public class PossibleTestpathGeneration implements ITestpathGeneration {
 
 					int currentIterations = tp.count(trueNode);
 					if (currentIterations < maxIterationsforEachLoop) {
-						// if (haveSolution(tp, false))
-						traverseCFG(falseNode, tp, testpaths);
-						// else
-						// logger.debug(".");
 
-						// if (haveSolution(tp, true))
+						traverseCFG(falseNode, tp, testpaths);
 						traverseCFG(trueNode, tp, testpaths);
-						// else
-						// logger.debug(".");
 					} else
-						// if (haveSolution(tp, false))
 						traverseCFG(falseNode, tp, testpaths);
 				} else {
-					// if (haveSolution(tp, false))
 					traverseCFG(falseNode, tp, testpaths);
-					// else
-					// logger.debug(".");
-
-					// if (haveSolution(tp, true))
 					traverseCFG(trueNode, tp, testpaths);
-					// else
-					// logger.debug(".");
 				}
 			else
 				traverseCFG(trueNode, tp, testpaths);

@@ -131,8 +131,11 @@ void quickSort(int arr[], int low, int high) {
 
 		// Separately sort elements before
 		// partition and after partition
-		quickSort(arr, low, pi - 1);
-		quickSort(arr, pi + 1, high);
+		int x = pi - 1;
+		quickSort(arr, low, x);
+		
+		int y = pi + 1;
+		quickSort(arr, y, high);
 	}
 }
 
@@ -150,14 +153,18 @@ void quickSortIterative(int arr[], int l, int h) {
 	int top = -1;
 
 	// push initial values of l and h to stack
-	stack[++top] = l;
-	stack[++top] = h;
+	top++;
+	stack[top] = l;
+	top++;
+	stack[top] = h;
 
 	// Keep popping from stack while is not empty
 	while (top >= 0) {
 		// Pop h and l
-		h = stack[top--];
-		l = stack[top--];
+		h = stack[top];
+		top--;
+		l = stack[top];
+		top--;
 
 		// Set pivot element at its correct position
 		// in sorted array
@@ -166,15 +173,19 @@ void quickSortIterative(int arr[], int l, int h) {
 		// If there are elements on left side of pivot,
 		// then push left side to stack
 		if (p - 1 > l) {
-			stack[++top] = l;
-			stack[++top] = p - 1;
+			top++;
+			stack[top] = l;
+			top++;
+			stack[top] = p - 1;
 		}
 
 		// If there are elements on right side of pivot,
 		// then push right side to stack
 		if (p + 1 < h) {
-			stack[++top] = p + 1;
-			stack[++top] = h;
+			top++;
+			stack[top] = p + 1;
+			top++;
+			stack[top] = h;
 		}
 	}
 }

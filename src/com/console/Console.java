@@ -226,7 +226,8 @@ public class Console {
 						+ (stms.size() <= 50 ? stms : "Too long. size=" + stms.size()) + "<br/>";
 
 				if (testdata.isHighlight())
-					allFunctionsTestReport += testdataStatus + testdataStr + statementCov + branchCov + testpath;
+					allFunctionsTestReport += "<span style=\"opacity:1\">" + testdataStatus + testdataStr + statementCov
+							+ branchCov + testpath + "</span>";
 				else
 					allFunctionsTestReport += "<span style=\"opacity:0.5\">" + testdataStatus + testdataStr
 							+ statementCov + branchCov + testpath + "</span>";
@@ -257,7 +258,13 @@ public class Console {
 		allFunctionsTestReport += "<br/>" + config1 + "<br/>" + config2 + "<br/>" + solver + "<br/>" + iterations
 				+ "<br/>" + sizeofArray + "<br/>";
 
-		//
+		// Others
+		String removeConstraints = "Removed constraints size = " + AbstractTestdataGeneration.removedConstraints
+				+ "<br/>";
+		String removeTestdata = "Removed test data size = " + AbstractTestdataGeneration.removedTestdata + "<br/>";
+
+		allFunctionsTestReport += removeConstraints + removeTestdata;
+
 		fullHtml = "<!DOCTYPE html> <html> <head>" + style + "</head><body>" + allFunctionsTestReport
 				+ "</body></html>";
 		Utils.writeContentToFile(fullHtml, htmlFile.getAbsolutePath());
@@ -266,9 +273,8 @@ public class Console {
 		// Present changes in visited branches over iterations
 		String visitedBranchesChangesOverIterations = "";
 		for (Integer[] iterationInfor : AbstractTestdataGeneration.visitedBranchesInfor) {
-			Integer iteration = iterationInfor[0];
 			Integer numVisitedBranches = iterationInfor[1];
-			visitedBranchesChangesOverIterations += toRow(toCell(iteration + "") + toCell(numVisitedBranches + ""));
+			visitedBranchesChangesOverIterations += toRow(toCell(numVisitedBranches + ""));
 		}
 		visitedBranchesChangesOverIterations = "<table>" + visitedBranchesChangesOverIterations + "</table>";
 		String iterationInforHtml = "<!DOCTYPE html> <html> <head>" + style + "</head><body>"
