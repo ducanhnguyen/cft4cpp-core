@@ -3,14 +3,14 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="ava">
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="cft4cpp-core">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../../Tools/eclipse Java/"/>
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
-    <path id="ava.classpath">
+    <path id="cft4cpp-core.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/commons-io-2.5.jar"/>
         <pathelement location="lib/hamcrest-all-1.3.jar"/>
@@ -60,6 +60,7 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -74,7 +75,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
@@ -93,17 +94,17 @@
     </target>
     <target name="ASTUtils">
         <java classname="com.fit.utils.ASTUtils" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="AvoidingErrorFunctionInstrumentation">
         <java classname="com.fit.testdatagen.fast.AvoidingErrorFunctionInstrumentation" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="BranchCoverageComputation">
         <java classname="com.fit.testdatagen.coverage.BranchCoverageComputation" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="BranchCoverageComputationv2Test">
@@ -112,17 +113,17 @@
             <formatter type="xml"/>
             <test name="test.parser.BranchCoverageComputationv2Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="BranchCoverageComputation_Mark">
         <java classname="com.fit.testdatagen.coverage.BranchCoverageComputation_Mark" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="CFGGenerationforBranchvsStatementCoverage">
         <java classname="com.fit.cfg.CFGGenerationforBranchvsStatementCoverage" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="CFGGenerationForDisplayingTest">
@@ -131,7 +132,7 @@
             <formatter type="xml"/>
             <test name="test.parser.CFGGenerationForDisplayingTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGGenerationSubConditionTest">
@@ -140,12 +141,12 @@
             <formatter type="xml"/>
             <test name="test.parser.CFGGenerationSubConditionTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_Mark">
         <java classname="com.fit.testdatagen.coverage.CFGUpdater_Mark" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="CFGUpdater_MarkTest.break_Stm">
@@ -154,7 +155,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.if_control_block_false_branch_2">
@@ -163,7 +164,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.if_else_control_block_2">
@@ -172,7 +173,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.if_else_control_block_4">
@@ -181,7 +182,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.if_else_control_block_5">
@@ -190,7 +191,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest">
@@ -199,7 +200,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.multiple_brackets">
@@ -208,7 +209,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.recursive_1">
@@ -217,7 +218,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.recursive_2">
@@ -226,7 +227,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="CFGUpdater_MarkTest.simple">
@@ -235,12 +236,12 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Console">
         <java classname="com.console.Console" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="FastTestdataGenerationTest">
@@ -249,7 +250,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.fast.FastTestdataGenerationTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="FastTestdataGenerationTest_basic">
@@ -258,12 +259,12 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.fast.FastTestdataGenerationTest_basic" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="FastTestdriverGenerationforCpp">
         <java classname="com.fit.testdatagen.fast.FastTestdriverGenerationforCpp" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="FullParserTest">
@@ -272,82 +273,82 @@
             <formatter type="xml"/>
             <test name="test.parser.FullParserTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="FunctionInstrumentation">
         <java classname="com.fit.instrument.FunctionInstrumentation" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="FunctionInstrumentationForStatementvsBranch_Marker">
         <java classname="com.fit.instrument.FunctionInstrumentationForStatementvsBranch_Marker" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="FunctionInstrumentationForSubCondition">
         <java classname="com.fit.instrument.FunctionInstrumentationForSubCondition" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="FunctionInstrumentUtils">
         <java classname="com.fit.instrument.FunctionInstrumentUtils" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="GoogleTestSourceCodeTest">
         <java classname="test.parser.GoogleTestSourceCodeTest" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="GUIView (1)">
         <java classname="com.fit.gui.main.GUIView" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="NormalCfgNode">
         <java classname="com.fit.cfg.object.NormalCfgNode" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="PossibleTestpathGeneration">
         <java classname="com.fit.cfg.testpath.PossibleTestpathGeneration" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="ProjectLoader">
         <java classname="com.fit.parser.projectparser.ProjectLoader" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="ProjectParser">
         <java classname="com.fit.parser.projectparser.ProjectParser" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="SmtLibv2Normalizer">
         <java classname="com.fit.testdatagen.se.solver.SmtLibv2Normalizer" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="SmtLibv2Normalizer2">
         <java classname="com.fit.testdatagen.se.solver.SmtLibv2Normalizer2" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="SourcecodeFileParser (1)">
         <java classname="com.fit.parser.projectparser.SourcecodeFileParser" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="SymbolicExecution">
         <java classname="com.fit.testdatagen.se.SymbolicExecution" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="TestpathString_Marker">
         <java classname="com.fit.testdata.object.TestpathString_Marker" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="Tsdvr14_Complex_Test">
@@ -356,7 +357,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Tsdvr14_Complex_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Tsdvr14_Complex_Test.test15">
@@ -365,7 +366,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Tsdvr14_Complex_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Tsdvr1_ArrayType_Test">
@@ -374,7 +375,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Tsdvr1_ArrayType_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Tsdvr1_BasicType_Test">
@@ -383,7 +384,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Tsdvr1_BasicType_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="VnuTestSuite">
@@ -392,7 +393,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.VnuTestSuite" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Basic_Test">
@@ -401,7 +402,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Basic_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_BTL_Test">
@@ -410,7 +411,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_BTL_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Combined_Test">
@@ -419,7 +420,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Combined_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Combined_Test.test10">
@@ -428,7 +429,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Combined_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test">
@@ -437,7 +438,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test1">
@@ -446,7 +447,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test12">
@@ -455,7 +456,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test13">
@@ -464,7 +465,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test17">
@@ -473,7 +474,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test2">
@@ -482,7 +483,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test5">
@@ -491,7 +492,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test6">
@@ -500,7 +501,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Journal_Test.test7">
@@ -509,7 +510,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test">
@@ -518,7 +519,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test1">
@@ -527,7 +528,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test10 (1)">
@@ -536,7 +537,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test10">
@@ -545,7 +546,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test11">
@@ -554,7 +555,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test12">
@@ -563,7 +564,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test14">
@@ -572,7 +573,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test2">
@@ -581,7 +582,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test21">
@@ -590,7 +591,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test24">
@@ -599,7 +600,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test27">
@@ -608,7 +609,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test3">
@@ -617,7 +618,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test32">
@@ -626,7 +627,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test36">
@@ -635,7 +636,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test37">
@@ -644,7 +645,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test4">
@@ -653,7 +654,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test5">
@@ -662,7 +663,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test7">
@@ -671,7 +672,7 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Vnu_Pratical_Test.test9">
@@ -680,12 +681,12 @@
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Z3SolutionParser">
         <java classname="com.fit.testdatagen.se.solver.Z3SolutionParser" failonerror="true" fork="yes">
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </java>
     </target>
     <target name="Z3SolutionParserTest">
@@ -694,7 +695,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.se.solver.Z3SolutionParserTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="Z3SolutionParserTest.test6">
@@ -703,7 +704,7 @@
             <formatter type="xml"/>
             <test name="com.fit.testdatagen.se.solver.Z3SolutionParserTest" todir="${junit.output.dir}"/>
             <jvmarg line="-ea"/>
-            <classpath refid="ava.classpath"/>
+            <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>
     <target name="junitreport">
