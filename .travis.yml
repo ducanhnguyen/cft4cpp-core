@@ -3,5 +3,5 @@ jdk:
   - oraclejdk8
 
 script:
-ant build
-ant test
+- ant build
+- ant test
