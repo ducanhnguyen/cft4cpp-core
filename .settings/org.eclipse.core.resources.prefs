@@ -1,6 +1,8 @@
 eclipse.preferences.version=1
 encoding//src/com/fit/cfg/CFGGenerationforBranchvsStatementCoverage.java=UTF-8
 encoding//src/com/fit/cfg/testpath/ITestpathInCFG.java=UTF-8
+encoding//src/com/fit/gui/cfg/CFGNode.java=UTF-8
+encoding//src/com/fit/gui/cfg/CFGNodeAdapter.java=UTF-8
 encoding//src/com/fit/gui/testreport/object/TestedFunctionReport.java=UTF-8
 encoding//src/com/fit/instrument/FunctionInstrumentationForStatementvsBranch_Marker.java=UTF-8
 encoding//src/com/fit/instrument/FunctionInstrumentationForSubCondition.java=UTF-8

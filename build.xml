@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="ava">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../Tools/eclipse Java/"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="ava.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/commons-io-2.5.jar"/>
+        <pathelement location="lib/hamcrest-all-1.3.jar"/>
+        <pathelement location="lib/jeval.jar"/>
+        <pathelement location="lib/json-simple-1.1.1.jar"/>
+        <pathelement location="lib/junit-4.12.jar"/>
+        <pathelement location="lib/log4j-1.2.16.jar"/>
+        <pathelement location="lib/org.eclipse.equinox.common_3.7.0.v20150402-1709.jar"/>
+        <pathelement location="lib/poi-3.14-20160307.jar"/>
+        <pathelement location="lib/poi-ooxml-3.14-20160307.jar"/>
+        <pathelement location="lib/poi-ooxml-schemas-3.14-20160307.jar"/>
+        <pathelement location="lib/rsyntaxtextarea-2.6.0-SNAPSHOT.jar"/>
+        <pathelement location="lib/weblaf-complete-1.28.jar"/>
+        <pathelement location="lib/xmlbeans-2.6.0.jar"/>
+        <pathelement location="lib/cdt/com.ibm.icu_54.1.1.v201501272100.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt_9.0.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core_6.0.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.aix_5.4.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.aix.source_5.4.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.linux_5.3.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.linux.ppc64_5.2.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.linux.ppc64le_1.0.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.linux.source_5.3.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.linux.x86_5.3.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.linux.x86_64_5.3.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.lrparser_5.2.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.lrparser.source_5.2.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.lrparser.xlc_5.1.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.lrparser.xlc.source_5.1.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.macosx_5.3.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.macosx.source_5.3.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.native_5.9.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.native.source_5.9.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.parser.upc_5.1.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.parser.upc.source_5.1.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.source_6.0.0.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.win32_5.4.1.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.win32.source_5.4.1.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.win32.x86_5.4.1.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.cdt.core.win32.x86_64_5.4.1.201607151550.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.core.resources_3.8.100.v20130521-2026.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.core.resources.win32.x86_64_3.5.0.v20121203-0906.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.equinox.common_3.7.0.v20150402-1709.jar"/>
+        <pathelement location="lib/cdt/org.eclipse.osgi_3.9.1.v20130814-1242.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="ava.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="ASTUtils">
+        <java classname="com.fit.utils.ASTUtils" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="AvoidingErrorFunctionInstrumentation">
+        <java classname="com.fit.testdatagen.fast.AvoidingErrorFunctionInstrumentation" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="BranchCoverageComputation">
+        <java classname="com.fit.testdatagen.coverage.BranchCoverageComputation" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="BranchCoverageComputationv2Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.parser.BranchCoverageComputationv2Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="BranchCoverageComputation_Mark">
+        <java classname="com.fit.testdatagen.coverage.BranchCoverageComputation_Mark" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="CFGGenerationforBranchvsStatementCoverage">
+        <java classname="com.fit.cfg.CFGGenerationforBranchvsStatementCoverage" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="CFGGenerationForDisplayingTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.parser.CFGGenerationForDisplayingTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGGenerationSubConditionTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.parser.CFGGenerationSubConditionTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_Mark">
+        <java classname="com.fit.testdatagen.coverage.CFGUpdater_Mark" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="CFGUpdater_MarkTest.break_Stm">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.if_control_block_false_branch_2">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.if_else_control_block_2">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.if_else_control_block_4">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.if_else_control_block_5">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.multiple_brackets">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.recursive_1">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.recursive_2">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGUpdater_MarkTest.simple">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.coverage.CFGUpdater_MarkTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Console">
+        <java classname="com.console.Console" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="FastTestdataGenerationTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.fast.FastTestdataGenerationTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="FastTestdataGenerationTest_basic">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.fast.FastTestdataGenerationTest_basic" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="FastTestdriverGenerationforCpp">
+        <java classname="com.fit.testdatagen.fast.FastTestdriverGenerationforCpp" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="FullParserTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.parser.FullParserTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="FunctionInstrumentation">
+        <java classname="com.fit.instrument.FunctionInstrumentation" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="FunctionInstrumentationForStatementvsBranch_Marker">
+        <java classname="com.fit.instrument.FunctionInstrumentationForStatementvsBranch_Marker" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="FunctionInstrumentationForSubCondition">
+        <java classname="com.fit.instrument.FunctionInstrumentationForSubCondition" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="FunctionInstrumentUtils">
+        <java classname="com.fit.instrument.FunctionInstrumentUtils" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="GoogleTestSourceCodeTest">
+        <java classname="test.parser.GoogleTestSourceCodeTest" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="GUIView (1)">
+        <java classname="com.fit.gui.main.GUIView" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="NormalCfgNode">
+        <java classname="com.fit.cfg.object.NormalCfgNode" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="PossibleTestpathGeneration">
+        <java classname="com.fit.cfg.testpath.PossibleTestpathGeneration" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="ProjectLoader">
+        <java classname="com.fit.parser.projectparser.ProjectLoader" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="ProjectParser">
+        <java classname="com.fit.parser.projectparser.ProjectParser" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="SmtLibv2Normalizer">
+        <java classname="com.fit.testdatagen.se.solver.SmtLibv2Normalizer" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="SmtLibv2Normalizer2">
+        <java classname="com.fit.testdatagen.se.solver.SmtLibv2Normalizer2" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="SourcecodeFileParser (1)">
+        <java classname="com.fit.parser.projectparser.SourcecodeFileParser" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="SymbolicExecution">
+        <java classname="com.fit.testdatagen.se.SymbolicExecution" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="TestpathString_Marker">
+        <java classname="com.fit.testdata.object.TestpathString_Marker" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="Tsdvr14_Complex_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Tsdvr14_Complex_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Tsdvr14_Complex_Test.test15">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Tsdvr14_Complex_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Tsdvr1_ArrayType_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Tsdvr1_ArrayType_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Tsdvr1_BasicType_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Tsdvr1_BasicType_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="VnuTestSuite">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.VnuTestSuite" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Basic_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Basic_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_BTL_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_BTL_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Combined_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Combined_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Combined_Test.test10">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Combined_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test1">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test12">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test13">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test17">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test2">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test5">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test6">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Journal_Test.test7">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test1">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test10 (1)">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test10">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test11">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test12">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test14">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test2">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test21">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test24">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test27">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test3">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test32">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test36">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test37">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test4">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test5">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test7">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Vnu_Pratical_Test.test9">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.testdatageneration.Vnu_Pratical_Test" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Z3SolutionParser">
+        <java classname="com.fit.testdatagen.se.solver.Z3SolutionParser" failonerror="true" fork="yes">
+            <classpath refid="ava.classpath"/>
+        </java>
+    </target>
+    <target name="Z3SolutionParserTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.se.solver.Z3SolutionParserTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="Z3SolutionParserTest.test6">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.fit.testdatagen.se.solver.Z3SolutionParserTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="ava.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>
