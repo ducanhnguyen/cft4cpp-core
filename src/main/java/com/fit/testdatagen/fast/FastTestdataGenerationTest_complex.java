@@ -4,9 +4,7 @@ import javax.sound.sampled.LineUnavailableException;
 
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 
 import com.fit.config.IFunctionConfig;
 import com.fit.config.Paths;
@@ -15,8 +13,6 @@ import com.fit.testdatagen.htmlreport.FuntionTestReportGUI;
 import testdatageneration.AbstractJUnitTest;
 
 public class FastTestdataGenerationTest_complex extends AbstractJUnitTest {
-	@Rule
-	public Timeout globalTimeout = Timeout.seconds(120);
 
 	/**
 	 * Tsdvr14_Age_Test
@@ -233,7 +229,8 @@ public class FastTestdataGenerationTest_complex extends AbstractJUnitTest {
 				IFunctionConfig.SUBCONDITION, new FuntionTestReportGUI()));
 	}
 
-	@Test // HALF-PASS: Detect test path wrong because of the special source code
+	@Test // HALF-PASS: Detect test path wrong because of the special source
+			// code
 	@Ignore
 	public void Vnu_Pratical_Test3() throws LineUnavailableException {
 		Assert.assertEquals(true, generateTestdata(Paths.SYMBOLIC_EXECUTION_TEST, "Merge2(int[],int[],int[],int,int)",

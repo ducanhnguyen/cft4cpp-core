@@ -4,22 +4,19 @@ import javax.sound.sampled.LineUnavailableException;
 
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 
 import com.fit.config.IFunctionConfig;
 import com.fit.config.Paths;
 import com.fit.testdatagen.htmlreport.FuntionTestReportGUI;
 
 public class Vnu_Basic_Test extends AbstractJUnitTest {
-	@Rule
-	public Timeout globalTimeout = Timeout.seconds(60);
-
 	/**
 	 * <pre>
-	 * int basicTest1(int a, int b) { // fails due to line break (it leads to the inconsistency in the position
-	 * 								// of statement "a>0" between the original function and CFG
+	 * int basicTest1(int a, int b) { // fails due to line break (it leads to
+	 * 								// the inconsistency in the position
+	 * 								// of statement "a>0" between the
+	 * 								// original function and CFG
 	 * 	if (a > 0)
 	 * 		return a;
 	 * 	return b;

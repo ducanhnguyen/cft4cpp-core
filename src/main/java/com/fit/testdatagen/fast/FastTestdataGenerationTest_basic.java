@@ -3,9 +3,7 @@ package com.fit.testdatagen.fast;
 import javax.sound.sampled.LineUnavailableException;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 
 import com.fit.config.IFunctionConfig;
 import com.fit.config.Paths;
@@ -17,8 +15,6 @@ import testdatageneration.AbstractJUnitTest;
  * Vnu_Basic_Test
  */
 public class FastTestdataGenerationTest_basic extends AbstractJUnitTest {
-	@Rule
-	public Timeout globalTimeout = Timeout.seconds(120); 
 
 	@Test
 	public void Vnu_Basic_Test1() throws LineUnavailableException {
