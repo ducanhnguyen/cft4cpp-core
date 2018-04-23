@@ -1,0 +1,16 @@
+arr[6]=5
+arr[7]=18
+arr[4]=21
+arr[5]=2
+arr[2]=26
+arr[3]=7
+arr[0]=6
+arr[1]=5
+arr[10]=11
+arr[11]=28
+arr[8]=13
+arr[9]=18
+sizeof(arr)=13
+l=0
+r=5
+

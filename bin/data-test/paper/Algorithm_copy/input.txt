@@ -1,0 +1,15 @@
+arr[6]=4
+arr[7]=15
+arr[4]=2
+arr[5]=24
+arr[2]=18
+arr[3]=1
+arr[0]=1
+arr[1]=27
+arr[10]=3
+arr[11]=8
+arr[8]=23
+arr[9]=10
+sizeof(arr)=13
+n=24
+

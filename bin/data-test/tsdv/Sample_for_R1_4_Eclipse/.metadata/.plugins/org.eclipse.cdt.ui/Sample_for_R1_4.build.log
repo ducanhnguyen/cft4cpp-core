@@ -1,0 +1,63 @@
+
+**** Build of configuration Debug for project Sample_for_R1_4 ****
+
+make all 
+Building file: ../Age.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"Age.d" -MT"Age.d" -o"Age.o" "../Age.cpp"
+../Age.cpp: In function ‘int calculateZodiac(Date)’:
+../Age.cpp:171:6: warning: unused variable ‘year1’ [-Wunused-variable]
+  int year1 = born.year; 
+      ^
+Finished building: ../Age.cpp
+ 
+Building file: ../Complex.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"Complex.d" -MT"Complex.d" -o"Complex.o" "../Complex.cpp"
+Finished building: ../Complex.cpp
+ 
+Building file: ../NonLinear.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"NonLinear.d" -MT"NonLinear.d" -o"NonLinear.o" "../NonLinear.cpp"
+Finished building: ../NonLinear.cpp
+ 
+Building file: ../PassArgs.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"PassArgs.d" -MT"PassArgs.d" -o"PassArgs.o" "../PassArgs.cpp"
+Finished building: ../PassArgs.cpp
+ 
+Building file: ../TypeDef.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"TypeDef.d" -MT"TypeDef.d" -o"TypeDef.o" "../TypeDef.cpp"
+Finished building: ../TypeDef.cpp
+ 
+Building file: ../asa005.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"asa005.d" -MT"asa005.d" -o"asa005.o" "../asa005.cpp"
+Finished building: ../asa005.cpp
+ 
+Building file: ../asa103.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"asa103.d" -MT"asa103.d" -o"asa103.o" "../asa103.cpp"
+Finished building: ../asa103.cpp
+ 
+Building file: ../cities.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"cities.d" -MT"cities.d" -o"cities.o" "../cities.cpp"
+Finished building: ../cities.cpp
+ 
+Building file: ../main.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main.d" -MT"main.d" -o"main.o" "../main.cpp"
+Finished building: ../main.cpp
+ 
+Building file: ../r85.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"r85.d" -MT"r85.d" -o"r85.o" "../r85.cpp"
+Finished building: ../r85.cpp
+ 
+Building target: Sample_for_R1_4
+Invoking: GCC C++ Linker
+g++  -o"Sample_for_R1_4"  ./Age.o ./Complex.o ./NonLinear.o ./PassArgs.o ./TypeDef.o ./asa005.o ./asa103.o ./cities.o ./main.o ./r85.o   
+Finished building target: Sample_for_R1_4
+ 
