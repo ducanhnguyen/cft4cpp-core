@@ -5,7 +5,7 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="cft4cpp-core">
     <property environment="env"/>
-    <property name="junit.output.dir" value="test"/>
+    <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
@@ -55,6 +55,19 @@
         <pathelement location="lib/cdt/org.eclipse.equinox.common_3.7.0.v20150402-1709.jar"/>
         <pathelement location="lib/cdt/org.eclipse.osgi_3.9.1.v20130814-1242.jar"/>
     </path>
+    <path id="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER.libraryclasspath"/>
+    <path id="run.CustomJevalTest.classpath">
+        <path refid="cft4cpp-core.classpath"/>
+        <path refid="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER.libraryclasspath"/>
+    </path>
+    <path id="run.Vnu_Journal_Test.classpath">
+        <path refid="cft4cpp-core.classpath"/>
+        <path refid="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER.libraryclasspath"/>
+    </path>
+    <path id="run.CFGGenerationTest.classpath">
+        <path refid="cft4cpp-core.classpath"/>
+        <path refid="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER.libraryclasspath"/>
+    </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
@@ -91,11 +104,35 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
+    <target name="CustomJevalTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="parser.CustomJevalTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.CustomJevalTest.classpath"/>
+        </junit>
+    </target>
     <target name="Vnu_Journal_Test">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
             <test name="test.testdatageneration.Vnu_Journal_Test" todir="${junit.output.dir}"/>
+            <classpath refid="run.Vnu_Journal_Test.classpath"/>
+        </junit>
+    </target>
+    <target name="CFGGenerationTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="parser.CFGGenerationTest" todir="${junit.output.dir}"/>
+            <classpath refid="run.CFGGenerationTest.classpath"/>
+        </junit>
+    </target>
+    <target name="VariableTypeNormalizerTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.parser.VariableTypeNormalizerTest" todir="${junit.output.dir}"/>
             <classpath refid="cft4cpp-core.classpath"/>
         </junit>
     </target>

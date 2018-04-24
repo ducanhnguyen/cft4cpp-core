@@ -4,4 +4,4 @@ jdk:
 
 script:
 - ant build
-- ant test
+- ant 'VariableTypeNormalizerTest'
