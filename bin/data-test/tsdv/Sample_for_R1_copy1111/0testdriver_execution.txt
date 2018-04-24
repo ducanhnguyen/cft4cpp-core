@@ -1,2 +1,0 @@
-statement={
-line-in-function=2###offset=48###statement=return x;

@@ -1,3 +1,0 @@
-statement={
-line-in-function=3###offset=62###statement=x > 0###control-block=if
-line-in-function=4###offset=72###statement=return 1;

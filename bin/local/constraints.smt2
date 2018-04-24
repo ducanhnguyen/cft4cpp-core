@@ -1,7 +1,0 @@
-(set-option :timeout 5000)
-(declare-fun tvw_a (Int) Int)
-(declare-fun tvw_b (Int) Int)
-(declare-fun tvw_i () Int)
-(declare-fun tvw_k () Int)
-(assert (=  (tvw_a (+  (+  (+  (+  0   0 )   0 )   0 )   0 ) )   0 ) )
-(check-sat)(get-model)
