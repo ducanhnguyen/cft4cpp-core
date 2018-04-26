@@ -5,7 +5,9 @@ os:
 jdk:
   - oraclejdk8
 before_install:
+- sudo add-apt-repository ppa:hvr/z3
 - sudo apt-get update
+- sudo apt-get install z3
 script:
 - ant build
 - ant 'AllTestSuite'
