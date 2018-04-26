@@ -1,8 +1,9 @@
 language: java
+sudo: enabled
 jdk:
   - oraclejdk8
 install:
-- sudo pacman z3
+- sudo pacman -S z3
 script:
 - ant build
 - ant 'AllTestSuite'
