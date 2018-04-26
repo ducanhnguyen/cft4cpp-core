@@ -1,11 +1,11 @@
 language: java
 sudo: enabled
+os:
+  - linux
 jdk:
   - oraclejdk8
 before_install:
-- sudo add-apt-repository ppa:launchpad.net/ubuntu/+source/z3/4.4.1-0.3build4
 - sudo apt-get update
-- sudo apt-get install z3
 script:
 - ant build
 - ant 'AllTestSuite'
