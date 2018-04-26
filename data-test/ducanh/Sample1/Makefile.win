@@ -1,8 +1,8 @@
 # Project: Sample1
 # Makefile created by Dev-C++ 5.11
 
-CPP      = g++.exe
-CC       = gcc.exe
+CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
 WINDRES  = windres.exe
 OBJ      = SimpleStackLinklist.o
 LINKOBJ  = SimpleStackLinklist.o
@@ -26,3 +26,27 @@ $(BIN): $(OBJ)
 
 SimpleStackLinklist.o: SimpleStackLinklist.cpp
 	$(CPP) -c SimpleStackLinklist.cpp -o SimpleStackLinklist.o $(CXXFLAGS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

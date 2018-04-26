@@ -1,8 +1,8 @@
 # Project: Sample_R1_Sep16
 # Makefile created by Dev-C++ 5.11
 
-CPP      = g++.exe
-CC       = gcc.exe
+CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
 WINDRES  = windres.exe
 OBJ      = main.o BasicType.o PointerType.o StructType.o UnionType.o ClassType.o NamespaceTest.o OpTest.o EnumType.o ArrayType.o
 LINKOBJ  = main.o BasicType.o PointerType.o StructType.o UnionType.o ClassType.o NamespaceTest.o OpTest.o EnumType.o ArrayType.o
@@ -53,3 +53,27 @@ EnumType.o: EnumType.cpp
 
 ArrayType.o: ArrayType.cpp
 	$(CPP) -c ArrayType.cpp -o ArrayType.o $(CXXFLAGS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

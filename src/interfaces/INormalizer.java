@@ -1,6 +1,6 @@
 package interfaces;
 
-import com.fit.testdatagen.structuregen.ChangedTokens;
+import testdatagen.structuregen.ChangedTokens;
 
 /**
  * Represent normalization behavior for source code, e.g., file level, function

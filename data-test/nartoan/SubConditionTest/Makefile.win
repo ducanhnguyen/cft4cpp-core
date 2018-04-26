@@ -1,8 +1,8 @@
 # Project: SubConditionTest
 # Makefile created by Dev-C++ 5.11
 
-CPP="C:/Dev-Cpp/MinGW64/bin/g++.exe"
-CC="C:/Dev-Cpp/MinGW64/bin/gcc.exe"
+CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
 WINDRES  = windres.exe
 OBJ      = main.o IfCondition.o Loop.o
 LINKOBJ  = main.o IfCondition.o Loop.o
@@ -32,6 +32,13 @@ IfCondition.o: IfCondition.cpp
 
 Loop.o: Loop.cpp
 	$(CPP) -c Loop.cpp -o Loop.o $(CXXFLAGS)
+
+
+
+
+
+
+
 
 
 

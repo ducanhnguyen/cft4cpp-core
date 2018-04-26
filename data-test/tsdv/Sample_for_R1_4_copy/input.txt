@@ -1,0 +1,13 @@
+born.year=17
+
+born.date=24
+
+born.month=30
+
+today.month=6
+
+today.year=26
+
+today.date=2
+
+

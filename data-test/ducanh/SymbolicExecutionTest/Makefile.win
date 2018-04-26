@@ -30,8 +30,8 @@ pointerTest.o: pointerTest.cpp
 switchCaseTest.o: switchCaseTest.cpp
 	$(CPP) -c switchCaseTest.cpp -o switchCaseTest.o $(CXXFLAGS)
 
-basicTest.o: basicTest.c
-	$(CPP) -c basicTest.c -o basicTest.o $(CXXFLAGS)
+basicTest.o: basicTest.cpp
+	$(CPP) -c basicTest.cpp -o basicTest.o $(CXXFLAGS)
 
 nsTest2.o: nsTest2.cpp
 	$(CPP) -c nsTest2.cpp -o nsTest2.o $(CXXFLAGS)
@@ -62,74 +62,6 @@ nsTest6.o: nsTest6.cpp
 
 nsTest7.o: nsTest7.cpp
 	$(CPP) -c nsTest7.cpp -o nsTest7.o $(CXXFLAGS)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

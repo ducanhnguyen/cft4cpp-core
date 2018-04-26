@@ -1,8 +1,8 @@
 # Project: Project1
 # Makefile created by Dev-C++ 5.11
 
-CPP      = g++.exe
-CC       = gcc.exe
+CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
+CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
 WINDRES  = windres.exe
 OBJ      = main.o qlsv.o
 LINKOBJ  = main.o qlsv.o
@@ -29,3 +29,27 @@ main.o: main.cpp
 
 qlsv.o: qlsv.cpp
 	$(CPP) -c qlsv.cpp -o qlsv.o $(CXXFLAGS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

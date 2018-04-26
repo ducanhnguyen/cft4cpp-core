@@ -52,7 +52,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=basicTest.c
+FileName=basicTest.cpp
 CompileCpp=1
 Folder=
 Compile=1
