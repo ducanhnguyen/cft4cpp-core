@@ -4,7 +4,9 @@ jdk:
   - oraclejdk8
 before_install:
 - sudo add-apt-repository http://archive.ubuntu.com/ubuntu/ -y
+- sudo add-apt-repository https://github.com/Z3Prover/z3 -y
 - sudo apt-get update -y
+- sudo apt-get install z3
 script:
 - ant build
 - ant 'AllTestSuite'
