@@ -3,7 +3,8 @@ sudo: enabled
 jdk:
   - oraclejdk8
 before_install:
-- sudo apt-get update
+- sudo add-apt-repository http://archive.ubuntu.com/ubuntu/ -y
+- sudo apt-get update -y
 - sudo apt-get install z3 -y
 script:
 - ant build
