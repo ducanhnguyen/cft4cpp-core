@@ -5,7 +5,6 @@ jdk:
 before_install:
 - sudo add-apt-repository http://archive.ubuntu.com/ubuntu/ -y
 - sudo apt-get update -y
-- sudo apt-get install z3 -y
 script:
 - ant build
 - ant 'AllTestSuite'
