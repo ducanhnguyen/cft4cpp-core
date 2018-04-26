@@ -2,8 +2,8 @@ language: java
 sudo: enabled
 jdk:
   - oraclejdk8
-install:
-- sudo apt-get z3
+before_install:
+- sudo apt-get install z3
 script:
 - ant build
 - ant 'AllTestSuite'
