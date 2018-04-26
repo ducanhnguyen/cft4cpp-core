@@ -118,6 +118,10 @@ public class Console {
 				break;
 
 			case LOG4J_LEVEL:
+				// Note: If there exists log4j configuration outside, this
+				// setLevel is
+				// useless!
+
 				// A log request of level p in a logger with level
 				// q is enabled if p >= q. This rule is at the
 				// heart of log4j. It assumes that levels are
@@ -141,6 +145,9 @@ public class Console {
 					break;
 				case "warn":
 					Logger.getRootLogger().setLevel(Level.WARN);
+					break;
+				case "off":
+					Logger.getRootLogger().setLevel(Level.OFF);
 					break;
 				default:
 					break;

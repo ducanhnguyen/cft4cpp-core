@@ -96,7 +96,7 @@ public abstract class AbstractJUnitTest {
 		boolean reachCoverageObjective = false;
 
 		String[] args = new String[] { Console.LOAD_PROJECT, Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH,
-				Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "debug" };
+				Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "off" };
 		Console console = new Console(args);
 
 		// Display output
