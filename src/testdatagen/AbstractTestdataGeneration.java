@@ -68,7 +68,9 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 	public static float branchCoverage = 0.0f;
 	public static float statementCoverage = 0.0f;
 
-	// DOES NOT RESET THESE FOLLOWING FIELDS
+	public static boolean isTerminateDuetoTooLong = false;
+
+	// DOES NOT RESET THESE FOLLOWING FIELDS (FOR SUMMARY PURPOSE)
 	public static int numOfBranches = 0;// OVERALL SCOPE
 	public static int numOfVisitedBranches = 0;// OVERALL SCOPE
 	public static int totalSolverCalls = 0;// OVERALL SCOPE
@@ -105,6 +107,7 @@ public abstract class AbstractTestdataGeneration implements ITestdataGeneration 
 		testdata = new ArrayList<>();
 		branchCoverage = 0f;
 		statementCoverage = 0f;
+		isTerminateDuetoTooLong = false;
 
 		Date startTime = Calendar.getInstance().getTime();
 

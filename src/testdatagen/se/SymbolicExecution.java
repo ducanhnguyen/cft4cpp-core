@@ -476,7 +476,7 @@ public class SymbolicExecution implements ISymbolicExecution {
 				String nameVarInConstraint = ISymbolicVariable.PREFIX_SYMBOLIC_VALUE + var.getName();
 				String newConstraint = "(" + nameVarInConstraint + ">=32&&" + nameVarInConstraint + "<=126)" + "||"
 						+ nameVarInConstraint + "==0";
-				constraints.add(new PathConstraint(newConstraint, null, PathConstraint.CREATE_FROM_STATEMENT));
+				constraints.add(new PathConstraint(newConstraint, null, PathConstraint.ADDITIONAL_TYPE));
 			}
 	}
 
@@ -486,7 +486,7 @@ public class SymbolicExecution implements ISymbolicExecution {
 					&& VariableTypes.isBasic(var.getType())) {
 				String nameVarInConstraint = ISymbolicVariable.PREFIX_SYMBOLIC_VALUE + var.getName();
 				String newConstraint = nameVarInConstraint + "==" + 0 + "||" + nameVarInConstraint + "==1";
-				constraints.add(new PathConstraint(newConstraint, null, PathConstraint.CREATE_FROM_STATEMENT));
+				constraints.add(new PathConstraint(newConstraint, null, PathConstraint.ADDITIONAL_TYPE));
 			}
 	}
 
@@ -507,7 +507,7 @@ public class SymbolicExecution implements ISymbolicExecution {
 				newConstraint = newConstraint.replaceAll(Utils.toRegex(item.getName()),
 						ISymbolicVariable.PREFIX_SYMBOLIC_VALUE + item.getName());
 
-			constraints.add(new PathConstraint(newConstraint, null, PathConstraint.CREATE_FROM_STATEMENT));
+			constraints.add(new PathConstraint(newConstraint, null, PathConstraint.ADDITIONAL_TYPE));
 		}
 	}
 
@@ -522,7 +522,7 @@ public class SymbolicExecution implements ISymbolicExecution {
 			String nameVarInConstraint = ISymbolicVariable.PREFIX_SYMBOLIC_VALUE + usedVariable;
 			String newConstraint = "(" + nameVarInConstraint + ">=(" + lower + ")&&" + nameVarInConstraint + "<=("
 					+ upper + "))||" + nameVarInConstraint + "==0";
-			constraints.add(new PathConstraint(newConstraint, null, PathConstraint.CREATE_FROM_STATEMENT));
+			constraints.add(new PathConstraint(newConstraint, null, PathConstraint.ADDITIONAL_TYPE));
 		}
 	}
 

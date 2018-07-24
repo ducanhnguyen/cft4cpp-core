@@ -45,46 +45,51 @@ import testdatagen.se.solver.Z3SolutionParserTest;
 
 @RunWith(Suite.class)
 
-@Suite.SuiteClasses({ CFGGenerationforBranchvsStatementCoverageTest.class, //
-		CFGGenerationforSubConditionCoverageTest.class, //
-		PossibleTestpathGenerationTest.class, //
-		ExternalVariableDetecterTest.class, //
-		Cpp11ClassNormalizerTest.class, //
-		FunctionNameNormalizerTest.class, //
-		VariableTypeNormalizerTest.class, //
-		TypedefNodeNameTest.class, //
-		ProjectParserTest.class, //
-		Z3SolutionParserTest.class, //
-		// VNU TESTS
-		Vnu_Basic_Test.class, //
-		Vnu_BTL_Test.class, //
-		Vnu_Combined_Test.class, //
-		Vnu_Journal_Test.class, //
-		Vnu_Namespace_Test.class, //
-		Vnu_Pointer_Test.class, //
-		Vnu_Pratical_Test.class, //
-		Vnu_Sample1_Test.class, //
-		Vnu_SwitchCase_Test.class, //
-		// TSDV TESTS
-		Tsdvr1_ArrayType_Test.class, //
-		Tsdvr1_BasicType_Test.class, //
-		Tsdvr1_ClassType_Test.class, //
-		Tsdvr1_EnumType_Test.class, //
-		Tsdvr1_Namespace_Test.class, //
-		Tsdvr1_Op_Test.class, //
-		Tsdvr1_PointerType_Test.class, //
-		Tsdvr1_Struct_Test.class, //
-		Tsdvr12_StorageKeyword_Test.class, //
-		Tsdvr12_ViewSource_Test.class, //
-		Tsdvr13_BasicCpp11_Test.class, //
-		Tsdvr14_Age_Test.class, //
-		Tsdvr14_Asaxxx_Test.class, //
-		Tsdvr14_Cities_Test.class, //
-		Tsdvr14_Complex_Test.class, //
-		Tsdvr14_NonLinear_Test.class, //
-		Tsdvr14_PassArgs_Test.class, //
-		Tsdvr14_r85_Test.class, //
-		Tsdvr14_Typedef_Test.class })
+@Suite.SuiteClasses({ 
+//	CFGGenerationforBranchvsStatementCoverageTest.class, //
+//		CFGGenerationforSubConditionCoverageTest.class, //
+//		PossibleTestpathGenerationTest.class, //
+//		ExternalVariableDetecterTest.class, //
+//		Cpp11ClassNormalizerTest.class, //
+//		FunctionNameNormalizerTest.class, //
+//		VariableTypeNormalizerTest.class, //
+//		TypedefNodeNameTest.class, //
+//		ProjectParserTest.class, //
+//		Z3SolutionParserTest.class, //
+//		// VNU TESTS
+//		Vnu_Basic_Test.class, //
+//		Vnu_BTL_Test.class, //
+//		Vnu_Combined_Test.class, //
+		Vnu_Journal_Test.class //
+//		Vnu_Namespace_Test.class, //
+//		Vnu_Pointer_Test.class, //
+//		Vnu_Pratical_Test.class, //
+//		Vnu_Sample1_Test.class, //
+//		Vnu_SwitchCase_Test.class, //
+//		// TSDV TESTS
+//		Tsdvr1_ArrayType_Test.class, //
+//		Tsdvr1_BasicType_Test.class, //
+//		Tsdvr1_ClassType_Test.class, //
+//		Tsdvr1_EnumType_Test.class, //
+//		Tsdvr1_Namespace_Test.class, //
+//		Tsdvr1_Op_Test.class, //
+//		Tsdvr1_PointerType_Test.class, //
+//		Tsdvr1_Struct_Test.class, //
+//		Tsdvr12_StorageKeyword_Test.class, //
+//		Tsdvr12_ViewSource_Test.class, //
+//		Tsdvr13_BasicCpp11_Test.class, //
+//		Tsdvr14_Age_Test.class, //
+//		Tsdvr14_Asaxxx_Test.class, //
+//		Tsdvr14_Cities_Test.class, //
+//		Tsdvr14_Complex_Test.class, //
+//		Tsdvr14_NonLinear_Test.class, //
+//		Tsdvr14_PassArgs_Test.class, //
+//		Tsdvr14_r85_Test.class, //
+//		Tsdvr14_Typedef_Test.class 
+		
+
+
+})
 
 public class AllTestSuite {
 	@Rule

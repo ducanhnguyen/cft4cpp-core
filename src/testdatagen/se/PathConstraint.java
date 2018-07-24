@@ -70,5 +70,5 @@ public class PathConstraint {
 	public static final int CREATE_FROM_DECISION = 0;
 
 	// Represent additional constraints, e.g., constraints for positive indexes
-	public static final int CREATE_FROM_STATEMENT = 1;
+	public static final int ADDITIONAL_TYPE = 1;
 }

@@ -9,7 +9,22 @@ import org.junit.Test;
 import config.IFunctionConfig;
 import config.Paths;
 
+/**
+ * Contain all of tests used in the experiment
+ * 
+ * @author Duc Anh Nguyen
+ *
+ */
 public class Vnu_Journal_Test extends AbstractJUnitTest {
+	public static final int BFS = 0;
+	public static final int UNVISITED_VS_RANDOM_COMBINATION = 1;
+	public static final int UNVISITED = 2;
+	public static final int RANDOM = 3;
+	public static final int DFS = 4;
+	public static final int ANYTHING = -1;
+	public static final int FOLLOW_CONFIGURATION_IN_CODE = -2;
+
+	public static int TEST_DATA_SELECTION_STRATEGY = FOLLOW_CONFIGURATION_IN_CODE;
 
 	@Test
 	public void test1() throws LineUnavailableException {
@@ -67,6 +82,7 @@ public class Vnu_Journal_Test extends AbstractJUnitTest {
 
 	@Test
 	public void test10() throws LineUnavailableException {
+
 		Assert.assertEquals(true,
 				generateTestdata(Paths.JOURNAL_TEST, "bubbleSort2(int[],int)", null, IFunctionConfig.BRANCH_COVERAGE));
 	}
@@ -107,7 +123,6 @@ public class Vnu_Journal_Test extends AbstractJUnitTest {
 		Assert.assertEquals(true, generateTestdata(Paths.JOURNAL_TEST, "mergeSort(int[],int,int)", null,
 				IFunctionConfig.BRANCH_COVERAGE));
 	}
-	// ---------------
 
 	@Test
 	public void test17() throws LineUnavailableException {
@@ -252,4 +267,72 @@ public class Vnu_Journal_Test extends AbstractJUnitTest {
 		Assert.assertEquals(true, generateTestdata(Paths.JOURNAL_TEST, "check_anagram(char[],char[])", null,
 				IFunctionConfig.BRANCH_COVERAGE));
 	}
+
+	@Test
+	public void test43() throws LineUnavailableException {
+		Assert.assertEquals(true, generateTestdata(Paths.JOURNAL_TEST, "printClosest(int[],int,int)", null,
+				IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test44() throws LineUnavailableException {
+		Assert.assertEquals(true,
+				generateTestdata(Paths.JOURNAL_TEST, "largestNum(int,int)", null, IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test45() throws LineUnavailableException {
+		Assert.assertEquals(true, generateTestdata(Paths.JOURNAL_TEST, "frequencyDigits(int,int)", null,
+				IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test46() throws LineUnavailableException {
+		Assert.assertEquals(true,
+				generateTestdata(Paths.JOURNAL_TEST, "lds(int[],int)", null, IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test47() throws LineUnavailableException {
+		Assert.assertEquals(true,
+				generateTestdata(Paths.JOURNAL_TEST, "getPriority(char)", null, IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test48() throws LineUnavailableException {
+		Assert.assertEquals(true,
+				generateTestdata(Paths.JOURNAL_TEST, "printDistinctPFs(int)", null, IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test49() throws LineUnavailableException {
+		Assert.assertEquals(true,
+				generateTestdata(Paths.JOURNAL_TEST, "steps(int,int)", null, IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test50() throws LineUnavailableException {
+
+		Assert.assertEquals(true, generateTestdata(Paths.JOURNAL_TEST, "minimumNumberOfDigits(int,int)", null,
+				IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test51() throws LineUnavailableException {
+		Assert.assertEquals(true, generateTestdata(Paths.JOURNAL_TEST, "printSmallestNumber(int,int)", null,
+				IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test52() throws LineUnavailableException {
+		Assert.assertEquals(true, generateTestdata(Paths.JOURNAL_TEST, "binomialCoeff(int[],int)", null,
+				IFunctionConfig.BRANCH_COVERAGE));
+	}
+
+	@Test
+	public void test53() throws LineUnavailableException {
+		Assert.assertEquals(true,
+				generateTestdata(Paths.JOURNAL_TEST, "sumOfproduct(int)", null, IFunctionConfig.BRANCH_COVERAGE));
+	}
+
 }

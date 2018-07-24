@@ -17,6 +17,8 @@ import config.Paths;
 import config.Settingv2;
 import console.Console;
 import console.ConsoleOutput;
+import testdatagen.Bug;
+import testdatagen.ITestdataGeneration;
 import utils.Utils;
 
 public abstract class AbstractJUnitTest {
@@ -60,14 +62,14 @@ public abstract class AbstractJUnitTest {
 		String configurePath = folderTestPath + "setting.properties";
 		Settingv2.create();
 		AbstractSetting.setValue(ISettingv2.SOLVER_Z3_NAME, 32);
-		
+
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_LOWER_BOUND, 32);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_UPPER_BOUND, 126);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_LOWER_BOUND, 0);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_NUMBER_UPPER_BOUND, 30);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_TEST_ARRAY_SIZE, 12);
 		AbstractSetting.setValue(ISettingv2.MAX_ITERATION_FOR_EACH_LOOP, 11);
-		
+
 		AbstractSetting.setValue(ISettingv2.IN_TEST_MODE, "true");
 		AbstractSetting.setValue(ISettingv2.TESTDATA_STRATEGY,
 				ITestdataGeneration.TESTDATA_GENERATION_STRATEGIES.FAST_MARS);
@@ -90,13 +92,13 @@ public abstract class AbstractJUnitTest {
 		Paths.CURRENT_PROJECT.TYPE_OF_PROJECT = Utils.getTypeOfProject(Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH);
 
 		expectedOutput = expectedOutput == null
-				? new ExpectOutputTestdata(ExpectOutputTestdata.UNSPECIFIED_NUM_OF_TEST_PATH, 0.0001f, 0.0001f)
+				? new ExpectOutputTestdata(ExpectOutputTestdata.UNSPECIFIED_NUM_OF_TEST_PATH, 100f, 100f)
 				: expectedOutput;
 
 		boolean reachCoverageObjective = false;
 
 		String[] args = new String[] { Console.LOAD_PROJECT, Paths.CURRENT_PROJECT.ORIGINAL_PROJECT_PATH,
-				Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "off" };
+				Console.TESTED_FUNCTIONS, inputPath, Console.CONFIG, configurePath, Console.LOG4J_LEVEL, "debug" };
 		Console console = new Console(args);
 
 		// Display output

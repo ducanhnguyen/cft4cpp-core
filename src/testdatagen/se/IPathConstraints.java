@@ -50,5 +50,7 @@ public interface IPathConstraints {
 
 	void setVariablesTableNode(VariableNodeTable tables);
 
+	int getNumOfPCcreatedFromDecision();
+
 	int size();
 }

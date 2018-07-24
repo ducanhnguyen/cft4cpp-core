@@ -178,8 +178,8 @@ public class FunctionInstrumentationForStatementvsBranch_Marker implements IFunc
 			IASTExpression astIter = astFor.getIterationExpression();
 			if (astIter != null) {
 				b.append(SpecialCharacter.LINE_BREAK).append("\t\t\t");
-				b.append(putInMark(addDefaultMarkerContentforNormalStatement(astIter), false)).append(" && ")
-						.append(getShortenContent(astIter));
+				b.append(putInMark(addDefaultMarkerContentforNormalStatement(astIter), false)).append(" && ").append("(")
+						.append(getShortenContent(astIter)).append(")");
 			}
 			b.append(") ");
 

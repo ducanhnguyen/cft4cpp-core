@@ -50,7 +50,7 @@ public class PathConstraints extends ArrayList<PathConstraint> implements IPathC
 			indexExpander.setInputConstraint(newConstraint.getConstraint());
 			indexExpander.generateNewConstraints();
 			for (String newConstraintItem : indexExpander.getNewConstraints()) {
-				super.add(new PathConstraint(newConstraintItem, null, PathConstraint.CREATE_FROM_STATEMENT));
+				super.add(new PathConstraint(newConstraintItem, null, PathConstraint.ADDITIONAL_TYPE));
 			}
 
 			//
@@ -117,7 +117,9 @@ public class PathConstraints extends ArrayList<PathConstraint> implements IPathC
 	public String toString() {
 		String output = "";
 		for (PathConstraint constraint : this)
-			output += "\t" + constraint + ";\n";
+			// output += "\t" + constraint + ";\n";
+			output += constraint + ";";
+		output += "\n\n";
 		return output;
 	}
 
@@ -213,7 +215,7 @@ public class PathConstraints extends ArrayList<PathConstraint> implements IPathC
 			OneLevelSymbolicVariable cast = (OneLevelSymbolicVariable) symbolicVariable;
 			String newConstraint = cast.getReference().getBlock().getName();
 
-			this.add(new PathConstraint(newConstraint + "!=NULL", null, PathConstraint.CREATE_FROM_STATEMENT));
+			this.add(new PathConstraint(newConstraint + "!=NULL", null, PathConstraint.ADDITIONAL_TYPE));
 		} else {
 			// nothing to do
 		}
@@ -223,4 +225,14 @@ public class PathConstraints extends ArrayList<PathConstraint> implements IPathC
 		for (ISymbolicVariable symbolicVariable : symbolicVariables)
 			createNewConstraint(symbolicVariable);
 	}
+
+	@Override
+	public int getNumOfPCcreatedFromDecision() {
+		int num = 0;
+		for (PathConstraint constraint : this)
+			if (constraint.getType() == PathConstraint.CREATE_FROM_DECISION)
+				num++;
+		return num;
+	}
+
 }

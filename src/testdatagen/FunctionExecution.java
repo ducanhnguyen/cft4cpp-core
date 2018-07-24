@@ -284,10 +284,13 @@ public class FunctionExecution implements ITestdataExecution {
 		} else {
 			// logger.debug("Start executing function");
 			boolean isTerminated = ConsoleExecution.executeExe(new File(Paths.CURRENT_PROJECT.EXE_PATH));
-			if (isTerminated)
+			if (isTerminated) {
 				logger.info("Terminate .exe due to too long!!!");
+				AbstractTestdataGeneration.isTerminateDuetoTooLong = true;
+			} else
+				AbstractTestdataGeneration.isTerminateDuetoTooLong = false;
 
-			// logger.debug("Start executing function...done");
+			logger.debug("Start executing function...done");
 			AbstractTestdataGeneration.numOfExecutions++;
 
 			// Read hard disk until the test path is written into file completely
@@ -305,7 +308,27 @@ public class FunctionExecution implements ITestdataExecution {
 				countReadFile++;
 			} while (encodedTestpath.getEncodedTestpath().length() == 0 && countReadFile <= MAX_READ_FILE_NUMBER);
 
-			// Only for log
+			// Shorten test path if the program is terminated due to too long
+			if (AbstractTestdataGeneration.isTerminateDuetoTooLong
+					&& encodedTestpath.getEncodedTestpath().length() > 0) {
+				String[] executedStms = encodedTestpath.getEncodedTestpath()
+						.split(ITestpathInCFG.SEPARATE_BETWEEN_NODES);
+
+				int THRESHOLD = 200; // by default
+				if (executedStms.length >= THRESHOLD) {
+					logger.debug("Shorten test path to enhance code coverage computation speed: from "
+							+ executedStms.length + " to " + THRESHOLD);
+					String tmp_shortenTp = "";
+
+					for (int i = 0; i < THRESHOLD - 1; i++) {
+						tmp_shortenTp += executedStms[i] + ITestpathInCFG.SEPARATE_BETWEEN_NODES;
+					}
+					tmp_shortenTp += executedStms[THRESHOLD - 1];
+					encodedTestpath.setEncodedTestpath(tmp_shortenTp);
+				}
+			}
+
+			// Only for logging
 			if (encodedTestpath.getEncodedTestpath().length() > 0) {
 				String tp = "";
 				List<String> stms = encodedTestpath
@@ -313,7 +336,7 @@ public class FunctionExecution implements ITestdataExecution {
 				for (String stm : stms)
 					tp += stm + "=>";
 				tp = tp.substring(0, tp.length() - 2);
-				logger.debug("Done. Execution test path = " + tp);
+				logger.debug("Done. Execution test path [length=" + stms.size() + "] = " + tp);
 			} else
 				logger.debug("Done. Empty test path");
 		}

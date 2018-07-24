@@ -85,8 +85,7 @@ public class StaticSolutionGeneration implements IStaticSolutionGeneration {
 							constraintsFile);
 					z3Runner.execute();
 
-					// logger.debug("Original solution:\n" +
-					// z3Runner.getSolution());
+					logger.debug("Original solution:\n" + z3Runner.getSolution());
 					this.staticSolution = new Z3SolutionParser().getSolution(z3Runner.getSolution());
 				}
 			} else

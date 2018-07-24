@@ -224,7 +224,7 @@ public class Console {
 				String testdataStr = testdata.getValue();
 				if (testdata.isGenerateRandomly() && testdata.isImprovedTestdata())
 					testdataStr = "<span style='background-color: #CD5C5C'>" + testdataStr + "</span>";
-				else if (testdata.isGenerateRandomly())
+				else if (testdata.isGenerateRandomly() && !testdata.isImprovedTestdata())
 					testdataStr = "<span style='background-color: #FFFF00'>" + testdataStr + "</span>";
 				else if (testdata.isImprovedTestdata())
 					testdataStr = "<span style='background-color: green'> [improved]" + testdataStr + "</span>";
