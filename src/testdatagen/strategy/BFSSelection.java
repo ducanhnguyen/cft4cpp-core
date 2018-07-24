@@ -11,7 +11,8 @@ import testdatagen.se.PathConstraint;
 import testdatagen.se.PathConstraints;
 
 /**
- * Choose from the first condition in the current test path, just unvisited branches
+ * Choose from the first condition in the current test path, just unvisited
+ * branches
  * 
  * @author Duc Anh Nguyen
  *
@@ -28,7 +29,11 @@ public class BFSSelection extends AbstractPathSelectionStrategy {
 		Set<Integer> negatedIndexs = new HashSet<>();
 		ConditionCfgNode negatedCfgNode = null;
 		int negatedConstraintsIndexCandidate = -1;
+
+		int max_selection = 0;
+		int MAX_SELECTION_UPPER_BOUND = 30;
 		do {
+			max_selection++;
 			negatedConstraintsIndexCandidate++;
 
 			switch (((PathConstraints) getOriginalConstraints()).get(negatedConstraintsIndexCandidate).getType()) {
@@ -67,7 +72,8 @@ public class BFSSelection extends AbstractPathSelectionStrategy {
 				break;
 			}
 		} while (!foundNegatedCondition && negatedIndexs.size() < getOriginalConstraints().size()
-				&& negatedConstraintsIndexCandidate < getOriginalConstraints().size() - 1);
+				&& negatedConstraintsIndexCandidate < getOriginalConstraints().size() - 1
+				&& max_selection < MAX_SELECTION_UPPER_BOUND);
 
 		if (foundNegatedCondition)
 			output.setNegatedPathConstraints(negatedConstraints);

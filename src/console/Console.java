@@ -57,9 +57,8 @@ public class Console {
 	/**
 	 * Example: args = new String[] { Console.LOAD_PROJECT, new
 	 * File(Paths.SYMBOLIC_EXECUTION_TEST).getCanonicalPath(),
-	 * Console.TESTED_FUNCTIONS,
-	 * "E:/workspace/java/cft4cpp-core/local/test.txt", Console.CONFIG,
-	 * "E:/workspace/java/cft4cpp-core/local/setting.properties",
+	 * Console.TESTED_FUNCTIONS, "E:/workspace/java/cft4cpp-core/local/test.txt",
+	 * Console.CONFIG, "E:/workspace/java/cft4cpp-core/local/setting.properties",
 	 * Console.LOG4J_LEVEL, "debug" };
 	 * 
 	 * @param args
@@ -69,29 +68,21 @@ public class Console {
 		// [executable name] -p [project path] -f [function test] -c
 		// [setting.properties path] -log4j "debug"
 
+		/**
+		 * AUTHOR: PLEASE CONFIGURE HERE
+		 */
+		String TESTING_PROJET_PATH = Paths.JOURNAL_TEST;
+		String TESTING_FUNCTIONS_LIST = "E:/workspace/java/cft4cpp-core/local/test.txt";
+		String CONFIGURATION_FILE_PATH = "E:/workspace/java/cft4cpp-core/local/setting.properties";
+		/**
+		 * AUTHOR: THE END OF CONFIGURATION
+		 */
+		args = new String[] { Console.LOAD_PROJECT, new File(TESTING_PROJET_PATH).getCanonicalPath(),
+				Console.TESTED_FUNCTIONS, TESTING_FUNCTIONS_LIST, Console.CONFIG, CONFIGURATION_FILE_PATH,
+				Console.LOG4J_LEVEL, "debug" };
+
 		Console console = new Console(args);
-
-		// Display output
-		List<ConsoleOutput> outputList = console.getOutput();
-
-		for (ConsoleOutput outputItem : outputList) {
-			logger.info("Original function");
-			logger.info(outputItem.getFunctionNode().getAST().getRawSignature());
-			logger.info(
-					"Total time = " + outputItem.getRunningTime() + "ms (" + outputItem.getRunningTime() / 1000 + "s)");
-			logger.info("Solver running time = " + outputItem.getSolverRunningTime() + "ms ("
-					+ outputItem.getSolverRunningTime() / outputItem.getRunningTime() * 100 + "%)");
-			logger.info("Make file running time = " + outputItem.getMakeCommandRunningTime() + "ms ("
-					+ outputItem.getMakeCommandRunningTime() / outputItem.getRunningTime() * 100 + "%)");
-			logger.info("Num of effective solver calls = "
-					+ (outputItem.getNumOfSolverCalls() - outputItem.getNumOfSolverCallsbutCannotSolve()) + "/"
-					+ outputItem.getNumOfSolverCalls() + " times (Num of error Solver calls = "
-					+ outputItem.getNumOfSolverCallsbutCannotSolve() + "/" + outputItem.getNumOfSolverCalls() + ")");
-			logger.info("Num of symbolic executions = " + outputItem.getNumOfSymbolicExecutions() + " times");
-			logger.info("Num of symbolic statements = " + outputItem.getNumOfSymbolicStatements() + " times");
-			logger.info("Num of executions = " + outputItem.getNumOfExecutions() + " times");
-			logger.info("Reached coverage = " + outputItem.getBranchCoverge() + "%)");
-		}
+		console.exportToHtml(new File(AbstractSetting.getValue(Settingv2.TEST_REPORT)), "xxx");
 	}
 
 	private ConsoleInput analyzeArgs(String[] args) {
@@ -167,8 +158,8 @@ public class Console {
 	}
 
 	/**
-	 * Get output in console. Each test data generation result of each function
-	 * is stored in an element in the given list.
+	 * Get output in console. Each test data generation result of each function is
+	 * stored in an element in the given list.
 	 *
 	 * @return
 	 */
@@ -217,17 +208,15 @@ public class Console {
 			// display test data
 			for (TestdataInReport testdata : item.getTestdata()) {
 				String testdataStatus = "["
-						+ (testdata.outputCompleteTestpath() == false ? "<b><font color='red'> uncomplete </font></b>"
+						+ (testdata.outputCompleteTestpath() == false ? "<b><font color='red'> incomplete </font></b>"
 								: "<b><font color='blue'> complete </font></b>")
 						+ "]&nbsp;";
 
 				String testdataStr = testdata.getValue();
-				if (testdata.isGenerateRandomly() && testdata.isImprovedTestdata())
-					testdataStr = "<span style='background-color: #CD5C5C'>" + testdataStr + "</span>";
-				else if (testdata.isGenerateRandomly() && !testdata.isImprovedTestdata())
-					testdataStr = "<span style='background-color: #FFFF00'>" + testdataStr + "</span>";
-				else if (testdata.isImprovedTestdata())
-					testdataStr = "<span style='background-color: green'> [improved]" + testdataStr + "</span>";
+				if (testdata.isGeneratedBySDART())
+					testdataStr = "<span style='background-color: green'>" + testdataStr + "</span>";
+				else
+					testdataStr = "<span >" + testdataStr + "</span>";
 
 				String statementCov = "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Stm cov="
 						+ testdata.getCurrentStatementCodeCoverage();
@@ -247,6 +236,7 @@ public class Console {
 					allFunctionsTestReport += "<span style=\"opacity:0.5\">" + testdataStatus + testdataStr
 							+ statementCov + branchCov + testpath + "</span>";
 			}
+
 		}
 		// Summary of result
 		for (ConsoleOutput item : this.getOutput()) {
@@ -254,12 +244,13 @@ public class Console {
 			AbstractTestdataGeneration.totalSolverCalls += item.getNumOfSolverCalls();
 			AbstractTestdataGeneration.totalSymbolicStatements += item.getNumOfSymbolicStatements();
 		}
-		String summary = ("Total solver calls = " + AbstractTestdataGeneration.totalSolverCalls + "<br/>")
-				+ ("Total num of execution: " + AbstractTestdataGeneration.totalNumOfExecution + "<br/>")
-				+ ("Total symbolic statements: " + AbstractTestdataGeneration.totalSymbolicStatements + "<br/>")
-				+ (AbstractTestdataGeneration.numOfVisitedBranches + " / " + AbstractTestdataGeneration.numOfBranches
-						+ " visited branches");
-		allFunctionsTestReport += "<br/>" + summary;
+		String summary = ("The number of SMT-Solver calls = " + AbstractTestdataGeneration.totalSolverCalls + "<br/>")
+				+ ("The number of iterations =  " + AbstractTestdataGeneration.totalNumOfExecution + "<br/>")
+				+ ("The number of statements performed symbolically: "
+						+ AbstractTestdataGeneration.totalSymbolicStatements + "<br/>")
+				+ (AbstractTestdataGeneration.numOfVisitedBranches + " visited branches / "
+						+ AbstractTestdataGeneration.numOfBranches + " total branches");
+		allFunctionsTestReport += "<br/>" + summary + "<br/>";
 
 		// Add configuration
 		IFunctionConfig conf = this.getOutput().get(0).getFunctionNode().getFunctionConfig();
@@ -270,18 +261,32 @@ public class Console {
 		String solver = "Solver: " + conf.getSolvingStrategy();
 		String iterations = "Max iteration for each loop: " + conf.getMaximumInterationsForEachLoop();
 		String sizeofArray = "Max size of array: " + conf.getSizeOfArray();
-		allFunctionsTestReport += "<br/>" + config1 + "<br/>" + config2 + "<br/>" + solver + "<br/>" + iterations
-				+ "<br/>" + sizeofArray + "<br/>";
 
+		// Help
+		String testDataDescription = "";
+		testDataDescription += "THIS FILE DESCRIBES THE PROCESS OF TEST DATA GENERATION<br/>";
+		testDataDescription += "<h1>Test data description</h1></br>";
+		testDataDescription += "<span>xxx</span> &nbsp;&nbsp;&nbsp;Test data is generated by DART<br/>";
+		testDataDescription += "<span style='background-color: green'>xxx</span> &nbsp;&nbsp;&nbsp;Test data is generated by using SDART<br/>";
+		testDataDescription += "<b><font color='red'> incomplete </font></b>&nbsp;&nbsp;&nbsp;The test data causes an exception<br/>";
+		testDataDescription += "<b><font color='blue'> complete </font></b>&nbsp;&nbsp;&nbsp;The test data does not cause exceptions<br/>";
+
+		testDataDescription += "<span style=\"opacity:1\">test data</span>&nbsp;&nbsp;&nbsp;This test data increases code coverage (opacity = 1)<br/>";
+		testDataDescription += "<span style=\"opacity:0.5\">test data</span>&nbsp;&nbsp;&nbsp;This test data does not increase code coverage (opacity = 0.5)<br/>";
+		testDataDescription += "<h1>CONFIGURATION</h1></br>";
+		testDataDescription += "<br/>" + config1 + "<br/>" + config2 + "<br/>" + solver + "<br/>" + iterations + "<br/>"
+				+ sizeofArray + "<br/>";
+		testDataDescription += "Path selection strategy: " + Settingv2.getValue(Settingv2.PATH_SELECTION_STRATEGY)
+				+ "<br/>";
+		testDataDescription += "<h1>DETAILS</h1>";
 		// Others
 		String removeConstraints = "Removed constraints size = " + AbstractTestdataGeneration.removedConstraints
 				+ "<br/>";
 		String removeTestdata = "Removed test data size = " + AbstractTestdataGeneration.removedTestdata + "<br/>";
-
 		allFunctionsTestReport += removeConstraints + removeTestdata;
 
-		fullHtml = "<!DOCTYPE html> <html> <head>" + style + "</head><body>" + allFunctionsTestReport
-				+ "</body></html>";
+		fullHtml = "<!DOCTYPE html> <html> <head>" + style + "</head><body>" + testDataDescription
+				+ allFunctionsTestReport + "</body></html>";
 		Utils.writeContentToFile(fullHtml, htmlFile.getAbsolutePath());
 
 		// OTHER FILES

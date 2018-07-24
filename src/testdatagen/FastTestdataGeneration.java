@@ -21,11 +21,13 @@ import cfg.testpath.IStaticSolutionGeneration;
 import cfg.testpath.ITestpathInCFG;
 import cfg.testpath.PartialTestpaths;
 import cfg.testpath.StaticSolutionGeneration;
+import config.AbstractSetting;
 import config.FunctionConfig;
 import config.IFunctionConfig;
 import config.ISettingv2;
 import config.ParameterBound;
 import config.Paths;
+import config.Settingv2;
 import parser.projectparser.ProjectParser;
 import testdata.object.TestpathString_Marker;
 import testdatagen.coverage.CFGUpdater_Mark;
@@ -37,11 +39,7 @@ import testdatagen.se.SymbolicExecution;
 import testdatagen.se.memory.ISymbolicVariable;
 import testdatagen.strategy.AbstractPathSelectionStrategy;
 import testdatagen.strategy.BFSSelection;
-import testdatagen.strategy.DFSSelection;
 import testdatagen.strategy.PathSelectionOutput;
-import testdatagen.strategy.RandomBranchesSelection;
-import testdatagen.strategy.RandomUnvisitedBranchesSelection;
-import testdatagen.strategy.UnvisitedBranchesvsRandomBranchesSelection;
 import testdatagen.testdatainit.VariableTypes;
 import tree.object.FunctionNode;
 import tree.object.IFunctionNode;
@@ -179,7 +177,7 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 	 * @param originalFunction
 	 * @throws Exception
 	 */
-	private void DART_skeleton(IFunctionNode originalFunction) throws Exception {
+	private void DART(IFunctionNode originalFunction) throws Exception {
 		// Config: no limit loop, no limit recursive
 		getExePath(originalFunction);
 		ICFG normalizedCfg = generateNormalizedCFG(originalFunction);
@@ -371,61 +369,8 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 		while (!isFoundSolution && canNegateCondition && se.getConstraints().size() >= 1 && MAXIMUM_TRIES >= 0) {
 			MAXIMUM_TRIES--;
 
-			AbstractPathSelectionStrategy strategy = null;
+			AbstractPathSelectionStrategy strategy = new BFSSelection();
 
-			switch (Vnu_Journal_Test.TEST_DATA_SELECTION_STRATEGY) {
-			case Vnu_Journal_Test.FOLLOW_CONFIGURATION_IN_CODE:
-				strategy = new DFSSelection();
-				break;
-
-			case Vnu_Journal_Test.ANYTHING: {
-				int randomStrategy = new Random().nextInt(5);
-
-				switch (randomStrategy) {
-				case 0:
-					strategy = new BFSSelection();
-					break;
-
-				case 1:
-					strategy = new UnvisitedBranchesvsRandomBranchesSelection();
-					break;
-
-				case 2:
-					strategy = new RandomUnvisitedBranchesSelection();
-					break;
-
-				case 3:
-					strategy = new RandomBranchesSelection();
-					break;
-
-				case 4:
-					strategy = new DFSSelection();
-					break;
-				}
-				break;
-			}
-
-			case Vnu_Journal_Test.BFS:
-				strategy = new BFSSelection();
-				break;
-
-			case Vnu_Journal_Test.UNVISITED_VS_RANDOM_COMBINATION:
-				strategy = new UnvisitedBranchesvsRandomBranchesSelection();
-				break;
-
-			case Vnu_Journal_Test.UNVISITED:
-				strategy = new RandomUnvisitedBranchesSelection();
-				break;
-
-			case Vnu_Journal_Test.RANDOM:
-				strategy = new RandomBranchesSelection();
-				break;
-
-			case Vnu_Journal_Test.DFS:
-				strategy = new DFSSelection();
-				break;
-
-			}
 			logger.debug("STRATEGY = " + strategy.getClass());
 			strategy.setSolvedPathConstraints(optimization.getSolvedPathConstraints());
 			strategy.setOriginalConstraints(se.getConstraints());
@@ -489,11 +434,14 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 
 	@Override
 	protected void generateTestdata(IFunctionNode originalFunction) throws Exception {
-		logger.debug("Test data generation strategy: Fast Mars");
 		Date startTime = Calendar.getInstance().getTime();
 
-		// DART_skeleton(originalFunction);
-		DART_IMPROVEMENT(originalFunction);
+		if (AbstractSetting.getValue(Settingv2.PATH_SELECTION_STRATEGY).equals("DART_BFS"))
+			DART(originalFunction);
+		else if (AbstractSetting.getValue(Settingv2.PATH_SELECTION_STRATEGY).equals("SDART"))
+			SDART(originalFunction);
+		else
+			throw new Exception("The path selection strategy does not exist!");
 
 		// Calculate the running time
 		Date end = Calendar.getInstance().getTime();
@@ -688,7 +636,7 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 	}
 
 	// @Deprecated
-	private void DART_IMPROVEMENT(IFunctionNode originalFunction) throws Exception {
+	private void SDART(IFunctionNode originalFunction) throws Exception {
 		// Configure: no limit loop, no limit recursive
 		// Ignore execution when there exists duplicated constraints; duplicate test
 		// data
@@ -699,7 +647,7 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 
 		if (normalizedCfg != null) {
 			// IMPROVEMENT HERE - BEGIN
-			boolean improvedTestdata = false;
+			boolean generatedBySDART = false;
 			List<IPartialTestpath> analyzedTestpaths = new ArrayList<>();
 			List<String> existingTestdata = new ArrayList<>();
 			List<IPathConstraints> existingConstraints = new ArrayList<>();
@@ -775,19 +723,19 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 										if (currentTestdata.equals(IStaticSolutionGeneration.NO_SOLUTION)) {
 											logger.info("No solution. Seek another unvisited test path.");
 											testdata = "";
-											improvedTestdata = false;
+											generatedBySDART = false;
 										} else if (currentTestdata.equals(IStaticSolutionGeneration.EVERY_SOLUTION)) {
 											// Just pick a random test data
 											currentTestdata = initializeTestdataAtRandom();
 											logger.info("May solution. Choose a solution. Next test data = <b>"
 													+ currentTestdata + "</b>");
 											testdata = currentTestdata;
-											improvedTestdata = true;
+											generatedBySDART = true;
 										} else {
 											logger.info("Found a solution. Next test data = <b>" + currentTestdata
 													+ "</b>");
 											testdata = currentTestdata;
-											improvedTestdata = true;
+											generatedBySDART = true;
 										}
 
 										// Execute new test data
@@ -894,7 +842,7 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 					testdata = initializeTestdataAtRandom();
 					logger.info("Duplicate. Generate a random test data: <b>" + testdata + "</b>");
 					tmp_isGenerateRandomly = true;
-					improvedTestdata = true;
+					generatedBySDART = true;
 				} else
 					existingTestdata.add(testdata);
 				// IMPROVEMENT HERE - END
@@ -953,8 +901,8 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 										: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
 												? true
 												: false,
-								tmp_isGenerateRandomly, improvedTestdata)); // MODIFIED
-						improvedTestdata = false; // ADDED
+								tmp_isGenerateRandomly, generatedBySDART)); // MODIFIED
+						generatedBySDART = false; // ADDED
 						numOfNotIncreaseTestdata = tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? 0
 								: numOfNotIncreaseTestdata + 1;// ADDED
 					}
@@ -967,8 +915,8 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 										: false || tmp_currentStatementCoverage > tmp_previous_currentStatementCoverage
 												? true
 												: false,
-								tmp_isGenerateRandomly, improvedTestdata));// MODIFIED
-						improvedTestdata = false; // ADDED
+								tmp_isGenerateRandomly, generatedBySDART));// MODIFIED
+						generatedBySDART = false; // ADDED
 						numOfNotIncreaseTestdata = tmp_currentBranchCoverage > tmp_previous_currentBranchCoverage ? 0
 								: numOfNotIncreaseTestdata + 1;// ADDED
 
@@ -1019,8 +967,8 @@ public class FastTestdataGeneration extends AbstractTestdataGeneration {
 					logger.debug("Current test data causes errors.");
 					AbstractTestdataGeneration.testdata.add(new TestdataInReport(fullTestdata,
 							new TestpathString_Marker(), false, tmp_currentStatementCoverage, tmp_currentBranchCoverage,
-							false, tmp_isGenerateRandomly, improvedTestdata));// MODIFIED
-					improvedTestdata = false; // ADDED
+							false, tmp_isGenerateRandomly, generatedBySDART));// MODIFIED
+					generatedBySDART = false; // ADDED
 				}
 			}
 			// depth++;

@@ -82,7 +82,7 @@ public interface ISettingv2 {
 
 	// If this flag turns on, we dont perform macro normalization
 	String IN_TEST_MODE = "IN_TEST_MODE";
-	
+
 	// others
 	final int PROJECT_UNKNOWN_TYPE = -1;
 	final int PROJECT_DEV_CPP = 0;
@@ -93,4 +93,6 @@ public interface ISettingv2 {
 	final int PROJECT_CUSTOMMAKEFILE = 4;
 
 	String TESTDATA_STRATEGY = "TESTDATA_STRATEGY";
+	String PATH_SELECTION_STRATEGY = "PATH_SELECTION_STRATEGY";
+	String TEST_REPORT = "TEST_REPORT";
 }

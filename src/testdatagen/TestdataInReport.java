@@ -92,7 +92,7 @@ public class TestdataInReport {
 		this.generateRandomly = generateRandomly;
 	}
 
-	public boolean isImprovedTestdata() {
+	public boolean isGeneratedBySDART() {
 		return improvedTestdata;
 	}
 

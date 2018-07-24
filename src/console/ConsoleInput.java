@@ -114,7 +114,7 @@ public class ConsoleInput {
 				consoleOutput.setBugs(AbstractTestdataGeneration.bugs);
 				consoleOutput.setBranchCoverge(AbstractTestdataGeneration.branchCoverage);
 				consoleOutput.setStatementCoverge(AbstractTestdataGeneration.statementCoverage);
-				consoleOutput.setLog(Utils.readFileContent("E:\\log4j-application.log"));
+				// consoleOutput.setLog(Utils.readFileContent("E:\\log4j-application.log"));
 
 				consoleOutput.setTestdata(AbstractTestdataGeneration.testdata);
 			}
@@ -138,11 +138,14 @@ public class ConsoleInput {
 		if (!testFunctionsFile.exists())
 			throw new Exception("Tested function file does not exist");
 
-		if (!new File(AbstractSetting.getValue(ISettingv2.SOLVER_Z3_PATH)).exists()
-				|| !new File(AbstractSetting.getValue(ISettingv2.MCPP_EXE_PATH)).exists()
-				|| !new File(AbstractSetting.getValue(ISettingv2.GNU_GCC_PATH)).exists()
-				|| !new File(AbstractSetting.getValue(ISettingv2.GNU_GPlusPlus_PATH)).exists())
-			throw new Exception("Wrong path of compiler");
+		if (!new File(AbstractSetting.getValue(ISettingv2.SOLVER_Z3_PATH)).exists())
+			throw new Exception("Wrong path of SMT-Solver Z3");
+		if (!new File(AbstractSetting.getValue(ISettingv2.MCPP_EXE_PATH)).exists())
+			throw new Exception("Wrong path of mcpp.exe");
+		if (!new File(AbstractSetting.getValue(ISettingv2.GNU_GCC_PATH)).exists())
+			throw new Exception("Wrong path of gcc.exe");
+		if (!new File(AbstractSetting.getValue(ISettingv2.GNU_GPlusPlus_PATH)).exists())
+			throw new Exception("Wrong path of g++.exe");
 
 		// TODO: may need some checkings on variables configuration
 		return true;

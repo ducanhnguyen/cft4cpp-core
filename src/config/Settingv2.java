@@ -70,18 +70,21 @@ public class Settingv2 extends AbstractSetting {
 		getAttributes().put(NUMBER_OF_PROJECT, 5);
 
 		// GUI configuration
-		getAttributes().put(COMMENT_PREFIX + "GUI", "");
-		getAttributes().put(MAX_CFG_NODE_LINE, 0);
-		getAttributes().put(MAX_GUI_TAB, 1);
-		getAttributes().put(LOOK_AND_FEEL, "javax.swing.plaf.metal.MetalLookAndFeel");
-		getAttributes().put(CFG_OVERVIEW_LEVEL, 2);
-		getAttributes().put(CFG_MARGIN_Y, 50);
-		getAttributes().put(CFG_MARGIN_X, 120);
-		getAttributes().put(MAX_CFG_NODE_WIDTH, 30);
+		// getAttributes().put(COMMENT_PREFIX + "GUI", "");
+		// getAttributes().put(MAX_CFG_NODE_LINE, 0);
+		// getAttributes().put(MAX_GUI_TAB, 1);
+		// getAttributes().put(LOOK_AND_FEEL,
+		// "javax.swing.plaf.metal.MetalLookAndFeel");
+		// getAttributes().put(CFG_OVERVIEW_LEVEL, 2);
+		// getAttributes().put(CFG_MARGIN_Y, 50);
+		// getAttributes().put(CFG_MARGIN_X, 120);
+		// getAttributes().put(MAX_CFG_NODE_WIDTH, 30);
 
 		getAttributes().put(IN_TEST_MODE, "false");
 
 		getAttributes().put(TESTDATA_STRATEGY, ITestdataGeneration.TESTDATA_GENERATION_STRATEGIES.MARS2 + "");
+		getAttributes().put(PATH_SELECTION_STRATEGY, "DART_BFS");
+		getAttributes().put(TEST_REPORT, "TEST_REPORT");
 		// Write all configuration to file
 		save(getAttributes());
 	}
@@ -139,18 +142,21 @@ public class Settingv2 extends AbstractSetting {
 		getAttributes().put(NUMBER_OF_PROJECT, 5);
 
 		// GUI configuration
-		getAttributes().put(COMMENT_PREFIX + "GUI", "");
-		getAttributes().put(MAX_CFG_NODE_LINE, 0);
-		getAttributes().put(MAX_GUI_TAB, 1);
-		getAttributes().put(LOOK_AND_FEEL, "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-		getAttributes().put(CFG_OVERVIEW_LEVEL, 2);
-		getAttributes().put(CFG_MARGIN_Y, 50);
-		getAttributes().put(CFG_MARGIN_X, 120);
-		getAttributes().put(MAX_CFG_NODE_WIDTH, 30);
+		// getAttributes().put(COMMENT_PREFIX + "GUI", "");
+		// getAttributes().put(MAX_CFG_NODE_LINE, 0);
+		// getAttributes().put(MAX_GUI_TAB, 1);
+		// getAttributes().put(LOOK_AND_FEEL,
+		// "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		// getAttributes().put(CFG_OVERVIEW_LEVEL, 2);
+		// getAttributes().put(CFG_MARGIN_Y, 50);
+		// getAttributes().put(CFG_MARGIN_X, 120);
+		// getAttributes().put(MAX_CFG_NODE_WIDTH, 30);
 
 		getAttributes().put(IN_TEST_MODE, "false");
 
 		getAttributes().put(TESTDATA_STRATEGY, ITestdataGeneration.TESTDATA_GENERATION_STRATEGIES.MARS2 + "");
+		getAttributes().put(PATH_SELECTION_STRATEGY, "DART_BFS");
+		getAttributes().put(TEST_REPORT, "TEST_REPORT");
 		// Write all configuration to file
 		save(getAttributes());
 	}
