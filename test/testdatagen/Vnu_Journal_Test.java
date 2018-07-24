@@ -24,7 +24,7 @@ public class Vnu_Journal_Test extends AbstractJUnitTest {
 	public static final int ANYTHING = -1;
 	public static final int FOLLOW_CONFIGURATION_IN_CODE = -2;
 
-	public static int TEST_DATA_SELECTION_STRATEGY = FOLLOW_CONFIGURATION_IN_CODE;
+	public static int TEST_DATA_SELECTION_STRATEGY = BFS;
 
 	@Test
 	public void test1() throws LineUnavailableException {

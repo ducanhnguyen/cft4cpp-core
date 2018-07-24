@@ -61,7 +61,7 @@ public abstract class AbstractJUnitTest {
 		// Create setting.properties
 		String configurePath = folderTestPath + "setting.properties";
 		Settingv2.create();
-		AbstractSetting.setValue(ISettingv2.SOLVER_Z3_NAME, 32);
+		AbstractSetting.setValue(ISettingv2.SOLVER_Z3_NAME, "z3.exe");
 
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_LOWER_BOUND, 32);
 		AbstractSetting.setValue(ISettingv2.DEFAULT_CHARACTER_UPPER_BOUND, 126);
