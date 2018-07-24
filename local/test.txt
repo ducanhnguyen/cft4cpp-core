@@ -1,1 +1,1 @@
-\bubbleSort2(int[],int)
+\reverse2(char*,int,int)
