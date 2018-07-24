@@ -1,8 +1,8 @@
 # Project: Project1
 # Makefile created by Dev-C++ 5.11
 
-CPP="E:/Dev-Cpp/MinGW64/bin/g++.exe"
-CC="E:/Dev-Cpp/MinGW64/bin/gcc.exe"
+CPP      = g++.exe
+CC       = gcc.exe
 WINDRES  = windres.exe
 OBJ      = Search.o main.o Merge.o Sort.o Utils.o
 LINKOBJ  = Search.o main.o Merge.o Sort.o Utils.o
@@ -38,14 +38,3 @@ Sort.o: Sort.cpp
 
 Utils.o: Utils.cpp
 	$(CPP) -c Utils.cpp -o Utils.o $(CXXFLAGS)
-
-
-
-
-
-
-
-
-
-
-
