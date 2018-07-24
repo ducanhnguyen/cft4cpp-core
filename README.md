@@ -12,10 +12,9 @@ Tool for test data generation for C/C++ projects
 - Install IDE Dev-cpp (https://sourceforge.net/projects/orwelldevcpp/). We use the compiler of Dev-Cpp.
 
 ## Run the experiment
-# Step 1. Configure
-- Go to /local/setting.properties
-(i) Configure the compiler of Dev-cpp
+# Step 1. Configure: Go to /local/setting.properties
 
+(i) Configure the compiler of Dev-cpp
 + GNU_GCC_PATH: the absolute path of gcc.exe
 + GNU_GPlusPlus_PATH: the absolute path of g++.exe
 + GNU_GENERAL: the absolute path of folder *bin*
