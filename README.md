@@ -1,6 +1,8 @@
 # CFT4Cpp-core (no graphical user iterface)
 Tool for test data generation for C/C++ projects
 
+Old version of CFT4-Cpp core: Video (https://www.youtube.com/watch?v=l3ugnLKmC6g), link github (https://github.com/phibao37/ava)
+
 ## Developement environment
 * IDE: Eclipse Java EE IDE for Web Developers (Oxygen.3a Release)
 * Java 8
@@ -34,7 +36,7 @@ Tool for test data generation for C/C++ projects
 + TEST_ARRAY_SIZE: the maximum size of array (used when an array parameter does not specify its size)
 
 (v) The path of test report
-+ TEST_REPORT
++ TEST_REPORT (An example of test report is stored in /local/test.html)
 
 # Step 2. Select 
 - After configuration, go to /src/console.java
