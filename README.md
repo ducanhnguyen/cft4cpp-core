@@ -10,11 +10,10 @@ Old version of CFT4-Cpp core: Video (https://www.youtube.com/watch?v=l3ugnLKmC6g
 
 ## Set up
 - Import CFT4cpp-core to Eclipse.
-- Add libraries stored in /lib/
 - Install IDE Dev-cpp (https://sourceforge.net/projects/orwelldevcpp/). We use the compiler of Dev-Cpp.
 
 ## Run the experiment
-# Step 1. Configure: Go to /local/setting.properties
+# Step 1. Create the configuration file
 
 (i) Configure the compiler of Dev-cpp
 + GNU_GCC_PATH: the absolute path of gcc.exe
@@ -38,16 +37,18 @@ Old version of CFT4-Cpp core: Video (https://www.youtube.com/watch?v=l3ugnLKmC6g
 (v) The path of test report
 + TEST_REPORT (An example of test report is stored in /local/test.html)
 
-# Step 2. Select 
-- After configuration, go to /src/console.java
-- In the main() function, set up the path of (i) the testing project, (ii) the path of file containing the testing functions, and (iii) the path of the configuration file (search "AUTHOR: PLEASE CONFIGURE HERE")
+# Step 2. Run
+- Go to /src/console.java
+- In the main() function, set up the path of (i) the testing project, (ii) the path of file containing the testing functions, and (iii) the path of the configuration file in step 1 (search "AUTHOR: PLEASE CONFIGURE HERE")
 - Run! Enjoy!
 
-## Note
+## Experiments
 # List of functions in the experiment
 
-+ test.txt (the path of file containing the testing functions)
-"\bubbleSort2(int[],int)
++ Go to /local/test.txt (this is the path of file containing the testing functions).
+Note: The testing project is located in /data-test/paper/Algorithm
+
+"\bubbleSort2(int[],int),
 
 \insertionSort(int[],int)
 
