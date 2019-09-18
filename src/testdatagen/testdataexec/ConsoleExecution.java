@@ -124,7 +124,7 @@ public class ConsoleExecution {
 	 *
 	 * @param exePath
 	 */
-	public static boolean executeExe(File exePath) throws Exception {
+	public static boolean executeExe(File exePath) throws Exception {					
 		boolean isTerminated = false;
 		String command = "";
 		if (Utils.isWindows())
@@ -132,6 +132,13 @@ public class ConsoleExecution {
 
 		else if (Utils.isUnix()) {
 			command = exePath.getCanonicalPath();
+			
+			// Set "chmod 777" for the executable file
+			if (exePath.exists()) {
+				exePath.setExecutable(true);
+				exePath.setReadable(true);
+				exePath.setWritable(true);
+			}
 		}
 
 		logger.info("Executing " + command);

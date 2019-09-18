@@ -17,6 +17,7 @@ import config.Paths;
 import config.Settingv2;
 import console.Console;
 import console.ConsoleOutput;
+import console.HtmlExporter;
 import testdatagen.Bug;
 import testdatagen.ITestdataGeneration;
 import utils.Utils;
@@ -157,7 +158,7 @@ public abstract class AbstractJUnitTest {
 					.getExpectedBranchCoverage()
 					|| outputTestingFunctionItem.getStatementCoverge() >= expectedOutput.getExpectedStatementCoverage()
 							? true : false;
-			console.exportToHtml(new File(JUNIT_REPORT), methodName);
+			new HtmlExporter(console.getOutput()).exportToHtml(new File(JUNIT_REPORT), methodName);
 		}
 
 		return reachCoverageObjective;
@@ -243,7 +244,7 @@ public abstract class AbstractJUnitTest {
 		symbolicExecutionTime /= MAX_GENERATION;
 		resultsAllInOne.getOutput().get(0).setSymbolicExecutionTime(symbolicExecutionTime);
 
-		resultsAllInOne.exportToHtml(new File(JUNIT_REPORT), methodName);
+		new HtmlExporter(resultsAllInOne.getOutput()).exportToHtml(new File(JUNIT_REPORT), methodName);
 	}
 
 	protected class ExpectOutputTestdata {

@@ -55,7 +55,8 @@ public class RunZ3OnCMD {
 				if (smtLibPath.contains(" "))
 					throw new Exception("Path of smt-lib file does not contain space. " + smtLibPath);
 				else
-					commandLine = "z3 -smt2 " + smtLibPath;
+					commandLine = Z3Path + " " + smtLibPath;
+					//commandLine = "z3 -smt2 " + smtLibPath;
 			} else {
 				throw new Exception("Your OS is not support!!");
 			}

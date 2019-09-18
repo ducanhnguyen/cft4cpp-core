@@ -13,7 +13,7 @@ import utils.Utils;
  * @author ducanhnguyen
  */
 public abstract class AbstractSetting implements ISettingv2 {
-	public static String settingPath = Paths.CURRENT_PROJECT.LOCAL_FOLDER + File.separator + "setting.properties";
+	public static String settingPath = null;
 
 	// List of setting values
 	public static Attributes attributes = new Attributes();

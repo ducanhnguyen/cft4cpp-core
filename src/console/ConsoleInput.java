@@ -140,8 +140,8 @@ public class ConsoleInput {
 
 		if (!new File(AbstractSetting.getValue(ISettingv2.SOLVER_Z3_PATH)).exists())
 			throw new Exception("Wrong path of SMT-Solver Z3");
-		if (!new File(AbstractSetting.getValue(ISettingv2.MCPP_EXE_PATH)).exists())
-			throw new Exception("Wrong path of mcpp.exe");
+		//if (!new File(AbstractSetting.getValue(ISettingv2.MCPP_EXE_PATH)).exists())
+		//	throw new Exception("Wrong path of mcpp.exe");
 		if (!new File(AbstractSetting.getValue(ISettingv2.GNU_GCC_PATH)).exists())
 			throw new Exception("Wrong path of gcc.exe");
 		if (!new File(AbstractSetting.getValue(ISettingv2.GNU_GPlusPlus_PATH)).exists())

@@ -30,6 +30,7 @@ public class ProjectParser extends AbstractProjectParser implements IProjectPars
 	final static Logger logger = Logger.getLogger(ProjectParser.class);
 
 	public static void main(String[] args) throws Exception {
+		File f = new File(Paths.STUDENT_MANAGEMENT);
 		ProjectParser projectParser = new ProjectParser(new File(Paths.STUDENT_MANAGEMENT), null);
 		IProjectNode projectRoot = projectParser.getRootTree();
 		System.out.println(new DependencyTreeDisplayer(projectRoot).getTreeInString());
@@ -50,6 +51,7 @@ public class ProjectParser extends AbstractProjectParser implements IProjectPars
 	}
 
 	private void findorCreateMakefile(INode root) {
+		Paths.CURRENT_PROJECT.TYPE_OF_PROJECT = ISettingv2.PROJECT_CUSTOMMAKEFILE; // for testing
 		if (Utils.isWindows()) {
 
 			switch (Paths.CURRENT_PROJECT.TYPE_OF_PROJECT) {
