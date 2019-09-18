@@ -1,0 +1,7 @@
+(set-option :timeout 5000)
+(declare-fun tvw_x (Int) Int)
+(declare-fun tvw_begin () Int)
+(declare-fun tvw_end () Int)
+(declare-fun tvw_c () Int)
+(assert (not  (>=  tvw_begin   tvw_end ) ) )
+(check-sat)(get-model)
